@@ -1272,12 +1272,24 @@ export default function ProgressManagement() {
                             <div className="w-3 h-3 bg-orange-200 border border-orange-300 rounded border-l-4 border-l-orange-400"></div>
                             <span>Lecturer-assigned tasks (Required)</span>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        {/* <div className="flex items-center space-x-2">
                             <span className="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded text-xs border border-orange-200">
-                                👨‍🏫 2
+                                👨‍🏫
                             </span>
-                            <span>Lecturer-assigned count</span>
-                        </div>
+                            <span>
+                                Lecturer task not done:{' '}
+                                {backlogItems.filter(
+                                    (item) =>
+                                        item.parentLecturerWorkItemId &&
+                                        item.status != 'DONE'
+                                ).length +
+                                    sprints.filter(
+                                        (item) =>
+                                            item.parentLecturerWorkItemId &&
+                                            item.status != 'DONE'
+                                    ).length}
+                            </span>
+                        </div> */}
                     </div>
                 </div>
             </div>
@@ -1629,7 +1641,11 @@ export default function ProgressManagement() {
                                         }
                                     </span>
                                     <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
-                                        0
+                                        {
+                                            backlogItems.filter(
+                                                (item) => item.status === 'DONE'
+                                            ).length
+                                        }
                                     </span>
                                     {/* {backlogItems.filter(
                                         (item) =>
