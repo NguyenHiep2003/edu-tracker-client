@@ -63,7 +63,7 @@ export function useAuthProtection({
             ) {
             }
             // Redirect to login if no auth data or wrong role
-            // router.push(redirectTo);
+            router.push(redirectTo);
             if (accessToken && roles) {
                 console.log('🚀 ~ hehehehe');
                 localStorage.setItem('accessToken', accessToken);

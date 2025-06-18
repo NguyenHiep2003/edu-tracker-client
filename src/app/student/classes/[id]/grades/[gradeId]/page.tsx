@@ -23,9 +23,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { GradeType, GradeVisibility } from '../page';
 import { toast } from 'react-toastify';
 import { getGradeDetail } from '@/services/api/grades';
+import { GradeType, GradeVisibility } from '@/services/api/grades/type';
 
 interface Student {
     id: number;

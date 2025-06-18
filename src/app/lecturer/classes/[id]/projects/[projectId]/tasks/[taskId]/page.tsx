@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +17,6 @@ import {
     FileText,
     User,
 } from 'lucide-react';
-import { useProjectContext } from '@/context/project-context';
 import Link from 'next/link';
 
 interface TaskSubmission {
@@ -110,11 +109,15 @@ export default function TaskDetailsPage() {
     const router = useRouter();
     const classId = params.id as string;
     const projectId = params.projectId as string;
-    const taskId = params.taskId as string;
+    // const taskId = params.taskId as string;
 
-    const [taskDetails, setTaskDetails] =
+    const [taskDetails, 
+        // setTaskDetails
+    ] =
         useState<TaskDetails>(mockTaskDetails);
-    const [submissions, setSubmissions] =
+    const [submissions, 
+        // setSubmissions
+    ] =
         useState<TaskSubmission[]>(mockSubmissions);
 
     const formatDate = (dateString: string) => {

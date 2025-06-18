@@ -22,20 +22,8 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getGrades } from '@/services/api/grades';
+import { GradeType, GradeVisibility } from '@/services/api/grades/type';
 
-export enum GradeType {
-    PROJECT = 'PROJECT',
-    LECTURER_WORK_ITEM = 'LECTURER WORK ITEM',
-    IMPORT_FILE = 'IMPORT FILE',
-    AGGREGATION = 'AGGREGATION',
-    EMPTY = 'EMPTY',
-}
-
-export enum GradeVisibility {
-    PRIVATE = 'PRIVATE',
-    PUBLIC = 'PUBLIC',
-    RESTRICTED = 'RESTRICTED',
-}
 
 interface Grade {
     id: number;

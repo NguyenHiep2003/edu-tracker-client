@@ -6,14 +6,12 @@ import { X, Check, ChevronDown, Upload, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    GradeType,
-    GradeVisibility,
-} from '../app/lecturer/classes/[id]/grading/page';
+
 import { toast } from 'react-toastify';
 import instance from '@/services/api/common/axios';
 import { cn } from '@/lib/utils';
 import { ImportErrorModal } from './import-error-modal';
+import { GradeType, GradeVisibility } from '@/services/api/grades/type';
 
 interface ImportErrorDetail {
     row: number;
