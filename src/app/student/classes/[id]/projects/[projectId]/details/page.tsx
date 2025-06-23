@@ -57,18 +57,14 @@ export default function StudentProjectOverviewPage() {
     const isDueSoon = daysUntilEnd <= 3 && daysUntilEnd >= 0;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="max-w-8xl mx-auto space-y-8 px-6">
             {/* Hero Section */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white shadow-lg">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold mb-2">
                             {projectData.title}
                         </h1>
-                        {/* <p className="text-blue-100 text-lg opacity-90">
-                            {projectData.description ||
-                                'Explore this exciting project and showcase your skills!'}
-                        </p> */}
                         <div className="flex items-center gap-3 mt-4">
                             <Badge className="bg-white/20 text-white border-white/30 px-3 py-1">
                                 {projectData.type == 'TEAM' ? 'Team' : 'Solo'}{' '}
@@ -94,7 +90,7 @@ export default function StudentProjectOverviewPage() {
 
             {/* Project Status Alert */}
             {!projectData.isJoined && projectData.status === 'OPEN' && (
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 rounded-xl p-6 shadow-sm">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
                             <AlertCircle className="h-6 w-6 text-amber-500" />
@@ -111,7 +107,7 @@ export default function StudentProjectOverviewPage() {
                         </div>
                         <Button
                             size="lg"
-                            className="ml-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg transform hover:scale-105 transition-all"
+                            className="ml-4 bg-amber-600 hover:bg-amber-700 text-white"
                         >
                             Join Project
                         </Button>
@@ -120,12 +116,12 @@ export default function StudentProjectOverviewPage() {
             )}
 
             {/* Deadline Warning */}
-            {projectData.isJoined && (isOverdue || isDueSoon) && (
+            {/* {projectData.isJoined && (isOverdue || isDueSoon) && (
                 <div
-                    className={`rounded-2xl p-6 shadow-lg border-l-4 ${
+                    className={`rounded-xl p-6 border ${
                         isOverdue
-                            ? 'bg-gradient-to-r from-red-50 to-pink-50 border-red-400'
-                            : 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-400'
+                            ? 'bg-red-50 border-red-200'
+                            : 'bg-yellow-50 border-yellow-200'
                     }`}
                 >
                     <div className="flex items-center">
@@ -168,19 +164,17 @@ export default function StudentProjectOverviewPage() {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* Project Information Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Main Project Info */}
                 <div className="xl:col-span-2 space-y-8">
                     {/* Description */}
-                    <Card className="shadow-lg border-0 bg-gradient-to-br from-gray-50 to-white">
-                        <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-lg">
-                            <CardTitle className="flex items-center gap-3 text-xl">
-                                <div className="p-2 bg-white/20 rounded-lg">
-                                    <FileText className="h-6 w-6" />
-                                </div>
+                    <Card className="shadow-sm border border-gray-200">
+                        <CardHeader className="bg-blue-50 border-b border-blue-200">
+                            <CardTitle className="flex items-center gap-3 text-xl text-blue-900">
+                                <FileText className="h-6 w-6 text-blue-600" />
                                 Project Description
                             </CardTitle>
                         </CardHeader>
@@ -207,26 +201,24 @@ export default function StudentProjectOverviewPage() {
                     </Card>
 
                     {/* Project Timeline */}
-                    <Card className="shadow-lg border-0 bg-gradient-to-br from-gray-50 to-white">
-                        <CardHeader className="bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-t-lg mb-4">
-                            <CardTitle className="flex items-center gap-3 text-xl">
-                                <div className="p-2 bg-white/20 rounded-lg">
-                                    <Calendar className="h-6 w-6" />
-                                </div>
+                    <Card className="shadow-sm border border-gray-200">
+                        <CardHeader className="bg-green-50 border-b border-green-200">
+                            <CardTitle className="flex items-center gap-3 text-xl text-green-900">
+                                <Calendar className="h-6 w-6 text-green-600" />
                                 Project Timeline
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-8">
+                        <CardContent className="p-8 pt-5">
                             <div className="space-y-6">
                                 <div className="relative">
-                                    <div className="flex items-center justify-between p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-l-4 border-green-400 shadow-sm">
+                                    <div className="flex items-center justify-between p-6 bg-gray-50 rounded-xl border border-gray-200">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-4 h-4 bg-green-500 rounded-full shadow-lg"></div>
+                                            <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                                             <div>
-                                                <p className="font-semibold text-green-900 text-lg">
+                                                <p className="font-semibold text-gray-900 text-lg">
                                                     Project Started
                                                 </p>
-                                                <p className="text-green-700 text-base">
+                                                <p className="text-gray-600 text-base">
                                                     {formatDate(
                                                         projectData.startDate
                                                     )}
@@ -240,15 +232,15 @@ export default function StudentProjectOverviewPage() {
                                     projectData.participationMode ===
                                         'optional' && (
                                         <div className="relative">
-                                            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-l-4 border-purple-400 shadow-sm">
+                                            <div className="flex items-center justify-between p-6 bg-gray-50 rounded-xl border border-gray-200">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-4 h-4 bg-purple-500 rounded-full shadow-lg"></div>
+                                                    <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                                                     <div>
-                                                        <p className="font-semibold text-purple-900 text-lg">
+                                                        <p className="font-semibold text-gray-900 text-lg">
                                                             Join Project
                                                             Deadline
                                                         </p>
-                                                        <p className="text-purple-700 text-base">
+                                                        <p className="text-gray-600 text-base">
                                                             {formatDate(
                                                                 projectData.joinProjectDeadline
                                                             )}
@@ -262,14 +254,14 @@ export default function StudentProjectOverviewPage() {
                                 {projectData.formGroupDeadline &&
                                     projectData.type === 'TEAM' && (
                                         <div className="relative">
-                                            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-l-4 border-purple-400 shadow-sm">
+                                            <div className="flex items-center justify-between p-6 bg-gray-50 rounded-xl border border-gray-200">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-4 h-4 bg-purple-500 rounded-full shadow-lg"></div>
+                                                    <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                                                     <div>
-                                                        <p className="font-semibold text-purple-900 text-lg">
+                                                        <p className="font-semibold text-gray-900 text-lg">
                                                             Form Group Deadline
                                                         </p>
-                                                        <p className="text-purple-700 text-base">
+                                                        <p className="text-gray-600 text-base">
                                                             {formatDate(
                                                                 projectData.formGroupDeadline
                                                             )}
@@ -279,19 +271,20 @@ export default function StudentProjectOverviewPage() {
                                             </div>
                                         </div>
                                     )}
+
                                 <div className="relative">
                                     <div
-                                        className={`flex items-center justify-between p-6 rounded-xl border-l-4 shadow-sm ${
+                                        className={`flex items-center justify-between p-6 rounded-xl border ${
                                             isOverdue
-                                                ? 'bg-gradient-to-r from-red-50 to-pink-50 border-red-400'
+                                                ? 'bg-red-50 border-red-200'
                                                 : isDueSoon
-                                                ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-400'
-                                                : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-400'
+                                                ? 'bg-yellow-50 border-yellow-200'
+                                                : 'bg-gray-50 border-gray-200'
                                         }`}
                                     >
                                         <div className="flex items-center gap-4">
                                             <div
-                                                className={`w-4 h-4 rounded-full shadow-lg ${
+                                                className={`w-4 h-4 rounded-full ${
                                                     isOverdue
                                                         ? 'bg-red-500'
                                                         : isDueSoon
@@ -306,7 +299,7 @@ export default function StudentProjectOverviewPage() {
                                                             ? 'text-red-900'
                                                             : isDueSoon
                                                             ? 'text-yellow-900'
-                                                            : 'text-blue-900'
+                                                            : 'text-gray-900'
                                                     }`}
                                                 >
                                                     {isOverdue
@@ -321,7 +314,7 @@ export default function StudentProjectOverviewPage() {
                                                             ? 'text-red-700'
                                                             : isDueSoon
                                                             ? 'text-yellow-700'
-                                                            : 'text-blue-700'
+                                                            : 'text-gray-600'
                                                     }`}
                                                 >
                                                     {formatDate(
@@ -355,19 +348,17 @@ export default function StudentProjectOverviewPage() {
                 {/* Sidebar */}
                 <div className="space-y-8">
                     {/* Quick Stats */}
-                    <Card className="shadow-lg border-0 bg-gradient-to-br from-gray-50 to-white">
-                        <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-t-lg">
-                            <CardTitle className="flex items-center gap-3 text-xl">
-                                <div className="p-2 bg-white/20 rounded-lg">
-                                    <Target className="h-6 w-6" />
-                                </div>
+                    <Card className="shadow-sm border border-gray-200">
+                        <CardHeader className="bg-purple-50 border-b border-purple-200">
+                            <CardTitle className="flex items-center gap-3 text-xl text-purple-900">
+                                <Target className="h-6 w-6 text-purple-600" />
                                 Project Details
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-6 p-6">
-                            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                        <CardContent className="space-y-6 p-6 pt-5">
+                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <span className="text-base font-medium text-gray-700">
-                                    📋 Type
+                                    Type
                                 </span>
                                 <Badge
                                     className={`px-3 py-1 text-sm font-semibold ${
@@ -382,24 +373,9 @@ export default function StudentProjectOverviewPage() {
                                 </Badge>
                             </div>
 
-                            {/* <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg"> */}
-                            {/* <span className="text-base font-medium text-gray-700">
-                                    🟢 Status
-                                </span>
-                                <Badge
-                                    className={`px-3 py-1 text-sm font-semibold ${
-                                        projectData.status === 'OPEN'
-                                            ? 'bg-green-100 text-green-800 border-green-300'
-                                            : 'bg-gray-100 text-gray-800 border-gray-300'
-                                    }`}
-                                >
-                                    {projectData.status}
-                                </Badge> */}
-                            {/* </div> */}
-
-                            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg">
+                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <span className="text-base font-medium text-gray-700">
-                                    ⚡ Mode
+                                    Mode
                                 </span>
                                 <Badge className="px-3 py-1 text-sm font-semibold bg-yellow-100 text-yellow-800 border-yellow-300">
                                     {projectData.participationMode ==
@@ -408,22 +384,23 @@ export default function StudentProjectOverviewPage() {
                                         : 'Optional'}
                                 </Badge>
                             </div>
-
-                            {/* <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg">
+                            {projectData.type == 'TEAM' && <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <span className="text-base font-medium text-gray-700">
-                                    👥 Students
+                                    Allow Form Group
                                 </span>
-                                <span className="text-lg font-bold text-purple-800">
-                                    {projectData.numberOfStudents || 0}
-                                </span>
-                            </div> */}
+                                <Badge className="px-3 py-1 text-sm font-semibold bg-blue-100 text-blue-800 border-blue-300">
+                                    {projectData.allowStudentFormTeam == true
+                                        ? 'Yes'
+                                        : 'No'}
+                                </Badge>
+                            </div>}
 
                             {projectData.isJoined && (
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600">
+                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <span className="text-base font-medium text-gray-700">
                                         Your Status
                                     </span>
-                                    <Badge className="bg-green-100 text-green-800">
+                                    <Badge className="px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 border-green-300">
                                         <CheckCircle className="h-3 w-3 mr-1" />
                                         Joined
                                     </Badge>
@@ -431,11 +408,11 @@ export default function StudentProjectOverviewPage() {
                             )}
 
                             {projectData.groupNumber && (
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm text-gray-600">
+                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <span className="text-base font-medium text-gray-700">
                                         Your Group
                                     </span>
-                                    <Badge className="bg-blue-100 text-blue-800">
+                                    <Badge className="bg-blue-100 text-blue-800 border-blue-300">
                                         Group {projectData.groupNumber}
                                     </Badge>
                                 </div>

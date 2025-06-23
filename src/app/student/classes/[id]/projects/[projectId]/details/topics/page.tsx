@@ -294,7 +294,7 @@ export default function StudentProjectTopicsPage() {
             {/* Empty State */}
             {filteredTopics.length === 0 && (
                 <Card>
-                    <CardContent className="text-center py-12">
+                    <CardContent className="text-center py-12 pt-8">
                         <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                         <p className="text-gray-500">
                             {searchTerm

@@ -17,6 +17,7 @@ export interface Grade {
     fileId: string | null;
     maxScore: number;
     visibility: string;
+    scale?: number;
 }
 
 export interface ProjectDetail {

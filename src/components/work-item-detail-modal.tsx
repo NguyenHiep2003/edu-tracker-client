@@ -14,8 +14,8 @@ import {
     ThumbsUp,
     ThumbsDown,
     Plus,
+    MoreVertical,
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import {
     WorkItem,
     ItemToAttachment,
@@ -26,6 +26,7 @@ import {
     getWorkItemDetail,
     rejectWorkItem,
     updateWorkItem,
+    deleteWorkItem,
 } from '@/services/api/work_items';
 import {
     getEpicInGroup,
@@ -46,6 +47,8 @@ import { useProfile } from '@/context/profile-context';
 import { ApprovalDialog } from './approval-dialog';
 import { generateInitials, getAvatarColor } from './avatar';
 import { getTypeIcon } from '@/helper/get-type-icon';
+import { formatDate } from '@/helper/date-formatter';
+import { WarningModal } from './warning-modal';
 
 type WorkItemStatus = 'TO DO' | 'IN PROGRESS' | 'WAIT FOR REVIEW' | 'DONE';
 
@@ -97,6 +100,7 @@ export interface WorkItemDetailModalProps {
     isGroupLeader: boolean;
     onOpenSubtask?: (subtaskId: number) => void;
     viewOnly?: boolean;
+    userId?: number;
 }
 
 interface RejectDialogProps {
@@ -354,6 +358,7 @@ export function WorkItemDetailModal({
     isGroupLeader,
     onOpenSubtask,
     viewOnly = false,
+    userId,
 }: WorkItemDetailModalProps) {
     const [workItem, setWorkItem] = useState<WorkItemWithFeedback | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -376,6 +381,8 @@ export function WorkItemDetailModal({
     const [showSubtaskDialog, setShowSubtaskDialog] = useState(false);
     const [showApprovalDialog, setShowApprovalDialog] = useState(false);
     const [showRejectDialog, setShowRejectDialog] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
     useEffect(() => {
         if (workItemId) {
@@ -604,6 +611,26 @@ export function WorkItemDetailModal({
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            await deleteWorkItem(workItemId);
+            toast.success('Work item deleted successfully');
+            onUpdate?.();
+            onClose();
+        } catch (error: any) {
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message);
+            }
+        }
+    };
+
+    // Check if user can delete the work item
+    const canDelete =
+        (isGroupLeader || (userId && workItem?.reporter?.id === userId)) &&
+        !workItem?.parentLecturerWorkItemId;
+
     if (!isOpen) return null;
 
     const getTypeColor = (type: string) => {
@@ -632,11 +659,6 @@ export function WorkItemDetailModal({
             default:
                 return 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300';
         }
-    };
-
-    const formatDate = (date: string) => {
-        if (!date) return '';
-        return formatDistanceToNow(new Date(date), { addSuffix: true });
     };
 
     const renderAttachmentCard = (item: ItemToAttachment) => {
@@ -670,7 +692,8 @@ export function WorkItemDetailModal({
 
                     <div className="flex items-center gap-2 flex-shrink-0">
                         <div className="text-xs text-gray-500">
-                            Added {formatDate(item.createdAt)}
+                            Added{' '}
+                            {formatDate(item.createdAt, 'dd/MM/yyyy HH:mm')}
                         </div>
 
                         <a
@@ -786,20 +809,22 @@ export function WorkItemDetailModal({
                         </div>
                         {!viewOnly && (
                             <div className="flex items-center space-x-2">
-                                {!isEditing && workItem?.type !== 'Subtask' && (
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() =>
-                                            setShowSubtaskDialog(true)
-                                        }
-                                        className="text-gray-600 hover:text-gray-900"
-                                        disabled={loading}
-                                    >
-                                        <Plus className="h-4 w-4 mr-1" />
-                                        Add Subtask
-                                    </Button>
-                                )}
+                                {!isEditing &&
+                                    workItem?.type !== 'Subtask' &&
+                                    workItem?.status != 'DONE' && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() =>
+                                                setShowSubtaskDialog(true)
+                                            }
+                                            className="text-gray-600 hover:text-gray-900"
+                                            disabled={loading}
+                                        >
+                                            <Plus className="h-4 w-4 mr-1" />
+                                            Add Subtask
+                                        </Button>
+                                    )}
                                 <Button
                                     variant="ghost"
                                     size="sm"
@@ -835,8 +860,39 @@ export function WorkItemDetailModal({
                                         Cancel
                                     </Button>
                                 )}
+
+                                {/* Options Menu */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() =>
+                                            setShowOptionsMenu(!showOptionsMenu)
+                                        }
+                                        className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                                    >
+                                        <MoreVertical className="h-5 w-5" />
+                                    </button>
+
+                                    {showOptionsMenu && (
+                                        <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+                                            <button
+                                                onClick={() => {
+                                                    setShowOptionsMenu(false);
+                                                    setShowDeleteDialog(true);
+                                                }}
+                                                disabled={!canDelete}
+                                                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:text-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                                Delete Work Item
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
                                 <button
-                                    onClick={onClose}
+                                    onClick={() => {
+                                        onClose();
+                                    }}
                                     className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                                 >
                                     <X className="h-5 w-5" />
@@ -1394,10 +1450,10 @@ export function WorkItemDetailModal({
                                                     rel="noopener noreferrer"
                                                     className="flex items-start space-x-3 p-3 rounded-md border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
                                                 >
-                                                    <GitCommit className="h-5 w-5 text-gray-600 mt-0.5" />
+                                                    <GitCommit className="h-5 w-5 text-gray-600 mt-0.5 flex-shrink-0" />
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="flex items-center space-x-2">
-                                                            <span className="text-sm font-mono text-gray-800 truncate">
+                                                        <div className="flex items-center space-x-2 mb-1">
+                                                            <span className="text-sm font-mono text-gray-800">
                                                                 {commit.id.substring(
                                                                     0,
                                                                     7
@@ -1405,11 +1461,17 @@ export function WorkItemDetailModal({
                                                             </span>
                                                             <span className="text-xs text-gray-600">
                                                                 {formatDate(
-                                                                    commit.commitAt
+                                                                    commit.commitAt,
+                                                                    'dd/MM/yyyy HH:mm'
                                                                 )}
                                                             </span>
                                                         </div>
-                                                        <div className="text-xs text-gray-600 mt-1">
+                                                        {commit.message && (
+                                                            <div className="text-sm text-gray-900 mb-1 line-clamp-2">
+                                                                {commit.message}
+                                                            </div>
+                                                        )}
+                                                        <div className="text-xs text-gray-600">
                                                             <span className="text-green-700">
                                                                 +
                                                                 {
@@ -1534,7 +1596,8 @@ export function WorkItemDetailModal({
                                                                 </p>
                                                                 <span className="text-xs text-gray-500">
                                                                     {formatDate(
-                                                                        feedback.createdAt
+                                                                        feedback.createdAt,
+                                                                        'dd/MM/yyyy HH:mm'
                                                                     )}
                                                                 </span>
                                                             </div>
@@ -1648,10 +1711,10 @@ export function WorkItemDetailModal({
                                                               value: 'WAIT FOR REVIEW',
                                                               label: 'WAIT FOR REVIEW',
                                                           },
-                                                          {
-                                                              value: 'DONE',
-                                                              label: 'DONE',
-                                                          },
+                                                          //   {
+                                                          //       value: 'DONE',
+                                                          //       label: 'DONE',
+                                                          //   },
                                                       ]
                                             }
                                             className="text-sm"
@@ -1952,20 +2015,11 @@ export function WorkItemDetailModal({
                                     ) : (
                                         <span className="text-sm text-gray-900">
                                             {workItem?.startDate
-                                                ? new Date(workItem.startDate)
-                                                      .toLocaleDateString(
-                                                          'en-GB',
-                                                          {
-                                                              day: '2-digit',
-                                                              month: '2-digit',
-                                                              year: 'numeric',
-                                                              hour: '2-digit',
-                                                              minute: '2-digit',
-                                                              hour12: false,
-                                                          }
-                                                      )
-                                                      .replace(',', '')
-                                                : 'Not started'}
+                                                ? formatDate(
+                                                      workItem.startDate,
+                                                      'dd/MM/yyyy HH:mm'
+                                                  )
+                                                : 'No start date set'}
                                         </span>
                                     )}
                                 </div>
@@ -2061,19 +2115,10 @@ export function WorkItemDetailModal({
                                     ) : (
                                         <span className="text-sm text-gray-900">
                                             {workItem?.endDate
-                                                ? new Date(workItem.endDate)
-                                                      .toLocaleDateString(
-                                                          'en-GB',
-                                                          {
-                                                              day: '2-digit',
-                                                              month: '2-digit',
-                                                              year: 'numeric',
-                                                              hour: '2-digit',
-                                                              minute: '2-digit',
-                                                              hour12: false,
-                                                          }
-                                                      )
-                                                      .replace(',', '')
+                                                ? formatDate(
+                                                      workItem.endDate,
+                                                      'dd/MM/yyyy HH:mm'
+                                                  )
                                                 : 'No end date set'}
                                         </span>
                                     )}
@@ -2085,7 +2130,10 @@ export function WorkItemDetailModal({
                                     </h3>
                                     <span className="text-sm text-gray-900">
                                         {workItem?.createdAt
-                                            ? formatDate(workItem.createdAt)
+                                            ? formatDate(
+                                                  workItem.createdAt,
+                                                  'dd/MM/yyyy HH:mm'
+                                              )
                                             : 'Unknown'}
                                     </span>
                                 </div>
@@ -2098,7 +2146,10 @@ export function WorkItemDetailModal({
                                                 UPDATED
                                             </h3>
                                             <span className="text-sm text-gray-900">
-                                                {formatDate(workItem.updatedAt)}
+                                                {formatDate(
+                                                    workItem.updatedAt,
+                                                    'dd/MM/yyyy HH:mm'
+                                                )}
                                             </span>
                                         </div>
                                     )}
@@ -2153,7 +2204,7 @@ export function WorkItemDetailModal({
                     </div>
 
                     {/* Footer */}
-                    <div className="flex justify-end px-6 py-4 border-t bg-gray-50 space-x-2">
+                    <div className="flex justify-end px-6 py-1 border-t bg-gray-50 space-x-2">
                         {!isEditing && isGroupLeader && workItem && (
                             <>
                                 {workItem.status !== 'DONE' &&
@@ -2164,7 +2215,13 @@ export function WorkItemDetailModal({
                                                 (item) =>
                                                     item.type ===
                                                     'WORK EVIDENCE'
-                                            ).length > 0)) && (
+                                            ).length > 0) ||
+                                        (workItem.subItems &&
+                                            workItem.subItems?.length > 0 &&
+                                            workItem.subItems.every(
+                                                (subItem) =>
+                                                    subItem.status === 'DONE'
+                                            ))) && (
                                         <Button
                                             variant="default"
                                             onClick={() =>
@@ -2186,7 +2243,13 @@ export function WorkItemDetailModal({
                                 )}
                             </>
                         )}
-                        <Button variant="outline" onClick={onClose}>
+                        <Button
+                            variant="outline"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onClose();
+                            }}
+                        >
                             Close
                         </Button>
                     </div>
@@ -2215,6 +2278,25 @@ export function WorkItemDetailModal({
                         onSubtaskCreated={onUpdate}
                     />
                 </>
+            )}
+
+            {/* Warning Modal for Delete */}
+            <WarningModal
+                isOpen={showDeleteDialog}
+                onClose={() => setShowDeleteDialog(false)}
+                onConfirm={handleDelete}
+                title="Delete Work Item"
+                description={`Are you sure you want to delete "${workItem?.key} - ${workItem?.summary}"? This action cannot be undone.`}
+                confirmText="Delete"
+                cancelText="Cancel"
+            />
+
+            {/* Click outside to close options menu */}
+            {showOptionsMenu && (
+                <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowOptionsMenu(false)}
+                />
             )}
         </>
     );

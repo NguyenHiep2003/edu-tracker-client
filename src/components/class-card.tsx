@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 interface ClassCardProps {
     classData: Class;
     onClick?: () => void;
+    showLecturerNames?: boolean;
 }
 
 // Generate a consistent color based on class name
@@ -62,7 +63,7 @@ const getLecturerNames = (lecturers: Class['lecturers']): string => {
     return `${lecturers[0].name} & ${lecturers.length - 1} others`;
 };
 
-export function ClassCard({ classData, onClick }: ClassCardProps) {
+export function ClassCard({ classData, onClick, showLecturerNames = true }: ClassCardProps) {
     const [mounted, setMounted] = useState(false);
     const [cardData, setCardData] = useState({
         gradientClass: '',
@@ -130,26 +131,28 @@ export function ClassCard({ classData, onClick }: ClassCardProps) {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <UserCheck className="h-4 w-4" />
-                        <span
+                    {showLecturerNames && (
+                        <div className="flex items-center gap-2">
+                            <UserCheck className="h-4 w-4" />
+                            <span
                             className="line-clamp-1"
                             title={cardData.lecturerNames}
                         >
-                            {cardData.lecturerNames}
-                        </span>
-                    </div>
+                                {cardData.lecturerNames}
+                            </span>
+                        </div>
+                    )}
 
                     <div className="flex items-center gap-2">
                         <BookOpen className="h-4 w-4" />
                         <span>Created {cardData.formattedDate}</span>
                     </div>
 
-                    {classData.description && (
+                    {/* {classData.description && (
                         <p className="text-xs text-gray-500 line-clamp-2 mt-2">
                             {classData.description}
                         </p>
-                    )}
+                    )} */}
                 </div>
             </CardContent>
         </Card>

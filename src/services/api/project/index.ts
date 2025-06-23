@@ -199,3 +199,18 @@ export const joinGroup = async (projectId: number, groupId: number) => {
     const response = await instance.post(`/v1/project/${projectId}/join-group-request/${groupId}`);
     return response.data;
 };
+
+export const getAllLecturerAssignedItems = async (projectId: number) => {
+    const response = await instance.get(`/v1/project/${projectId}/lecturer-assigned-items`);
+    return response.data;
+};
+
+export const exportProjectToTemplate = async (projectId: number, title: string) => {
+    const response = await instance.post(`/v1/project/${projectId}/template-export`, { title });
+    return response.data;
+};
+
+export const deleteProject = async (projectId: number) => {
+    const response = await instance.delete(`/v1/project/${projectId}`);
+    return response.data;
+};

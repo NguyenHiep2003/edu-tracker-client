@@ -51,6 +51,7 @@ import { generateInitials, getAvatarColor } from '@/components/avatar';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { getTypeIcon } from '@/helper/get-type-icon';
 import { formatDate } from '@/helper/date-formatter';
+import { useProfile } from '@/context/profile-context';
 
 const getStatusIcon = (status: WorkItemStatus) => {
     switch (status) {
@@ -121,6 +122,7 @@ interface SprintData {
 
 export default function WorkItemsListPage() {
     const { groupData, isGroupLeader } = useGroupContext();
+    const { profile } = useProfile();
     const [workItems, setWorkItems] = useState<WorkItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
@@ -1211,6 +1213,7 @@ export default function WorkItemsListPage() {
                     workItemId={selectedWorkItem.id}
                     onUpdate={() => loadWorkItems(true)}
                     isGroupLeader={isGroupLeader}
+                    userId={profile?.id}
                     onOpenSubtask={(subtaskId) => {
                         setSelectedWorkItem({ id: subtaskId } as WorkItem);
                     }}

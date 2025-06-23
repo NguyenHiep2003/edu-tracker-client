@@ -37,6 +37,8 @@ import {
     addUserToOrganization,
     deleteUser,
     downloadImportTemplate,
+    downloadLecturersExport,
+    downloadStudentsExport,
     getUsersInOrganization,
     importLecturer,
     importStudent,
@@ -203,6 +205,10 @@ function UpdateUserModal({
             ...prev,
             roles: prev.roles.includes(role)
                 ? prev.roles.filter((r) => r !== role)
+                : role == UserRole.STUDENT
+                ? [...prev.roles.filter((r) => r !== UserRole.LECTURER), role]
+                : role == UserRole.LECTURER
+                ? [...prev.roles.filter((r) => r !== UserRole.STUDENT), role]
                 : [...prev.roles, role],
         }));
     };
@@ -297,7 +303,8 @@ function UpdateUserModal({
                             ))}
                         </div>
                         <p className="text-xs text-gray-500 mt-1">
-                            Required - select at least one role
+                            Required - select at least one role, student and
+                            lecturer roles are mutually exclusive
                         </p>
                     </div>
 
@@ -367,6 +374,10 @@ function AddUserModal({
             ...prev,
             roles: prev.roles.includes(role)
                 ? prev.roles.filter((r) => r !== role)
+                : role == UserRole.STUDENT
+                ? [...prev.roles.filter((r) => r !== UserRole.LECTURER), role]
+                : role == UserRole.LECTURER
+                ? [...prev.roles.filter((r) => r !== UserRole.STUDENT), role]
                 : [...prev.roles, role],
         }));
     };
@@ -462,9 +473,10 @@ function AddUserModal({
                                 })
                             }
                             placeholder="Enter student/employee ID"
+                            required
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Optional - organization&apos;s internal user
+                            Required - organization&apos;s internal user
                             identifier
                         </p>
                     </div>
@@ -490,7 +502,8 @@ function AddUserModal({
                             ))}
                         </div>
                         <p className="text-xs text-gray-500 mt-1">
-                            Required - select at least one role
+                            Required - select at least one role, student and
+                            lecturer roles are mutually exclusive
                         </p>
                     </div>
 
@@ -632,6 +645,8 @@ export default function UserManagementPage() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState<IUser | null>(null);
     const currentUserRoles = getAuthData()?.roles;
+    const [isImportingStudent, setIsImportingStudent] = useState(false);
+    const [isImportingLecturer, setIsImportingLecturer] = useState(false);
 
     // Fetch users with API call and pagination
     useEffect(() => {
@@ -699,10 +714,22 @@ export default function UserManagementPage() {
             toast.error('Please select a file first');
             return;
         }
-        await importStudent(selectedImportStudentFile);
-        toast.success(
-            `Importing ${type}s from ${selectedImportStudentFile.name}.  View import log to check progress!`
-        );
+        setIsImportingStudent(true);
+        try {
+            await importStudent(selectedImportStudentFile);
+            toast.success(
+                `Importing ${type}s from ${selectedImportStudentFile.name}. View import log to check progress!`
+            );
+        } catch (error: any) {
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message || `Failed to import ${type}s`);
+            }
+        } finally {
+            setIsImportingStudent(false);
+            setSelectedImportStudentFile(null);
+        }
     };
 
     const handleFileLecturerChange = (
@@ -719,15 +746,30 @@ export default function UserManagementPage() {
             toast.error('Please select a file first');
             return;
         }
-        await importLecturer(selectedImportLecturerFile);
-        toast.success(
-            `Importing ${type}s from ${selectedImportLecturerFile.name}.  View import log to check progress!`
-        );
+        setIsImportingLecturer(true);
+        try {
+            await importLecturer(selectedImportLecturerFile);
+            toast.success(
+                `Importing ${type}s from ${selectedImportLecturerFile.name}. View import log to check progress!`
+            );
+        } catch (error: any) {
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message || `Failed to import ${type}s`);
+            }
+        } finally {
+            setIsImportingLecturer(false);
+            setSelectedImportLecturerFile(null);
+        }
     };
 
     const handleExportUsers = (type: 'student' | 'lecturer') => {
-        // TODO: Implement export logic
-        // toast.(`Exporting ${type}s...`, 'success');
+        if (type === 'student') {
+            downloadStudentsExport('student');
+        } else {
+            downloadLecturersExport('lecturer');
+        }
     };
 
     const downloadTemplate = (type: string) => {
@@ -909,10 +951,20 @@ export default function UserManagementPage() {
                                     onClick={() =>
                                         handleImportStudent('student')
                                     }
+                                    disabled={isImportingStudent}
                                     className="flex items-center gap-2"
                                 >
-                                    <Upload className="h-4 w-4" />
-                                    Import Students
+                                    {isImportingStudent ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                            Importing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="h-4 w-4" />
+                                            Import Students
+                                        </>
+                                    )}
                                 </Button>
                             </div>
                         </div>
@@ -974,10 +1026,20 @@ export default function UserManagementPage() {
                                     onClick={() =>
                                         handleImportLecturer('lecturer')
                                     }
+                                    disabled={isImportingLecturer}
                                     className="flex items-center gap-2"
                                 >
-                                    <Upload className="h-4 w-4" />
-                                    Import Lecturers
+                                    {isImportingLecturer ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                            Importing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="h-4 w-4" />
+                                            Import Lecturers
+                                        </>
+                                    )}
                                 </Button>
                             </div>
                         </div>

@@ -18,7 +18,7 @@ interface StudentHeaderProps {
 }
 
 export function StudentHeader({
-    title = 'Lecturer Dashboard',
+    title = 'Student Dashboard',
 }: StudentHeaderProps) {
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
@@ -53,7 +53,7 @@ export function StudentHeader({
 
     return (
         <header className="bg-white shadow-sm border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-full px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     {/* Left side - App Icon and Name */}
                     <div className="flex items-center space-x-3">
@@ -164,7 +164,7 @@ export function StudentHeader({
                                 </div>
                                 <div className="hidden lg:block text-left">
                                     <p className="text-sm font-medium text-gray-900">
-                                        {userInfo?.name || 'Lecturer'}
+                                        {userInfo?.name || 'Student'}
                                     </p>
                                     <p className="text-xs text-gray-500">
                                         Student

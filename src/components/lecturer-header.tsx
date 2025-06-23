@@ -53,7 +53,7 @@ export function LecturerHeader({
 
     return (
         <header className="bg-white shadow-sm border-b border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-full px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-20">
                     {/* Left side - App Icon and Name */}
                     <div className="flex items-center space-x-3">

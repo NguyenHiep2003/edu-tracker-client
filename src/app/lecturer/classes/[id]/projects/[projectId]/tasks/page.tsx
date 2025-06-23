@@ -1,12 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import {
     Plus,
@@ -15,28 +21,51 @@ import {
     Users,
     FileText,
     Eye,
-    Edit3,
     Trash2,
+    CheckCircle,
+    AlertCircle,
+    XCircle,
+    Loader2,
+    Edit2,
+    BarChart3,
 } from 'lucide-react';
 import { useProjectContext } from '@/context/project-context';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Dialog, Transition } from '@headlessui/react';
-import { createLecturerWorkItem } from '@/services/api/work_items';
+import {
+    createLecturerWorkItem,
+    deleteLecturerAssignedItem,
+} from '@/services/api/work_items';
+import { getAllLecturerAssignedItems } from '@/services/api/project';
+import { formatDate } from '@/helper/date-formatter';
+import { getTypeIcon } from '@/helper/get-type-icon';
+import { EditTaskModal } from '@/components/edit-task-modal';
+import { WarningModal } from '@/components/warning-modal';
+import { Progress } from '@/components/ui/progress';
 
 interface Task {
-    id: number;
-    summary: string;
-    description?: string;
-    type: 'Task' | 'Story';
-    startDate?: string;
-    endDate?: string;
-    createdAt: string;
-    status: 'active' | 'completed' | 'overdue';
-    totalGroups: number;
-    submittedGroups: number;
-    attachments?: string[];
+    lecturer_item_id: number;
+    lecturer_item_created_at: string;
+    lecturer_item_updated_at: string;
+    lecturer_item_deleted_at: string | null;
+    lecturer_item_type: 'Task' | 'Story';
+    lecturer_item_summary: string;
+    lecturer_item_description: string;
+    lecturer_item_start_date: string | null;
+    lecturer_item_end_date: string | null;
+    lecturer_item_reporter_id: number;
+    lecturer_item_project_id: number;
+    lecturer_item_assign_type: 'ALL' | 'SPECIFIC';
+    lecturer_item_group_ids: string | null;
+    lecturer_item_scheduled_job_id: string;
+    job_id: string;
+    job_scheduled_time: string;
+    job_status: 'PENDING' | 'PROCESSING' | 'DONE' | 'FAIL';
+    job_fail_reason: string | null;
+    num_group_done: string;
+    num_group: string;
 }
 
 enum AssignType {
@@ -49,45 +78,21 @@ enum WorkItemType {
     STORY = 'Story',
 }
 
-// Mock data - replace with your API calls
-const mockTasks: Task[] = [
-    {
-        id: 1,
-        summary: 'Vẽ biểu đồ ca sử dụng',
-        description:
-            'Submit your project proposal with detailed timeline and objectives',
-        type: 'Task',
-        startDate: '2024-12-10T10:00:00',
-        endDate: '2024-12-15T23:59:00',
-        createdAt: '2024-11-20T10:00:00',
-        status: 'active',
-        totalGroups: 8,
-        submittedGroups: 3,
-        attachments: ['requirements.pdf'],
-    },
-    {
-        id: 2,
-        summary: 'Literature Review',
-        description:
-            'Conduct and submit a comprehensive literature review for your project topic',
-        type: 'Story',
-        startDate: '2024-12-15T09:00:00',
-        endDate: '2024-12-22T23:59:00',
-        createdAt: '2024-11-21T14:30:00',
-        status: 'active',
-        totalGroups: 8,
-        submittedGroups: 1,
-    },
-];
-
 export default function TasksPage() {
     const {} = useProjectContext();
     const params = useParams();
     const classId = params.id as string;
     const projectId = params.projectId as string;
 
-    const [tasks, setTasks] = useState<Task[]>(mockTasks);
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [loading, setLoading] = useState(true);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+    const [isCreatingTask, setIsCreatingTask] = useState(false);
+    const [isDeleteWarningOpen, setIsDeleteWarningOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+    const [isDeletingTask, setIsDeletingTask] = useState(false);
     const [newTask, setNewTask] = useState({
         assignType: AssignType.ALL,
         type: WorkItemType.TASK,
@@ -96,64 +101,103 @@ export default function TasksPage() {
         startDate: '',
         endDate: '',
         attachments: [] as File[],
+        createGradeComponent: true,
+        gradeComponent: {
+            title: '',
+            description: '',
+            maxScore: 10,
+            scale: 2,
+        },
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
+    // Fetch tasks on component mount
+    useEffect(() => {
+        fetchTasks();
+    }, [projectId]);
 
-    const getDaysUntilDue = (endDate: string) => {
-        const due = new Date(endDate);
-        const now = new Date();
-        const diffTime = due.getTime() - now.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays;
-    };
-
-    const getStatusBadge = (task: Task) => {
-        if (!task.endDate) {
-            return (
-                <Badge className="bg-blue-100 text-blue-800">No Due Date</Badge>
-            );
+    // Auto-update grade component title when task summary changes
+    useEffect(() => {
+        if (
+            newTask.createGradeComponent &&
+            newTask.summary &&
+            newTask.gradeComponent
+        ) {
+            const defaultGradeTitle = `${newTask.summary} Grade`;
+            // Only update if it's still the default or empty
+            if (
+                !newTask.gradeComponent.title ||
+                newTask.gradeComponent.title.endsWith(' Grade')
+            ) {
+                setNewTask((prev) => ({
+                    ...prev,
+                    gradeComponent: {
+                        ...prev.gradeComponent!,
+                        title: defaultGradeTitle,
+                    },
+                }));
+            }
         }
+    }, [newTask.summary, newTask.createGradeComponent]);
 
-        const daysLeft = getDaysUntilDue(task.endDate);
-
-        if (daysLeft < 0) {
-            return <Badge className="bg-red-100 text-red-800">Overdue</Badge>;
-        } else if (daysLeft <= 3) {
-            return (
-                <Badge className="bg-yellow-100 text-yellow-800">
-                    Due Soon
-                </Badge>
+    const fetchTasks = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllLecturerAssignedItems(
+                Number(projectId)
             );
-        } else {
-            return (
-                <Badge className="bg-green-100 text-green-800">Active</Badge>
-            );
+            setTasks(response);
+        } catch (error: any) {
+            console.log('🚀 ~ fetchTasks ~ error:', error);
+            toast.error('Failed to load tasks');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const getProgressBadge = (submitted: number, total: number) => {
-        const percentage = (submitted / total) * 100;
+    const getJobStatusBadge = (status: string) => {
+        switch (status) {
+            case 'PENDING':
+                return (
+                    <Badge className="bg-yellow-100 text-yellow-800">
+                        Pending
+                    </Badge>
+                );
+            case 'PROCESSING':
+                return (
+                    <Badge className="bg-blue-100 text-blue-800">
+                        Processing
+                    </Badge>
+                );
+            case 'DONE':
+                return (
+                    <Badge className="bg-green-100 text-green-800">
+                        Published
+                    </Badge>
+                );
+            case 'FAIL':
+                return (
+                    <Badge className="bg-red-100 text-red-800">Failed</Badge>
+                );
+            default:
+                return <Badge variant="outline">Unknown</Badge>;
+        }
+    };
 
-        if (percentage === 100) {
-            return (
-                <Badge className="bg-green-100 text-green-800">Complete</Badge>
-            );
-        } else if (percentage >= 50) {
-            return (
-                <Badge className="bg-blue-100 text-blue-800">In Progress</Badge>
-            );
-        } else {
-            return <Badge className="bg-gray-100 text-gray-800">Started</Badge>;
+    const getJobStatusIcon = (status: string) => {
+        switch (status) {
+            case 'PENDING':
+                return <Clock className="h-4 w-4 text-yellow-600" />;
+            case 'PROCESSING':
+                return (
+                    <Loader2 className="h-4 w-4 text-blue-600 animate-spin" />
+                );
+            case 'DONE':
+                return <CheckCircle className="h-4 w-4 text-green-600" />;
+            case 'FAIL':
+                return <XCircle className="h-4 w-4 text-red-600" />;
+            default:
+                return <AlertCircle className="h-4 w-4 text-gray-600" />;
         }
     };
 
@@ -166,6 +210,26 @@ export default function TasksPage() {
 
         if (newTask.description && !newTask.description.trim()) {
             newErrors.description = 'Description cannot be empty if provided';
+        }
+
+        // Grade component validation
+        if (newTask.createGradeComponent && newTask.gradeComponent) {
+            if (!newTask.gradeComponent.title.trim()) {
+                newErrors.gradeTitle = 'Grade component title is required';
+            }
+
+            if (
+                !newTask.gradeComponent.maxScore ||
+                newTask.gradeComponent.maxScore <= 0
+            ) {
+                newErrors.gradeMaxScore = 'Max score must be greater than 0';
+            }
+            if (
+                !newTask.gradeComponent.scale ||
+                newTask.gradeComponent.scale <= 0
+            ) {
+                newErrors.gradeScale = 'Scale must be greater than 0';
+            }
         }
 
         // Validate start date if provided
@@ -202,23 +266,9 @@ export default function TasksPage() {
         if (!validateForm()) return;
 
         try {
-           
+            setIsCreatingTask(true);
             await createLecturerWorkItem(Number(projectId), newTask);
-            const mockNewTask: Task = {
-                id: Date.now(),
-                summary: newTask.summary,
-                description: newTask.description,
-                type: newTask.type,
-                startDate: newTask.startDate || undefined,
-                endDate: newTask.endDate || undefined,
-                createdAt: new Date().toISOString(),
-                status: 'active',
-                totalGroups: 8, // You'll get this from your API
-                submittedGroups: 0,
-                attachments: newTask.attachments.map((file) => file.name),
-            };
-
-            setTasks([...tasks, mockNewTask]);
+            await fetchTasks(); // Refresh the task list
             setNewTask({
                 assignType: AssignType.ALL,
                 type: WorkItemType.TASK,
@@ -227,6 +277,13 @@ export default function TasksPage() {
                 startDate: '',
                 endDate: '',
                 attachments: [],
+                createGradeComponent: true,
+                gradeComponent: {
+                    title: '',
+                    description: '',
+                    maxScore: 10,
+                    scale: 2,
+                },
             });
             setIsCreateDialogOpen(false);
             setErrors({});
@@ -237,8 +294,71 @@ export default function TasksPage() {
             } else {
                 toast.error(error.message || 'Failed to create task');
             }
+        } finally {
+            setIsCreatingTask(false);
         }
     };
+
+    const handleDeleteClick = (task: Task) => {
+        setTaskToDelete(task);
+        setIsDeleteWarningOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!taskToDelete) return;
+
+        try {
+            setIsDeletingTask(true);
+            await deleteLecturerAssignedItem(taskToDelete.lecturer_item_id);
+            await fetchTasks(); // Refresh the task list
+            toast.success('Task deleted successfully!');
+        } catch (error: any) {
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message || 'Failed to delete task');
+            }
+        } finally {
+            setIsDeletingTask(false);
+            setTaskToDelete(null);
+            setIsDeleteWarningOpen(false);
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setTaskToDelete(null);
+        setIsDeleteWarningOpen(false);
+    };
+
+    const handleGradeComponentChange = (
+        field: keyof NonNullable<typeof newTask.gradeComponent>,
+        value: any
+    ) => {
+        setNewTask((prev) => ({
+            ...prev,
+            gradeComponent: {
+                ...prev.gradeComponent!,
+                [field]: value,
+            },
+        }));
+
+        // Clear error when user starts typing
+        const errorKey = `grade${
+            field.charAt(0).toUpperCase() + field.slice(1)
+        }`;
+        if (errors[errorKey]) {
+            setErrors((prev) => ({ ...prev, [errorKey]: '' }));
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                <span className="ml-2 text-gray-600">Loading tasks...</span>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -254,11 +374,22 @@ export default function TasksPage() {
                 <Button
                     className="bg-blue-600 hover:bg-blue-700"
                     onClick={() => setIsCreateDialogOpen(true)}
+                    disabled={isCreatingTask}
                 >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Task
+                    {isCreatingTask ? (
+                        <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Creating Task...
+                        </>
+                    ) : (
+                        <>
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create Task
+                        </>
+                    )}
                 </Button>
 
+                {/* Create Task Dialog */}
                 <Transition appear show={isCreateDialogOpen}>
                     <Dialog
                         as="div"
@@ -286,14 +417,17 @@ export default function TasksPage() {
                                     leaveFrom="opacity-100 scale-100"
                                     leaveTo="opacity-0 scale-95"
                                 >
-                                    <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                                    <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all flex flex-col max-h-[82vh]">
+                                        {/* Fixed Header */}
                                         <Dialog.Title
                                             as="h3"
-                                            className="text-lg font-medium leading-6 text-gray-900 mb-4"
+                                            className="p-6 text-lg font-medium leading-6 text-gray-900 flex-shrink-0 border-b"
                                         >
                                             Create New Task
                                         </Dialog.Title>
-                                        <div className="space-y-4">
+
+                                        {/* Scrollable Content */}
+                                        <div className="p-6 space-y-4 flex-grow overflow-y-auto">
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
                                                     <Label
@@ -422,26 +556,68 @@ export default function TasksPage() {
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <Label
-                                                        htmlFor="startDate"
-                                                        className="text-gray-900"
-                                                    >
-                                                        Start Date (Optional)
-                                                    </Label>
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <Label
+                                                            htmlFor="startDate"
+                                                            className="text-gray-900"
+                                                        >
+                                                            Start Date
+                                                            (Optional)
+                                                        </Label>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger
+                                                                    asChild
+                                                                >
+                                                                    <button
+                                                                        type="button"
+                                                                        className="text-gray-400 hover:text-gray-600"
+                                                                    >
+                                                                        <svg
+                                                                            className="h-4 w-4"
+                                                                            fill="none"
+                                                                            stroke="currentColor"
+                                                                            viewBox="0 0 24 24"
+                                                                        >
+                                                                            <path
+                                                                                strokeLinecap="round"
+                                                                                strokeLinejoin="round"
+                                                                                strokeWidth={
+                                                                                    2
+                                                                                }
+                                                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                                            />
+                                                                        </svg>
+                                                                    </button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    <p>
+                                                                        Students
+                                                                        will
+                                                                        receive
+                                                                        the task
+                                                                        after
+                                                                        this
+                                                                        date
+                                                                    </p>
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    </div>
                                                     <input
                                                         id="startDate"
                                                         type="datetime-local"
                                                         value={
                                                             newTask.startDate
                                                         }
-                                                        onChange={(e) =>
+                                                        onChange={(e) => {
                                                             setNewTask({
                                                                 ...newTask,
                                                                 startDate:
                                                                     e.target
                                                                         .value,
-                                                            })
-                                                        }
+                                                            });
+                                                        }}
                                                         className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                                         lang="en-GB"
                                                     />
@@ -490,30 +666,48 @@ export default function TasksPage() {
                                                     Attachments (Optional)
                                                 </Label>
                                                 <div className="space-y-3">
-                                                    <Input
-                                                        id="attachments"
-                                                        type="file"
-                                                        multiple
-                                                        onChange={(e) => {
-                                                            const files =
-                                                                Array.from(
-                                                                    e.target
-                                                                        .files ||
-                                                                        []
-                                                                );
-                                                            // Add new files to existing ones
-                                                            setNewTask({
-                                                                ...newTask,
-                                                                attachments: [
-                                                                    ...newTask.attachments,
-                                                                    ...files,
-                                                                ],
-                                                            });
-                                                            // Clear the input value so same file can be selected again
-                                                            e.target.value = '';
-                                                        }}
-                                                        className="h-12 flex items-center text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer file:transition-colors"
-                                                    />
+                                                    <div className="relative">
+                                                        <input
+                                                            id="attachments"
+                                                            type="file"
+                                                            multiple
+                                                            onChange={(e) => {
+                                                                const files =
+                                                                    Array.from(
+                                                                        e.target
+                                                                            .files ||
+                                                                            []
+                                                                    );
+                                                                // Add new files to existing ones
+                                                                setNewTask({
+                                                                    ...newTask,
+                                                                    attachments:
+                                                                        [
+                                                                            ...newTask.attachments,
+                                                                            ...files,
+                                                                        ],
+                                                                });
+                                                                // Clear the input value so same file can be selected again
+                                                                e.target.value =
+                                                                    '';
+                                                            }}
+                                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        />
+                                                        <label
+                                                            htmlFor="attachments"
+                                                            className="flex items-center justify-center h-12 px-4 border border-gray-300 rounded-md bg-white text-gray-700 cursor-pointer hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            <div className="flex items-center space-x-2">
+                                                                <div className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
+                                                                    Choose Files
+                                                                </div>
+                                                                <span className="text-gray-500">
+                                                                    or drag and
+                                                                    drop
+                                                                </span>
+                                                            </div>
+                                                        </label>
+                                                    </div>
 
                                                     {newTask.attachments
                                                         .length > 0 && (
@@ -613,34 +807,252 @@ export default function TasksPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="flex justify-end space-x-2 pt-4">
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => {
-                                                        setIsCreateDialogOpen(
-                                                            false
-                                                        );
-                                                        setNewTask({
-                                                            assignType:
-                                                                AssignType.ALL,
-                                                            type: WorkItemType.TASK,
-                                                            summary: '',
-                                                            description: '',
-                                                            startDate: '',
-                                                            endDate: '',
-                                                            attachments: [],
-                                                        });
-                                                        setErrors({});
-                                                    }}
-                                                >
-                                                    Cancel
-                                                </Button>
-                                                <Button
-                                                    onClick={handleCreateTask}
-                                                >
-                                                    Create Task
-                                                </Button>
+                                            {/* Grade Component Settings */}
+                                            <div className="space-y-4">
+                                                <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                    <BarChart3 className="h-5 w-5" />
+                                                    Grade Component
+                                                </h3>
+
+                                                <div>
+                                                    <label className="flex items-center gap-2">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={
+                                                                newTask.createGradeComponent
+                                                            }
+                                                            onChange={(e) =>
+                                                                setNewTask({
+                                                                    ...newTask,
+                                                                    createGradeComponent:
+                                                                        e.target
+                                                                            .checked,
+                                                                })
+                                                            }
+                                                            className="text-blue-600"
+                                                        />
+                                                        <span className="text-gray-900">
+                                                            Create grade
+                                                            component for this
+                                                            task
+                                                        </span>
+                                                    </label>
+                                                    <p className="text-sm text-gray-600 mt-1">
+                                                        Automatically create a
+                                                        grading component to
+                                                        track student
+                                                        performance
+                                                    </p>
+                                                </div>
+
+                                                {newTask.createGradeComponent && (
+                                                    <div className="space-y-4 pl-6 border-l-2 border-blue-200 bg-blue-50 p-4 rounded-r-lg">
+                                                        <div>
+                                                            <Label
+                                                                htmlFor="gradeTitle"
+                                                                className="text-gray-900 font-medium"
+                                                            >
+                                                                Grade Component
+                                                                Title *
+                                                            </Label>
+                                                            <Input
+                                                                id="gradeTitle"
+                                                                value={
+                                                                    newTask
+                                                                        .gradeComponent
+                                                                        ?.title ||
+                                                                    ''
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleGradeComponentChange(
+                                                                        'title',
+                                                                        e.target
+                                                                            .value
+                                                                    )
+                                                                }
+                                                                placeholder="Enter grade component title"
+                                                                className={`text-gray-900 placeholder-gray-500 ${
+                                                                    errors.gradeTitle
+                                                                        ? 'border-red-500'
+                                                                        : ''
+                                                                }`}
+                                                            />
+                                                            {errors.gradeTitle && (
+                                                                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                                                                    <AlertCircle className="h-4 w-4" />
+                                                                    {
+                                                                        errors.gradeTitle
+                                                                    }
+                                                                </p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <Label
+                                                                htmlFor="gradeDescription"
+                                                                className="text-gray-900 font-medium"
+                                                            >
+                                                                Grade Component
+                                                                Description
+                                                            </Label>
+                                                            <textarea
+                                                                id="gradeDescription"
+                                                                value={
+                                                                    newTask
+                                                                        .gradeComponent
+                                                                        ?.description ||
+                                                                    ''
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleGradeComponentChange(
+                                                                        'description',
+                                                                        e.target
+                                                                            .value
+                                                                    )
+                                                                }
+                                                                placeholder="Enter grade component description (optional)"
+                                                                className="w-full min-h-[60px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                                                            />
+                                                        </div>
+
+                                                        <div>
+                                                            <Label
+                                                                htmlFor="gradeMaxScore"
+                                                                className="text-gray-900 font-medium"
+                                                            >
+                                                                Max Score *
+                                                            </Label>
+                                                            <Input
+                                                                id="gradeMaxScore"
+                                                                type="number"
+                                                                min="1"
+                                                                step="0.1"
+                                                                value={
+                                                                    newTask
+                                                                        .gradeComponent
+                                                                        ?.maxScore ||
+                                                                    ''
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleGradeComponentChange(
+                                                                        'maxScore',
+                                                                        Number.parseFloat(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        ) || 0
+                                                                    )
+                                                                }
+                                                                placeholder="Enter maximum score"
+                                                                className={`text-gray-900 placeholder-gray-500 ${
+                                                                    errors.gradeMaxScore
+                                                                        ? 'border-red-500'
+                                                                        : ''
+                                                                }`}
+                                                            />
+                                                            {errors.gradeMaxScore && (
+                                                                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                                                                    <AlertCircle className="h-4 w-4" />
+                                                                    {
+                                                                        errors.gradeMaxScore
+                                                                    }
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        <div>
+                                                            <Label
+                                                                htmlFor="gradeScale"
+                                                                className="text-gray-900 font-medium"
+                                                            >
+                                                                Scale *
+                                                            </Label>
+                                                            <Input
+                                                                id="gradeScale"
+                                                                type="number"
+                                                                min="0"
+                                                                step="1"
+                                                                value={
+                                                                    newTask
+                                                                        .gradeComponent
+                                                                        ?.scale ||
+                                                                    ''
+                                                                }
+                                                                onChange={(e) =>
+                                                                    handleGradeComponentChange(
+                                                                        'scale',
+                                                                        Number(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        ) || 0
+                                                                    )
+                                                                }
+                                                                placeholder="Enter scale"
+                                                                className={`text-gray-900 placeholder-gray-500 ${
+                                                                    errors.gradeScale
+                                                                        ? 'border-red-500'
+                                                                        : ''
+                                                                }`}
+                                                            />
+                                                            {errors.gradeScale && (
+                                                                <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                                                                    <AlertCircle className="h-4 w-4" />
+                                                                    {
+                                                                        errors.gradeScale
+                                                                    }
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
+                                        </div>
+
+                                        {/* Fixed Footer */}
+                                        <div className="flex justify-end space-x-2 p-6 flex-shrink-0 border-t">
+                                            <Button
+                                                variant="outline"
+                                                onClick={() => {
+                                                    setIsCreateDialogOpen(
+                                                        false
+                                                    );
+                                                    setNewTask({
+                                                        assignType:
+                                                            AssignType.ALL,
+                                                        type: WorkItemType.TASK,
+                                                        summary: '',
+                                                        description: '',
+                                                        startDate: '',
+                                                        endDate: '',
+                                                        attachments: [],
+                                                        createGradeComponent:
+                                                            true,
+                                                        gradeComponent: {
+                                                            title: '',
+                                                            description: '',
+                                                            maxScore: 10,
+                                                            scale: 2,
+                                                        },
+                                                    });
+                                                    setErrors({});
+                                                }}
+                                                disabled={isCreatingTask}
+                                            >
+                                                Cancel
+                                            </Button>
+                                            <Button
+                                                onClick={handleCreateTask}
+                                                disabled={isCreatingTask}
+                                            >
+                                                {isCreatingTask ? (
+                                                    <>
+                                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                        Creating Task...
+                                                    </>
+                                                ) : (
+                                                    'Create Task'
+                                                )}
+                                            </Button>
                                         </div>
                                     </Dialog.Panel>
                                 </Transition.Child>
@@ -654,30 +1066,27 @@ export default function TasksPage() {
             <div className="grid gap-6">
                 {tasks.map((task) => (
                     <Card
-                        key={task.id}
+                        key={task.lecturer_item_id}
                         className="hover:shadow-lg transition-shadow"
                     >
                         <CardHeader>
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2">
+                                        {getTypeIcon(task.lecturer_item_type)}
                                         <CardTitle className="text-xl">
-                                            {task.summary}
+                                            {task.lecturer_item_summary}
                                         </CardTitle>
                                         <Badge
                                             variant="outline"
                                             className="text-xs"
                                         >
-                                            {task.type}
+                                            {task.lecturer_item_type}
                                         </Badge>
-                                        {getStatusBadge(task)}
-                                        {getProgressBadge(
-                                            task.submittedGroups,
-                                            task.totalGroups
-                                        )}
+                                        {getJobStatusBadge(task.job_status)}
                                     </div>
                                     <p className="text-gray-600">
-                                        {task.description ||
+                                        {task.lecturer_item_description ||
                                             'No description provided'}
                                     </p>
                                 </div>
@@ -685,7 +1094,25 @@ export default function TasksPage() {
                         </CardHeader>
 
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                {/* Start Date */}
+                                <div className="flex items-center space-x-2">
+                                    <Calendar className="h-4 w-4 text-gray-500" />
+                                    <div>
+                                        <div className="text-sm font-medium">
+                                            Start Date
+                                        </div>
+                                        <div className="text-sm text-gray-600">
+                                            {task.lecturer_item_start_date
+                                                ? formatDate(
+                                                      task.lecturer_item_start_date,
+                                                      'dd/MM/yyyy HH:mm'
+                                                  )
+                                                : 'Not set'}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* End Date */}
                                 <div className="flex items-center space-x-2">
                                     <Clock className="h-4 w-4 text-gray-500" />
@@ -694,9 +1121,12 @@ export default function TasksPage() {
                                             End Date
                                         </div>
                                         <div className="text-sm text-gray-600">
-                                            {task.endDate
-                                                ? formatDate(task.endDate)
-                                                : 'No end date'}
+                                            {task.lecturer_item_end_date
+                                                ? formatDate(
+                                                      task.lecturer_item_end_date,
+                                                      'dd/MM/yyyy HH:mm'
+                                                  )
+                                                : 'Not set'}
                                         </div>
                                     </div>
                                 </div>
@@ -708,74 +1138,94 @@ export default function TasksPage() {
                                         <div className="text-sm font-medium">
                                             Progress
                                         </div>
-                                        <div className="text-sm text-gray-600">
-                                            {task.submittedGroups} of{' '}
-                                            {task.totalGroups} groups
-                                        </div>
+                                        {task.job_status === 'DONE' ? (
+                                            <div className="text-sm text-gray-600">
+                                                {task.num_group_done} of{' '}
+                                                {task.num_group} groups
+                                                submitted
+                                            </div>
+                                        ) : (
+                                            <div className="text-sm text-gray-600">
+                                                Not started
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Created */}
+                                {/* Publish Status */}
                                 <div className="flex items-center space-x-2">
-                                    <Calendar className="h-4 w-4 text-gray-500" />
+                                    {getJobStatusIcon(task.job_status)}
                                     <div>
                                         <div className="text-sm font-medium">
-                                            Created
+                                            Publish Status
                                         </div>
                                         <div className="text-sm text-gray-600">
-                                            {formatDate(task.createdAt)}
+                                            {formatDate(
+                                                task.job_scheduled_time,
+                                                'dd/MM/yyyy HH:mm'
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Progress Bar */}
+                            {/* Progress Bar - Always show, 0 progress when not published */}
                             <div className="mb-4">
-                                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                    <span>Submission Progress</span>
-                                    <span>
-                                        {Math.round(
-                                            (task.submittedGroups /
-                                                task.totalGroups) *
-                                                100
-                                        )}
-                                        %
-                                    </span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div
-                                        className="bg-blue-600 h-2 rounded-full transition-all"
-                                        style={{
-                                            width: `${
-                                                (task.submittedGroups /
-                                                    task.totalGroups) *
-                                                100
-                                            }%`,
-                                        }}
-                                    ></div>
-                                </div>
+                                <Progress
+                                    value={
+                                        task.job_status === 'DONE'
+                                            ? (parseInt(task.num_group_done) /
+                                                  parseInt(task.num_group)) *
+                                              100
+                                            : 0
+                                    }
+                                    className="h-2"
+                                />
                             </div>
 
                             {/* Actions */}
                             <div className="flex justify-between items-center">
                                 <div className="flex space-x-2">
                                     <Link
-                                        href={`/lecturer/classes/${classId}/projects/${projectId}/tasks/${task.id}`}
+                                        href={`/lecturer/classes/${classId}/projects/${projectId}/tasks/${task.lecturer_item_id}`}
                                     >
                                         <Button variant="outline" size="sm">
                                             <Eye className="h-4 w-4 mr-2" />
                                             View Submissions
                                         </Button>
                                     </Link>
-                                    <Button variant="outline" size="sm">
-                                        <Edit3 className="h-4 w-4 mr-2" />
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            setEditingTaskId(
+                                                task.lecturer_item_id
+                                            );
+                                            setIsEditDialogOpen(true);
+                                        }}
+                                    >
+                                        <Edit2 className="h-4 w-4 mr-2" />
                                         Edit
                                     </Button>
                                 </div>
 
-                                <Button variant="destructive" size="sm">
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => handleDeleteClick(task)}
+                                    disabled={isDeletingTask}
+                                >
+                                    {isDeletingTask ? (
+                                        <>
+                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                            Deleting...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Trash2 className="h-4 w-4 mr-2" />
+                                            Delete
+                                        </>
+                                    )}
                                 </Button>
                             </div>
                         </CardContent>
@@ -792,12 +1242,50 @@ export default function TasksPage() {
                     <p className="text-gray-600 mb-4">
                         Create your first task to assign work to project groups.
                     </p>
-                    <Button onClick={() => setIsCreateDialogOpen(true)}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Create First Task
+                    <Button
+                        onClick={() => setIsCreateDialogOpen(true)}
+                        disabled={isCreatingTask}
+                    >
+                        {isCreatingTask ? (
+                            <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Creating Task...
+                            </>
+                        ) : (
+                            <>
+                                <Plus className="h-4 w-4 mr-2" />
+                                Create First Task
+                            </>
+                        )}
                     </Button>
                 </div>
             )}
+
+            {/* Edit Task Modal */}
+            <EditTaskModal
+                isOpen={isEditDialogOpen}
+                onClose={() => {
+                    setIsEditDialogOpen(false);
+                    setEditingTaskId(null);
+                }}
+                taskId={editingTaskId || 0}
+                jobStatus={
+                    tasks.find((t) => t.lecturer_item_id === editingTaskId)
+                        ?.job_status || 'PENDING'
+                }
+                onUpdate={fetchTasks}
+            />
+
+            {/* Delete Warning Modal */}
+            <WarningModal
+                isOpen={isDeleteWarningOpen}
+                onClose={handleDeleteCancel}
+                onConfirm={handleDeleteConfirm}
+                title="Delete Task"
+                description={`Are you sure you want to delete the task "${taskToDelete?.lecturer_item_summary}"? This action cannot be undone and will remove all associated data.`}
+                confirmText="Delete Task"
+                cancelText="Cancel"
+            />
         </div>
     );
 }

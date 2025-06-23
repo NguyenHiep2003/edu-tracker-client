@@ -82,7 +82,7 @@ function LecturerLayoutContent({ children }: { children: React.ReactNode }) {
                             <div className="flex-1">{children}</div>
                         ) : (
                             // Regular layout for non-class pages
-                            <main className="flex-1 max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+                            <main className="flex-1 mx-auto px-4 py-6 sm:px-6 lg:px-8">
                                 {children}
                             </main>
                         )}

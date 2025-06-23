@@ -232,8 +232,11 @@ export function CreateWorkItemModal({
             await onSubmit(formData);
             onClose();
         } catch (error: any) {
-            console.error('Error creating work item:', error);
-            toast.error(error.message || 'Failed to create work item');
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message || 'Failed to create work item');
+            }
         } finally {
             setLoading(false);
         }

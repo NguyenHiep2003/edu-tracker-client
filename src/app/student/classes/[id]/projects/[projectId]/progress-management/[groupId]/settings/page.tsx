@@ -1050,7 +1050,7 @@ export default function GroupSettings() {
                                 <div className="flex items-center justify-center py-8">
                                     <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
                                 </div>
-                            ) : (
+                            ) : availableTopics.length > 0 ? (
                                 <div className="space-y-4">
                                     {availableTopics.map((topic) => (
                                         <div
@@ -1114,6 +1114,12 @@ export default function GroupSettings() {
                                                 </Button>
                                             </div>
                                         )}
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center py-8">
+                                    <p className="text-gray-500">
+                                        No topics available.
+                                    </p>
                                 </div>
                             )}
                         </div>

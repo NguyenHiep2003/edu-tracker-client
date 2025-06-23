@@ -237,7 +237,7 @@ export default function StudentProjectGroupsPage() {
                     <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-3">
                             <div className="p-1.5 bg-blue-100 rounded-md">
-                                <Users className="h-3.5 w-3.5 text-blue-600" />
+                                <Users className="h-7 w-7 text-blue-600" />
                             </div>
                             <div>
                                 <p className="text-xs font-medium text-blue-600">
@@ -255,7 +255,7 @@ export default function StudentProjectGroupsPage() {
                     <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-3">
                             <div className="p-1.5 bg-green-100 rounded-md">
-                                <User className="h-3.5 w-3.5 text-green-600" />
+                                <User className="h-7 w-7 text-green-600" />
                             </div>
                             <div>
                                 <p className="text-xs font-medium text-green-600">
@@ -273,7 +273,7 @@ export default function StudentProjectGroupsPage() {
                     <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-3">
                             <div className="p-1.5 bg-purple-100 rounded-md">
-                                <Users className="h-3.5 w-3.5 text-purple-600" />
+                                <Users className="h-7 w-7 text-purple-600" />
                             </div>
                             <div>
                                 <p className="text-xs font-medium text-purple-600">
@@ -296,7 +296,7 @@ export default function StudentProjectGroupsPage() {
                     <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-3">
                             <div className="p-1.5 bg-orange-100 rounded-md">
-                                <BookOpen className="h-3.5 w-3.5 text-orange-600" />
+                                <BookOpen className="h-7 w-7 text-orange-600" />
                             </div>
                             <div>
                                 <p className="text-xs font-medium text-orange-600">
@@ -470,7 +470,7 @@ export default function StudentProjectGroupsPage() {
             {/* Empty State */}
             {filteredGroups.length === 0 && (
                 <Card>
-                    <CardContent className="text-center py-12">
+                    <CardContent className="text-center py-12 pt-8">
                         <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                         <p className="text-gray-500">
                             {searchTerm

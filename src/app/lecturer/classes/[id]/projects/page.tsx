@@ -5,6 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { format, differenceInDays } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import {
     Plus,
     FolderOpen,
@@ -13,11 +23,26 @@ import {
     User,
     Clock,
     MoreVertical,
+    Download,
+    Trash2,
+    FileUp,
 } from 'lucide-react';
 import { AddProjectModal } from '@/components/add-project-modal';
+import ImportTemplateModal from '@/components/import-template-modal';
 import { toast } from 'react-toastify';
 import type { Project } from '@/services/api/project/interface';
-import { getProjectInClass } from '@/services/api/project';
+import {
+    getProjectInClass,
+    exportProjectToTemplate,
+    deleteProject,
+} from '@/services/api/project';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { WarningModal } from '@/components/warning-modal';
 
 export default function ProjectsPage() {
     const params = useParams();
@@ -25,7 +50,18 @@ export default function ProjectsPage() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showImportModal, setShowImportModal] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const [exportingProjectId, setExportingProjectId] = useState<number | null>(
+        null
+    );
+    const [showExportModal, setShowExportModal] = useState(false);
+    const [exportTitle, setExportTitle] = useState('');
+    const [selectedProjectForExport, setSelectedProjectForExport] =
+        useState<Project | null>(null);
+    const [selectedProjectForDelete, setSelectedProjectForDelete] =
+        useState<Project | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const router = useRouter();
     const [projectsData, setProjectsData] = useState<{
         [key: number]: {
@@ -87,6 +123,70 @@ export default function ProjectsPage() {
         fetchProjects();
     };
 
+    const handleTemplateImported = () => {
+        fetchProjects();
+    };
+
+    const handleExportClick = (project: Project) => {
+        setSelectedProjectForExport(project);
+        setExportTitle('');
+        setShowExportModal(true);
+    };
+
+    const handleExportToTemplate = async () => {
+        if (!selectedProjectForExport || !exportTitle.trim()) {
+            toast.error('Please enter a title for the export');
+            return;
+        }
+
+        try {
+            setExportingProjectId(selectedProjectForExport.id);
+            setShowExportModal(false);
+
+            await exportProjectToTemplate(
+                selectedProjectForExport.id,
+                exportTitle
+            );
+            toast.success(
+                `Project "${selectedProjectForExport.title}" exported to template as "${exportTitle}"`
+            );
+        } catch (error: any) {
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(
+                    error.message || 'Failed to export project to template'
+                );
+            }
+        } finally {
+            setExportingProjectId(null);
+            setSelectedProjectForExport(null);
+            setExportTitle('');
+        }
+    };
+
+    const handleDeleteClick = (project: Project) => {
+        setSelectedProjectForDelete(project);
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedProjectForDelete) return;
+
+        try {
+            await deleteProject(selectedProjectForDelete.id);
+            toast.success(
+                `Project "${selectedProjectForDelete.title}" deleted successfully.`
+            );
+            fetchProjects();
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to delete project.');
+        } finally {
+            setSelectedProjectForDelete(null);
+            setShowDeleteModal(false);
+        }
+    };
+
     const getTypeIcon = (type: Project['type']) => {
         return type === 'TEAM' ? (
             <Users className="h-4 w-4 text-blue-600" />
@@ -126,13 +226,23 @@ export default function ProjectsPage() {
                             Manage class projects and assignments
                         </p>
                     </div>
-                    <Button
-                        onClick={() => setShowAddModal(true)}
-                        className="bg-blue-600 hover:bg-blue-700"
-                    >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Create Project
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            onClick={() => setShowImportModal(true)}
+                            variant="outline"
+                            className="border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                        >
+                            <FileUp className="h-4 w-4 mr-2" />
+                            Import from template
+                        </Button>
+                        <Button
+                            onClick={() => setShowAddModal(true)}
+                            className="bg-blue-600 hover:bg-blue-700"
+                        >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create Project
+                        </Button>
+                    </div>
                 </div>
             </div>
 
@@ -166,6 +276,7 @@ export default function ProjectsPage() {
                         const daysRemaining = data.daysRemaining;
                         const isOverdue = data.isOverdue;
                         const isUrgent = data.isUrgent;
+                        const isExporting = exportingProjectId === project.id;
 
                         return (
                             <Card
@@ -290,13 +401,51 @@ export default function ProjectsPage() {
                                                 >
                                                     View Details
                                                 </Button>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    className="hover:bg-gray-50"
-                                                >
-                                                    <MoreVertical className="h-4 w-4" />
-                                                </Button>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="hover:bg-gray-50"
+                                                        >
+                                                            <MoreVertical className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent
+                                                        align="end"
+                                                        className="w-48"
+                                                    >
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                handleExportClick(
+                                                                    project
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                isExporting
+                                                            }
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <Download className="h-4 w-4 mr-2" />
+                                                            {isExporting
+                                                                ? 'Exporting...'
+                                                                : 'Export to template'}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                handleDeleteClick(
+                                                                    project
+                                                                )
+                                                            }
+                                                            className="cursor-pointer text-red-600 hover:!text-red-600 hover:!bg-red-50"
+                                                        >
+                                                            <Trash2 className="h-4 w-4 mr-2" />
+                                                            Delete
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </div>
                                         </div>
                                     </div>
@@ -314,6 +463,85 @@ export default function ProjectsPage() {
                 onProjectAdded={handleProjectAdded}
                 classId={classId}
             />
+
+            {/* Import Template Modal */}
+            <ImportTemplateModal
+                isOpen={showImportModal}
+                onClose={() => setShowImportModal(false)}
+                onTemplateImported={handleTemplateImported}
+                classId={classId}
+            />
+
+            {selectedProjectForDelete && (
+                <WarningModal
+                    isOpen={showDeleteModal}
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={handleConfirmDelete}
+                    title={`Delete Project: ${selectedProjectForDelete.title}`}
+                    description="Are you sure you want to delete this project? All associated data will be removed. This action cannot be undone."
+                    confirmText="Delete Project"
+                />
+            )}
+
+            {/* Export Template Modal */}
+            <Dialog open={showExportModal} onOpenChange={setShowExportModal}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Download className="h-5 w-5 text-blue-600" />
+                            Export Project to Template
+                        </DialogTitle>
+                        <DialogDescription>
+                            Enter a title for the exported template. This will
+                            be used to identify the template when you want to
+                            reuse it.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="export-title">Template Title</Label>
+                            <Input
+                                id="export-title"
+                                placeholder="Enter template title..."
+                                value={exportTitle}
+                                onChange={(e) => setExportTitle(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (
+                                        e.key === 'Enter' &&
+                                        exportTitle.trim()
+                                    ) {
+                                        handleExportToTemplate();
+                                    }
+                                }}
+                            />
+                        </div>
+                        {selectedProjectForExport && (
+                            <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
+                                <strong>Project:</strong>{' '}
+                                {selectedProjectForExport.title}
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowExportModal(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleExportToTemplate}
+                            disabled={
+                                !exportTitle.trim() ||
+                                exportingProjectId !== null
+                            }
+                            className="bg-blue-600 hover:bg-blue-700"
+                        >
+                            {exportingProjectId ? 'Exporting...' : 'Export'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

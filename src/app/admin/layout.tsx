@@ -55,7 +55,7 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
     {
         name: 'Dashboard',
-        href: '/admin/dashboard',
+        href: '/admin/home',
         icon: LayoutDashboard,
     },
     {

@@ -150,7 +150,7 @@ export default function ProjectLayout({
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 p-6 max-w-7xl mx-auto">{children}</div>
+                <div className="flex-1 p-6 max-w-8xl mx-auto">{children}</div>
             </div>
         </ProjectProvider>
     );

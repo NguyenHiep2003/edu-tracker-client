@@ -1,11 +1,12 @@
 import { User } from 'lucide-react';
 export const generateInitials = (name: string): string => {
     if (!name) return '?';
-    return name
+    const firstChars = name
         .split(' ')
-        .map((word) => word.charAt(0).toUpperCase())
-        .slice(0, 2)
-        .join('');
+        .map((word) => word.charAt(0).toUpperCase());
+    return firstChars.length < 2
+        ? firstChars[0]
+        : firstChars[0] + firstChars[firstChars.length - 1];
 };
 
 export const getAvatarColor = (name: string): string => {
@@ -25,7 +26,7 @@ export const getAvatarColor = (name: string): string => {
         .reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[index % colors.length];
 };
-export function Avatar({ name, size = 8 }: { name?: string; size?: number }) {
+export function Avatar({ name, size = 8 }: { name?: string | null; size?: number }) {
     return name ? (
         <div
             className={`w-${size} h-${size} ${getAvatarColor(
@@ -39,7 +40,7 @@ export function Avatar({ name, size = 8 }: { name?: string; size?: number }) {
         </div>
     ) : (
         <div
-            className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
+            className={`w-${size} h-${size} bg-gray-200 rounded-full flex items-center justify-center`}
             // title="Unassigned"
         >
             <User className="h-4 w-4 text-gray-400" />

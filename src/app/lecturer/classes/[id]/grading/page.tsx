@@ -16,12 +16,12 @@ import {
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+// import {
+//     DropdownMenu,
+//     DropdownMenuContent,
+//     DropdownMenuItem,
+//     DropdownMenuTrigger,
+// } from '@/components/ui/dropdown-menu';
 import { getGrades } from '@/services/api/grades';
 import { CreateGradeModal } from '@/components/create-grade-modal';
 import { GradeType, GradeVisibility } from '@/services/api/grades/type';
@@ -229,7 +229,7 @@ export default function GradingPage() {
                                     </p>
                                 )}
                             </div>
-                            <DropdownMenu>
+                            {/* <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="sm">
                                         <Settings2 className="h-4 w-4" />
@@ -253,7 +253,7 @@ export default function GradingPage() {
                                         Delete
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
-                            </DropdownMenu>
+                            </DropdownMenu> */}
                         </div>
                     </Card>
                 ))}

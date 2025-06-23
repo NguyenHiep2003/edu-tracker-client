@@ -29,6 +29,7 @@ export interface Project {
         fileId: string | null;
         maxScore: number;
         visibility: 'PRIVATE' | 'PUBLIC' | 'RESTRICTED';
+        scale: number;
     };
 }
 

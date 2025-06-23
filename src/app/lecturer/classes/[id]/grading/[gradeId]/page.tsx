@@ -26,6 +26,7 @@ import {
     Trash2,
     ChevronDown,
     Check,
+    FileDown,
 } from 'lucide-react';
 import {
     Table,
@@ -40,6 +41,7 @@ import {
     deleteGrade,
     getGradeDetail,
     updateGrade,
+    exportGradeToExcel,
 } from '@/services/api/grades';
 import { GradeType, GradeVisibility } from '@/services/api/grades/type';
 
@@ -95,6 +97,7 @@ interface GradeDetail {
         id: number;
         summary: string;
         description?: string;
+        projectId: number;
         // Add other lecturer work item fields as needed
     };
 }
@@ -107,6 +110,7 @@ export default function GradeDetailPage() {
     const [error, setError] = useState<string>('');
     const [isEditingGrade, setIsEditingGrade] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
     const [editedGradeInfo, setEditedGradeInfo] = useState({
         title: '',
         description: '',
@@ -316,6 +320,21 @@ export default function GradeDetailPage() {
         }
     };
 
+    const handleExport = async () => {
+        if (!gradeDetail?.id) return;
+
+        setIsExporting(true);
+        try {
+            await exportGradeToExcel(gradeDetail.id, gradeDetail.title);
+            toast.success('Grade report exported successfully.');
+        } catch (error) {
+            console.log('🚀 ~ handleExport ~ error:', error);
+            toast.error('Failed to export grade report.');
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="p-6">
@@ -398,6 +417,17 @@ export default function GradeDetailPage() {
                                 </>
                             ) : (
                                 <>
+                                    <button
+                                        onClick={handleExport}
+                                        disabled={isExporting}
+                                        className="rounded-md p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isExporting ? (
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                        ) : (
+                                            <FileDown className="h-4 w-4 text-green-600" />
+                                        )}
+                                    </button>
                                     <button
                                         onClick={handleEditGrade}
                                         className="rounded-md p-2 hover:bg-gray-100"
@@ -641,7 +671,7 @@ export default function GradeDetailPage() {
                                                 );
                                             if (gradeDetail.lecturerWorkItem)
                                                 router.push(
-                                                    `/lecturer/classes/${params.id}/work-items/${gradeDetail.lecturerWorkItem.id}`
+                                                    `/lecturer/classes/${params.id}/projects/${gradeDetail.lecturerWorkItem.projectId}/tasks/${gradeDetail.lecturerWorkItem.id}`
                                                 );
                                         }}
                                         className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 cursor-pointer hover:bg-indigo-100 hover:border-indigo-300 transition-all duration-200 hover:shadow-md group"

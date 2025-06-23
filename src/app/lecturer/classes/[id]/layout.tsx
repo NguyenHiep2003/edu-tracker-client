@@ -8,7 +8,7 @@ import {
     Info,
     FolderOpen,
     BarChart3,
-    Settings,
+    // Settings,
     ChevronRight,
     ArrowLeft,
     X,
@@ -62,13 +62,13 @@ function ClassSidebar({ classId }: { classId: string }) {
             href: `/lecturer/classes/${classId}/grading`,
             description: 'Configure grading criteria and components',
         },
-        {
-            id: 'settings',
-            label: 'Settings',
-            icon: Settings,
-            href: `/lecturer/classes/${classId}/settings`,
-            description: 'Class settings and preferences',
-        },
+        // {
+        //     id: 'settings',
+        //     label: 'Settings',
+        //     icon: Settings,
+        //     href: `/lecturer/classes/${classId}/settings`,
+        //     description: 'Class settings and preferences',
+        // },
     ];
 
     if (loading || !classData) {
@@ -185,7 +185,7 @@ function ClassSidebar({ classId }: { classId: string }) {
                                     </div>
                                 </div>
                                 <ChevronRight
-                                    className={`h-4 w-4 ${
+                                    className={`h-5 w-5 ${
                                         isActive
                                             ? 'text-green-600'
                                             : 'text-gray-400'

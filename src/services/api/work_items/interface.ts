@@ -7,6 +7,7 @@ export interface Commit {
     recordedAt: string;
     workItemId: number;
     groupRepositoryId: number;
+    message?: string;
 }
 
 export interface Attachment {

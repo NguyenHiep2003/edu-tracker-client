@@ -262,19 +262,19 @@ export default function StudentProjectsPage() {
                                         </div>
                                     </div>
 
-                                    {/* Project Type */}
+                                    {/* Join Project Deadline */}
                                     <div className="flex items-center space-x-2">
-                                        {project.type === 'TEAM' ? (
-                                            <Users className="h-4 w-4 text-gray-500" />
-                                        ) : (
-                                            <User className="h-4 w-4 text-gray-500" />
-                                        )}
+                                        <UserPlus className="h-4 w-4 text-gray-500" />
                                         <div>
                                             <div className="text-sm font-medium">
-                                                Type
+                                                Join Deadline
                                             </div>
                                             <div className="text-sm text-gray-600">
-                                                {project.type}
+                                                {project.joinProjectDeadline
+                                                    ? formatDate(
+                                                          project.joinProjectDeadline
+                                                      )
+                                                    : 'No deadline'}
                                             </div>
                                         </div>
                                     </div>
@@ -288,7 +288,7 @@ export default function StudentProjectsPage() {
                                             </div>
                                             <div className="text-sm text-gray-600">
                                                 {project.numberOfStudents}{' '}
-                                                enrolled
+                                                joined
                                             </div>
                                         </div>
                                     </div>

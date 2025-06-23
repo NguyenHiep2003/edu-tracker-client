@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
     Card,
     CardContent,
@@ -40,6 +40,7 @@ import {
     addStudentToClass,
     removeStudentInClass,
     removeLecturerFromClass,
+    deleteClass,
 } from '@/services/api/class';
 import type { User } from '@/services/api/class/interface';
 import { downloadImportTemplate } from '@/services/api/user';
@@ -95,6 +96,8 @@ export default function ClassInfoPage() {
     const [showWarningDeleteLecturerModal, setShowWarningDeleteLecturerModal] =
         useState(false);
     const [selectedLecturer, setSelectedLecturer] = useState<User | null>(null);
+    const [showDeleteClassModal, setShowDeleteClassModal] = useState(false);
+    const router = useRouter();
     useEffect(() => {
         const fetchClassData = async () => {
             try {
@@ -350,6 +353,23 @@ export default function ClassInfoPage() {
         setImportError(null);
     };
 
+    const handleConfirmDeleteClass = async () => {
+        if (!classData) return;
+        try {
+            await deleteClass(classData.id);
+            toast.success(`Class "${classData.name}" deleted successfully.`);
+            setShowDeleteClassModal(false);
+            router.push('/lecturer/home');
+        } catch (error: any) {
+            if (Array.isArray(error?.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error?.message ?? 'Failed to delete class.');
+            }
+            setShowDeleteClassModal(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
@@ -428,15 +448,27 @@ export default function ClassInfoPage() {
                                 </Button>
                             </>
                         ) : (
-                            <Button
-                                onClick={handleEdit}
-                                variant="outline"
-                                size="sm"
-                                className="bg-white"
-                            >
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit Information
-                            </Button>
+                            <>
+                                <Button
+                                    onClick={handleEdit}
+                                    variant="outline"
+                                    size="sm"
+                                    className="bg-white"
+                                >
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit Information
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        setShowDeleteClassModal(true)
+                                    }
+                                    variant="destructive"
+                                    size="sm"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete Class
+                                </Button>
+                            </>
                         )}
                     </div>
                 </div>
@@ -530,7 +562,7 @@ export default function ClassInfoPage() {
             {/* Quick Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-                    <CardContent className="p-6">
+                    <CardContent className="p-6 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-green-100 rounded-lg">
                                 <Users className="h-6 w-6 text-green-600" />
@@ -548,7 +580,7 @@ export default function ClassInfoPage() {
                 </Card>
 
                 <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
-                    <CardContent className="p-6">
+                    <CardContent className="p-6 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-blue-100 rounded-lg">
                                 <GraduationCap className="h-6 w-6 text-blue-600" />
@@ -566,7 +598,7 @@ export default function ClassInfoPage() {
                 </Card>
 
                 <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
-                    <CardContent className="p-6">
+                    <CardContent className="p-6 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-purple-100 rounded-lg">
                                 <UserCheck className="h-6 w-6 text-purple-600" />
@@ -586,19 +618,19 @@ export default function ClassInfoPage() {
                 </Card>
 
                 <Card className="bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200">
-                    <CardContent className="p-6">
+                    <CardContent className="p-6 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-orange-100 rounded-lg">
                                 <Clock className="h-6 w-6 text-orange-600" />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-orange-600">
-                                    Last Updated
+                                    Created At
                                 </p>
                                 <p className="text-sm font-bold text-orange-700">
                                     {new Date(
-                                        classData.updatedAt
-                                    ).toLocaleDateString()}
+                                        classData.createdAt
+                                    ).toLocaleDateString('vi-VN')}
                                 </p>
                             </div>
                         </div>
@@ -635,7 +667,10 @@ export default function ClassInfoPage() {
                                     className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     <div className="flex items-center space-x-4">
-                                        <Avatar name={lecturer.name} size={12} />
+                                        <Avatar
+                                            name={lecturer.name}
+                                            size={12}
+                                        />
                                         <div>
                                             <p className="font-medium text-gray-900">
                                                 {lecturer.name}
@@ -656,23 +691,25 @@ export default function ClassInfoPage() {
                                         </div>
                                     </div>
                                     <div className="flex gap-2">
-                                    <Button variant="outline" size="sm">
-                                        <Mail className="h-4 w-4" />
-                                    </Button>
-                                    {profile?.id != lecturer.id && (
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => {
-                                            setSelectedLecturer(lecturer);
-                                            setShowWarningDeleteLecturerModal(
-                                                true
-                                            );
-                                        }}
-                                        className="text-red-600 hover:text-red-700"
-                                    >
-                                            <Trash2 className="h-4 w-4" />
+                                        <Button variant="outline" size="sm">
+                                            <Mail className="h-4 w-4" />
                                         </Button>
+                                        {profile?.id != lecturer.id && (
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => {
+                                                    setSelectedLecturer(
+                                                        lecturer
+                                                    );
+                                                    setShowWarningDeleteLecturerModal(
+                                                        true
+                                                    );
+                                                }}
+                                                className="text-red-600 hover:text-red-700"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
                                         )}
                                     </div>
                                 </div>
@@ -967,6 +1004,14 @@ export default function ClassInfoPage() {
                     selectedLecturer?.name ?? selectedLecturer?.email
                 } from class`}
                 description="Are you sure you want to delete this lecturer?"
+            />
+            <WarningModal
+                isOpen={showDeleteClassModal}
+                onClose={() => setShowDeleteClassModal(false)}
+                onConfirm={handleConfirmDeleteClass}
+                title="Delete Class"
+                description={`Are you sure you want to delete the class "${classData?.name}"? All projects and student data within this class will be permanently removed. This action cannot be undone.`}
+                confirmText="Delete Class"
             />
         </div>
     );

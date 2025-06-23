@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useClassContext } from '@/context/class-context';
 import { getClassStudents } from '@/services/api/class';
+import { Avatar } from '@/components/avatar';
 
 interface Student {
     id: number;
@@ -85,7 +86,7 @@ export default function StudentClassInfoPage() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 px-6">
             {/* Class Information Hero Section */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
                 <div className="flex items-center justify-between mb-6">
@@ -107,7 +108,7 @@ export default function StudentClassInfoPage() {
                 {/* Main Class Info Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     {/* Class Name Card */}
-                    <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                         <div className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
                             Class Name
                         </div>
@@ -117,7 +118,7 @@ export default function StudentClassInfoPage() {
                     </div>
 
                     {/* Class ID Card */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                         <div className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
                             Class ID
                         </div>
@@ -127,7 +128,7 @@ export default function StudentClassInfoPage() {
                     </div>
 
                     {/* Semester Card */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                         <div className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
                             Semester
                         </div>
@@ -150,7 +151,7 @@ export default function StudentClassInfoPage() {
                 </div>
 
                 {/* Description */}
-                <div className="mt-6 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                <div className="mt-6 bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                     <div className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
                         Description
                     </div>
@@ -163,7 +164,7 @@ export default function StudentClassInfoPage() {
             {/* Quick Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-                    <CardContent className="p-6">
+                    <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-green-100 rounded-lg">
                                 <Users className="h-6 w-6 text-green-600" />
@@ -181,7 +182,7 @@ export default function StudentClassInfoPage() {
                 </Card>
 
                 <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
-                    <CardContent className="p-6">
+                    <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-blue-100 rounded-lg">
                                 <GraduationCap className="h-6 w-6 text-blue-600" />
@@ -199,7 +200,7 @@ export default function StudentClassInfoPage() {
                 </Card>
 
                 <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
-                    <CardContent className="p-6">
+                    <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-purple-100 rounded-lg">
                                 <UserCheck className="h-6 w-6 text-purple-600" />
@@ -217,7 +218,7 @@ export default function StudentClassInfoPage() {
                 </Card>
 
                 <Card className="bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200">
-                    <CardContent className="p-6">
+                    <CardContent className="px-4 py-4 pt-5">
                         <div className="flex items-center space-x-4">
                             <div className="p-3 bg-orange-100 rounded-lg">
                                 <Clock className="h-6 w-6 text-orange-600" />
@@ -256,7 +257,7 @@ export default function StudentClassInfoPage() {
                                     className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     <div className="flex items-center space-x-4">
-                                        <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                                        {/* <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
                                             <span className="text-white font-medium">
                                                 {lecturer?.name
                                                     ?.split(' ')
@@ -264,7 +265,11 @@ export default function StudentClassInfoPage() {
                                                     ?.join('')
                                                     ?.toUpperCase()}
                                             </span>
-                                        </div>
+                                        </div> */}
+                                        <Avatar
+                                            name={lecturer.name}
+                                            size={12}
+                                        />
                                         <div>
                                             <p className="font-medium text-gray-900">
                                                 {lecturer.name}
@@ -280,7 +285,7 @@ export default function StudentClassInfoPage() {
                                                     <Badge
                                                         key={role}
                                                         variant="outline"
-                                                        className="text-xs"
+                                                        className="text-xs text-gray-500"
                                                     >
                                                         {role}
                                                     </Badge>
@@ -319,15 +324,7 @@ export default function StudentClassInfoPage() {
                                     className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
-                                            <span className="text-white font-medium text-sm">
-                                                {student.name
-                                                    ?.split(' ')
-                                                    ?.map((n) => n[0])
-                                                    ?.join('')
-                                                    ?.toUpperCase()}
-                                            </span>
-                                        </div>
+                                        <Avatar name={student.name} size={12} />
                                         <div>
                                             <p className="font-medium text-gray-900 text-sm">
                                                 {student.name}

@@ -27,6 +27,46 @@ export async function downloadImportTemplate(type: string) {
     window.URL.revokeObjectURL(blobUrl);
 }
 
+export async function downloadLecturersExport(type: string) {
+    const response: any = await instance.get('v1/user/excel-lecturer', {
+        params: { type },
+        responseType: 'blob',
+    });
+    const blob = new Blob([response], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.setAttribute('download', `lecturers-export.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(blobUrl);
+}
+
+export async function downloadStudentsExport(type: string) {
+    const response: any = await instance.get('v1/user/excel-student', {
+        params: { type },
+        responseType: 'blob',
+    });
+    const blob = new Blob([response], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.setAttribute('download', `students-export.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(blobUrl);
+}
+
 export async function getUsersInOrganization(
     organizationId: number,
     query: {

@@ -44,10 +44,11 @@ instance.interceptors.response.use(
                         withCredentials: true,
                     }
                 );
-                isRefreshing = false;
                 const { accessToken, roles } = response.data?.data;
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('roles', JSON.stringify(roles));
+                isRefreshing = false;
+
                 instance.defaults.headers.common[
                     'Authorization'
                 ] = `Bearer ${accessToken}`;
@@ -69,9 +70,9 @@ instance.interceptors.response.use(
                 isRefreshing = false;
                 // Handle refresh token errors by clearing stored tokens and redirecting to the login page.
                 console.error('Token refresh failed:', refreshError);
-                localStorage.removeItem('accessToken');
+                // localStorage.removeItem('accessToken');
                 localStorage.removeItem('roles');
-                window.location.href = "/login";
+                // window.location.href = '/login';
 
                 return;
             }

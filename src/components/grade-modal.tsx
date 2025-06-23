@@ -185,7 +185,9 @@ export function GradeModal({
                                             Student Grades{' '}
                                             {grade?.maxScore
                                                 ? `(Max: ${grade.maxScore})`
-                                                : ''}
+                                                : ''}{' '}
+                                            {grade?.scale &&
+                                                `(Scale: ${grade.scale})`}
                                         </Dialog.Title>
                                         <div className="flex gap-2">
                                             {!isEditMode ? (
@@ -308,7 +310,12 @@ export function GradeModal({
                                                                         max={
                                                                             grade?.maxScore
                                                                         }
-                                                                        step="0.1"
+                                                                        step={
+                                                                            grade?.scale
+                                                                                ? 10 **
+                                                                                  -grade.scale
+                                                                                : 0.01
+                                                                        }
                                                                     />
                                                                     {errors[
                                                                         studentData

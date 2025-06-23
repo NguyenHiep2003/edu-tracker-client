@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { User, Mail, Search, UsersIcon, Crown } from 'lucide-react';
 import { useStudentProjectContext } from '@/context/student-project-context';
 import { getProjectStudents } from '@/services/api/project';
+import { Avatar } from '@/components/avatar';
 
 interface ProjectStudent {
     id: number;
@@ -146,19 +147,7 @@ export default function StudentProjectStudentsPage() {
                                     >
                                         <td className="py-3 px-4">
                                             <div className="flex items-center space-x-3">
-                                                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                                                    <span className="text-white font-medium text-xs">
-                                                        {(
-                                                            student.name ||
-                                                            student.email
-                                                        )
-                                                            .split(' ')
-                                                            .map((n) => n[0])
-                                                            .join('')
-                                                            .toUpperCase()
-                                                            .slice(0, 2)}
-                                                    </span>
-                                                </div>
+                                                <Avatar name={student.name} size={11} />
                                                 <span className="font-medium text-gray-900">
                                                     {student.name ||
                                                         'Unnamed User'}

@@ -18,7 +18,7 @@ import { ArrowLeft, Shield, GraduationCap, Users } from 'lucide-react';
 import type { Organization } from '@/services/api/organization/interface';
 import { getAvailableOrganization } from '@/services/api/organization';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getLoginUrl } from '@/services/api/auth';
 
 interface SelectOption {
@@ -28,6 +28,18 @@ interface SelectOption {
 }
 
 export default function LoginPage() {
+    const loginRole = localStorage.getItem('loginRole');
+    const router = useRouter();
+    const accessToken = localStorage.getItem('accessToken');
+    if (loginRole && accessToken) {
+        if (loginRole === 'lecturer') {
+            router.push('/lecturer/home');
+        } else if (loginRole === 'student') {
+            router.push('/student/home');
+        } else if (loginRole === 'admin') {
+            router.push('/admin/home');
+        }
+    }
     const searchParams = useSearchParams();
     const [formData, setFormData] = useState({
         organization: '',
@@ -104,6 +116,7 @@ export default function LoginPage() {
             formData.role,
             roles.filter((role) => role.id == formData.role)[0]?.homePagePath
         );
+        localStorage.setItem('loginRole', formData.role);
         window.location.href = loginUrl;
     };
 

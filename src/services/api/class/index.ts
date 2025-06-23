@@ -147,3 +147,8 @@ export const removeLecturerFromClass = async (
     );
     return response.data;
 };
+
+export const deleteClass = async (classId: number) => {
+    const response = await instance.delete(`/v1/classroom/${classId}`);
+    return response.data;
+};

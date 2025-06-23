@@ -19,13 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import Select from 'react-select';
 import { SuccessModal } from '@/components/ui/success-modal';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { getAuthProvider } from '@/services/api/auth';
@@ -63,7 +57,7 @@ export default function RegisterPage() {
     });
 
     const watchedAuthProviderId = watch('authProviderId');
-    
+
     // Fetch auth providers on component mount
     useEffect(() => {
         const fetchAuthProviders = async () => {
@@ -146,9 +140,22 @@ export default function RegisterPage() {
         setShowSuccessModal(false);
     };
 
-    const handleAuthProviderChange = (value: string) => {
-        setValue('authProviderId', value, { shouldValidate: true });
+    const handleAuthProviderChange = (selectedOption: any) => {
+        setValue('authProviderId', selectedOption?.value || '', {
+            shouldValidate: true,
+        });
     };
+
+    // Transform auth providers for React Select
+    const authProviderOptions = authProviders.map((provider) => ({
+        value: provider.id.toString(),
+        label: provider.name,
+    }));
+
+    // Find the selected option based on current value
+    const selectedAuthProvider = authProviderOptions.find(
+        (option) => option.value === watchedAuthProviderId
+    );
 
     return (
         <>
@@ -306,45 +313,86 @@ export default function RegisterPage() {
                                                 Authentication Provider *
                                             </Label>
                                             <Select
-                                                onValueChange={
+                                                id="authProviderId"
+                                                value={selectedAuthProvider}
+                                                onChange={
                                                     handleAuthProviderChange
                                                 }
-                                                value={watchedAuthProviderId}
-                                                disabled={
+                                                options={authProviderOptions}
+                                                placeholder={
+                                                    fetchingProviders
+                                                        ? 'Loading...'
+                                                        : 'Select provider'
+                                                }
+                                                isDisabled={
                                                     isSubmitting ||
                                                     fetchingProviders
                                                 }
-                                            >
-                                                <SelectTrigger
-                                                    className={
-                                                        errors.authProviderId
-                                                            ? 'border-red-500'
-                                                            : ''
-                                                    }
-                                                >
-                                                    <SelectValue
-                                                        placeholder={
-                                                            fetchingProviders
-                                                                ? 'Loading...'
-                                                                : 'Select provider'
-                                                        }
-                                                    />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {authProviders.map(
-                                                        (provider) => (
-                                                            <SelectItem
-                                                                key={
-                                                                    provider.id
-                                                                }
-                                                                value={provider.id.toString()}
-                                                            >
-                                                                {provider.name}
-                                                            </SelectItem>
-                                                        )
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
+                                                isLoading={fetchingProviders}
+                                                className={
+                                                    errors.authProviderId
+                                                        ? 'border-red-500'
+                                                        : ''
+                                                }
+                                                classNamePrefix="react-select"
+                                                styles={{
+                                                    control: (
+                                                        provided,
+                                                        state
+                                                    ) => ({
+                                                        ...provided,
+                                                        borderColor:
+                                                            errors.authProviderId
+                                                                ? '#ef4444'
+                                                                : state.isFocused
+                                                                ? '#3b82f6'
+                                                                : '#d1d5db',
+                                                        boxShadow:
+                                                            state.isFocused
+                                                                ? '0 0 0 1px #3b82f6'
+                                                                : 'none',
+                                                        '&:hover': {
+                                                            borderColor:
+                                                                errors.authProviderId
+                                                                    ? '#ef4444'
+                                                                    : '#9ca3af',
+                                                        },
+                                                    }),
+                                                    option: (
+                                                        provided,
+                                                        state
+                                                    ) => ({
+                                                        ...provided,
+                                                        backgroundColor:
+                                                            state.isSelected
+                                                                ? '#3b82f6'
+                                                                : state.isFocused
+                                                                ? '#f3f4f6'
+                                                                : 'white',
+                                                        color: state.isSelected
+                                                            ? 'white'
+                                                            : '#374151',
+                                                        '&:hover': {
+                                                            backgroundColor:
+                                                                state.isSelected
+                                                                    ? '#3b82f6'
+                                                                    : '#f3f4f6',
+                                                        },
+                                                    }),
+                                                    singleValue: (
+                                                        provided
+                                                    ) => ({
+                                                        ...provided,
+                                                        color: '#374151',
+                                                    }),
+                                                    placeholder: (
+                                                        provided
+                                                    ) => ({
+                                                        ...provided,
+                                                        color: '#9ca3af',
+                                                    }),
+                                                }}
+                                            />
                                             {errors.authProviderId && (
                                                 <p className="text-sm text-red-600">
                                                     {

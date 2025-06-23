@@ -51,6 +51,7 @@ import type {
 import { ApprovalDialog } from '@/components/approval-dialog';
 import { GroupMember } from '@/services/api/group/interface';
 import { generateInitials, getAvatarColor } from '@/components/avatar';
+import { useProfile } from '@/context/profile-context';
 
 interface BoardColumn {
     status: WorkItemStatus;
@@ -339,6 +340,7 @@ const DroppableColumn = ({ status, children }: DroppableColumnProps) => {
 
 export default function BoardPage() {
     const { groupData, isGroupLeader } = useGroupContext();
+    const { profile } = useProfile();
     const [boardData, setBoardData] = useState<BoardColumn[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeId, setActiveId] = useState<string | null>(null);
@@ -1030,6 +1032,7 @@ export default function BoardPage() {
                     workItemId={selectedWorkItem.id}
                     onUpdate={loadBoardData}
                     isGroupLeader={isGroupLeader}
+                    userId={profile?.id}
                     onOpenSubtask={(subtaskId) => {
                         setSelectedWorkItem({ id: subtaskId } as WorkItem);
                     }}

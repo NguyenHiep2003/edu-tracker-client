@@ -51,3 +51,19 @@ export const updateOrganizationSettings = async (
     );
     return response.data;
 };
+
+export const getOrganizationOverview = async (organizationId: number) => {
+    const response = await instance.get(
+        `/v1/organization/${organizationId}/overview`
+    );
+    return response.data;
+};
+
+export const getOrganizationOverviewThroughSemester = async (
+    organizationId: number
+) => {
+    const response = await instance.get(
+        `/v1/organization/${organizationId}/semester-stats`
+    );
+    return response.data;
+};

@@ -42,6 +42,7 @@ export function useAuthProtection({
     useEffect(() => {
         // Extract auth data from cookies and save to localStorage
         const authData = getAuthData();
+        console.log('🚀 ~ useEffect ~ authData:', authData);
 
         if (
             !authData ||
@@ -61,9 +62,9 @@ export function useAuthProtection({
                 !accessToken ||
                 !roles.some((userRole) => allowedRoles.includes(userRole))
             ) {
+                router.push(redirectTo);
             }
             // Redirect to login if no auth data or wrong role
-            router.push(redirectTo);
             if (accessToken && roles) {
                 console.log('🚀 ~ hehehehe');
                 localStorage.setItem('accessToken', accessToken);

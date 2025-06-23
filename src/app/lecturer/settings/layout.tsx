@@ -14,6 +14,7 @@ import {
     Menu,
     X,
     Home,
+    FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -23,6 +24,12 @@ const settingsNavigation = [
         href: '/lecturer/settings/github',
         icon: Github,
         description: 'Manage GitHub integrations',
+    },
+    {
+        name: 'Project Templates',
+        href: '/lecturer/settings/templates',
+        icon: FileText,
+        description: 'Manage project templates',
     },
     {
         name: 'Profile',

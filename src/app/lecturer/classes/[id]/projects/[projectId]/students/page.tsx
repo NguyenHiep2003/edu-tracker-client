@@ -51,6 +51,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { assignStudentToGroup } from '@/services/api/group';
+import { Avatar } from '@/components/avatar';
 
 interface NotJoinedStudent {
     id: number;
@@ -185,9 +186,13 @@ export default function ProjectStudentsPage() {
             toast.success('Students added successfully');
             handleCloseModal();
             fetchStudents();
-        } catch (err) {
-            console.error('Failed to add students:', err);
-            toast.error('Failed to add students');
+        } catch (error: any) {
+            console.log('🚀 ~ handleAddSelectedStudents ~ error:', error.message);
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message || 'Failed to add students');
+            }
         }
     };
 
@@ -452,11 +457,10 @@ export default function ProjectStudentsPage() {
                                     className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between"
                                 >
                                     <div className="flex items-center space-x-4">
-                                        <div className="flex-shrink-0">
-                                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                                <User className="h-6 w-6 text-gray-500" />
-                                            </div>
-                                        </div>
+                                        <Avatar
+                                            name={student.name}
+                                            size={11}
+                                        ></Avatar>
                                         <div>
                                             <div className="font-medium text-gray-900">
                                                 {student.name}

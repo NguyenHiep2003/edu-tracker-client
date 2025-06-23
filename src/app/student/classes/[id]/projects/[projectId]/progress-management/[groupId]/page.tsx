@@ -68,6 +68,8 @@ import { getTypeIcon } from '@/helper/get-type-icon';
 import { CompleteSprintModal } from '@/components/complete-sprint-modal';
 import { WarningModal } from '@/components/warning-modal';
 import { formatDistanceToNow } from 'date-fns';
+import { formatDate } from '@/helper/date-formatter';
+import { useProfile } from '@/context/profile-context';
 
 // Sortable Item Component
 interface SortableItemProps {
@@ -86,7 +88,7 @@ interface SortableItemProps {
     }>;
     generateInitials: (name: string) => string;
     getAvatarColor: (name: string) => string;
-    formatDate: (date: string) => string;
+    formatRelativeDate: (date: string) => string;
     setSelectedWorkItemToDelete: (item: WorkItem) => void;
     setShowWarningDeleteWorkItemModal: (value: boolean) => void;
 }
@@ -103,7 +105,7 @@ function DraggableItem({
     StatusMenuItem,
     generateInitials,
     getAvatarColor,
-    formatDate,
+    formatRelativeDate,
     setSelectedWorkItemToDelete,
     setShowWarningDeleteWorkItemModal,
 }: SortableItemProps) {
@@ -224,10 +226,11 @@ function DraggableItem({
                             )}
                         </div>
                         <div className="flex items-center space-x-2 mt-1 text-xs text-gray-500">
-                            <span>Created {formatDate(item.createdAt)}</span>
+                            <span>Created {formatRelativeDate(item.createdAt)}</span>
                             {item.updatedAt !== item.createdAt && (
                                 <span>
-                                    • Updated {formatDate(item.updatedAt)}
+                                    • Updated{' '}
+                                    {formatRelativeDate(item.updatedAt)}
                                 </span>
                             )}
                             {item.numOfSubItems > 0 && (
@@ -768,6 +771,7 @@ const EditSprintModal = ({
 
 export default function ProgressManagement() {
     const { groupData, isGroupLeader } = useGroupContext();
+    const { profile } = useProfile();
     // const [searchQuery, setSearchQuery] = useState('');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [sprints, setSprints] = useState<Partial<Sprint>[]>([]);
@@ -895,8 +899,11 @@ export default function ProgressManagement() {
             await loadData();
             toast.success(`${data.type} created successfully`);
         } catch (error: any) {
-            console.error('Error creating work item:', error);
-            throw new Error(error.message || 'Failed to create work item');
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message || 'Failed to create work item');
+            }
         }
     };
 
@@ -1111,11 +1118,10 @@ export default function ProgressManagement() {
         }
     };
 
-    const formatDate = (date: string) => {
+    const formatRelativeDate = (date: string) => {
         if (!date) return '';
         return formatDistanceToNow(new Date(date), { addSuffix: true });
     };
-
     const getSprintStatusCounts = (sprint: Sprint) => {
         const todo = sprint.workItems.filter(
             (item) => item.status === 'TO DO'
@@ -1403,11 +1409,13 @@ export default function ProgressManagement() {
                                                 sprint.endDate && (
                                                     <span className="text-sm text-gray-500">
                                                         {formatDate(
-                                                            sprint.startDate
+                                                            sprint.startDate, 
+                                                            'MMM d, yyyy'
                                                         )}{' '}
                                                         –{' '}
                                                         {formatDate(
-                                                            sprint.endDate
+                                                            sprint.endDate,
+                                                            'MMM d, yyyy'
                                                         )}
                                                     </span>
                                                 )}
@@ -1578,8 +1586,8 @@ export default function ProgressManagement() {
                                                             getAvatarColor={
                                                                 getAvatarColor
                                                             }
-                                                            formatDate={
-                                                                formatDate
+                                                            formatRelativeDate={
+                                                                formatRelativeDate
                                                             }
                                                             setSelectedWorkItemToDelete={
                                                                 setSelectedWorkItemToDelete
@@ -1726,7 +1734,9 @@ export default function ProgressManagement() {
                                                     generateInitials
                                                 }
                                                 getAvatarColor={getAvatarColor}
-                                                formatDate={formatDate}
+                                                formatRelativeDate={
+                                                    formatRelativeDate
+                                                }
                                                 setSelectedWorkItemToDelete={
                                                     setSelectedWorkItemToDelete
                                                 }
@@ -1815,6 +1825,7 @@ export default function ProgressManagement() {
                         loadData();
                     }}
                     isGroupLeader={isGroupLeader}
+                    userId={profile?.id}
                     onOpenSubtask={(subtaskId) => {
                         // Here you would:
                         // 1. Update your state to show the new work item

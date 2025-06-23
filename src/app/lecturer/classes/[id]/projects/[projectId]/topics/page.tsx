@@ -256,10 +256,10 @@ const TopicDetailModal = ({
                                             setEditedDescription(e.target.value)
                                         }
                                         placeholder="Enter description"
-                                        className="min-h-[200px] w-full resize-y break-words whitespace-pre-wrap bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-gray-900"
+                                        className="min-h-[100px] w-full resize-y break-words whitespace-pre-wrap bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-gray-900"
                                     />
                                 ) : (
-                                    <div className="bg-gray-50 rounded-lg p-4 min-h-[200px] break-words">
+                                    <div className="bg-gray-50 rounded-lg p-4 min-h-[100px] break-words">
                                         <p className="text-gray-700 whitespace-pre-wrap text-sm">
                                             {topic.description}
                                         </p>

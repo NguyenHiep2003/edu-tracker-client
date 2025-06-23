@@ -12,6 +12,7 @@ import {
     FileText,
     Users,
     Pencil,
+    Eye,
 } from 'lucide-react';
 import {
     Tooltip,
@@ -36,6 +37,7 @@ import React from 'react';
 import { Button } from '@headlessui/react';
 import { useProjectContext } from '@/context/project-context';
 import { GradeModal } from '@/components/grade-modal';
+import { StudentWorkItemsModal } from '@/components/student-work-items-modal';
 
 interface GroupWorkOverview {
     group_id: number;
@@ -57,6 +59,7 @@ interface WorkDistribution {
     student_externalid: string | null;
     group_role: string | null;
     total_work_done: string;
+    student_project_id: number | null;
     story_points_received: string | null;
     average_rating: string | null;
     total_commit: string;
@@ -106,6 +109,8 @@ export default function GroupStatisticsPage() {
     const [loading, setLoading] = useState(true);
     const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
     const [students, setStudents] = useState([]);
+    const [selectedStudent, setSelectedStudent] = useState<any>(null);
+    const [isWorkItemsModalOpen, setIsWorkItemsModalOpen] = useState(false);
     const params = useParams();
 
     useEffect(() => {
@@ -141,13 +146,18 @@ export default function GroupStatisticsPage() {
     const handleGradeClick = async () => {
         try {
             const response = await instance.get(
-                `/v1/group/${params.groupId}/member-grade`
+                `/v1/group/${params.groupId}/member-grade/${projectData?.grade?.id}`
             );
             setStudents(response.data);
             setIsGradeModalOpen(true);
         } catch (error) {
             console.error('Error fetching students:', error);
         }
+    };
+
+    const handleViewWorkItems = (member: any) => {
+        setSelectedStudent(member);
+        setIsWorkItemsModalOpen(true);
     };
 
     const StatCard = ({
@@ -515,6 +525,9 @@ export default function GroupStatisticsPage() {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Average Rating
                                         </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -613,6 +626,32 @@ export default function GroupStatisticsPage() {
                                                                 : 'N/A'}
                                                         </span>
                                                     </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger
+                                                                asChild
+                                                            >
+                                                                <Button
+                                                                    onClick={() =>
+                                                                        handleViewWorkItems(
+                                                                            member
+                                                                        )
+                                                                    }
+                                                                    className="h-8 w-8 p-0"
+                                                                >
+                                                                    <Eye className="h-4 w-4 text-gray-600" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p>
+                                                                    View all
+                                                                    works
+                                                                </p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
                                                 </td>
                                             </tr>
                                         ))}
@@ -869,6 +908,19 @@ export default function GroupStatisticsPage() {
                     students={students}
                     grade={projectData?.grade}
                 />
+
+                {/* Student Work Items Modal */}
+                {selectedStudent && (
+                    <StudentWorkItemsModal
+                        isOpen={isWorkItemsModalOpen}
+                        onClose={() => {
+                            setIsWorkItemsModalOpen(false);
+                            setSelectedStudent(null);
+                        }}
+                        student={selectedStudent}
+                        groupId={Number(params.groupId)}
+                    />
+                )}
             </div>
         </TooltipProvider>
     );
