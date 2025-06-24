@@ -63,8 +63,8 @@ export const createLecturerWorkItem = async (
         summary: string;
         description: string;
         type: string;
-        startDate?: string;
-        endDate?: string;
+        startDate?: string | null;
+        endDate?: string | null;
         attachments?: File[];
         createGradeComponent?: boolean;
         gradeComponent?: {

@@ -98,8 +98,8 @@ export default function TasksPage() {
         type: WorkItemType.TASK,
         summary: '',
         description: '',
-        startDate: '',
-        endDate: '',
+        startDate: '' as string | null,
+        endDate: '' as string | null,
         attachments: [] as File[],
         createGradeComponent: true,
         gradeComponent: {
@@ -609,13 +609,40 @@ export default function TasksPage() {
                                                         type="datetime-local"
                                                         value={
                                                             newTask.startDate
+                                                                ? (() => {
+                                                                      const date =
+                                                                          new Date(
+                                                                              newTask.startDate
+                                                                          );
+                                                                      // Convert to local timezone for datetime-local input
+                                                                      const offset =
+                                                                          date.getTimezoneOffset();
+                                                                      const localDate =
+                                                                          new Date(
+                                                                              date.getTime() -
+                                                                                  offset *
+                                                                                      60 *
+                                                                                      1000
+                                                                          );
+                                                                      return localDate
+                                                                          .toISOString()
+                                                                          .slice(
+                                                                              0,
+                                                                              16
+                                                                          );
+                                                                  })()
+                                                                : ''
                                                         }
                                                         onChange={(e) => {
+                                                            const value =
+                                                                e.target.value;
                                                             setNewTask({
                                                                 ...newTask,
-                                                                startDate:
-                                                                    e.target
-                                                                        .value,
+                                                                startDate: value
+                                                                    ? new Date(
+                                                                          value
+                                                                      ).toISOString()
+                                                                    : null,
                                                             });
                                                         }}
                                                         className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -638,15 +665,44 @@ export default function TasksPage() {
                                                     <input
                                                         id="endDate"
                                                         type="datetime-local"
-                                                        value={newTask.endDate}
-                                                        onChange={(e) =>
+                                                        value={
+                                                            newTask.endDate
+                                                                ? (() => {
+                                                                      const date =
+                                                                          new Date(
+                                                                              newTask.endDate
+                                                                          );
+                                                                      // Convert to local timezone for datetime-local input
+                                                                      const offset =
+                                                                          date.getTimezoneOffset();
+                                                                      const localDate =
+                                                                          new Date(
+                                                                              date.getTime() -
+                                                                                  offset *
+                                                                                      60 *
+                                                                                      1000
+                                                                          );
+                                                                      return localDate
+                                                                          .toISOString()
+                                                                          .slice(
+                                                                              0,
+                                                                              16
+                                                                          );
+                                                                  })()
+                                                                : ''
+                                                        }
+                                                        onChange={(e) => {
+                                                            const value =
+                                                                e.target.value;
                                                             setNewTask({
                                                                 ...newTask,
-                                                                endDate:
-                                                                    e.target
-                                                                        .value,
-                                                            })
-                                                        }
+                                                                endDate: value
+                                                                    ? new Date(
+                                                                          value
+                                                                      ).toISOString()
+                                                                    : null,
+                                                            });
+                                                        }}
                                                         className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                                         lang="en-GB"
                                                     />
