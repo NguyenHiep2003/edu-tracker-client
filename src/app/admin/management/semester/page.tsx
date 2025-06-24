@@ -1,8 +1,6 @@
 'use client';
 
-import type React from 'react';
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Card,
     CardContent,
@@ -13,13 +11,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Modal } from '@/components/ui/modal';
 import {
     Plus,
@@ -45,6 +36,7 @@ import type {
     CreateSemesterRequest,
     UpdateSemesterRequest,
 } from '@/services/api/semester/interface';
+import Select from 'react-select';
 
 // Create Semester Modal
 function CreateSemesterModal({
@@ -61,6 +53,11 @@ function CreateSemesterModal({
         status: 'INACTIVE',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const statusOptions = [
+        { value: 'INACTIVE', label: 'Inactive' },
+        { value: 'ACTIVE', label: 'Active' },
+    ];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -130,25 +127,52 @@ function CreateSemesterModal({
                         Status *
                     </Label>
                     <Select
-                        value={formData.status}
-                        onValueChange={(
-                            value: 'ACTIVE' | 'INACTIVE' | string
-                        ) =>
+                        value={statusOptions.find(
+                            (option) => option.value === formData.status
+                        )}
+                        onChange={(selectedOption: any) =>
                             setFormData((prev) => ({
                                 ...prev,
-                                status: value as 'ACTIVE' | 'INACTIVE',
+                                status: selectedOption?.value as
+                                    | 'ACTIVE'
+                                    | 'INACTIVE',
                             }))
                         }
-                        disabled={isSubmitting}
-                    >
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="INACTIVE">Inactive</SelectItem>
-                            <SelectItem value="ACTIVE">Active</SelectItem>
-                        </SelectContent>
-                    </Select>
+                        options={statusOptions}
+                        isDisabled={isSubmitting}
+                        placeholder="Select status..."
+                        className="text-sm"
+                        classNamePrefix="react-select"
+                        styles={{
+                            control: (provided: any, state: any) => ({
+                                ...provided,
+                                minHeight: '40px',
+                                borderColor: state.isFocused
+                                    ? '#3b82f6'
+                                    : '#d1d5db',
+                                boxShadow: state.isFocused
+                                    ? '0 0 0 2px rgba(59, 130, 246, 0.2)'
+                                    : 'none',
+                                '&:hover': {
+                                    borderColor: '#3b82f6',
+                                },
+                            }),
+                            option: (provided: any, state: any) => ({
+                                ...provided,
+                                backgroundColor: state.isSelected
+                                    ? '#3b82f6'
+                                    : state.isFocused
+                                    ? '#f3f4f6'
+                                    : 'white',
+                                color: state.isSelected ? 'white' : '#374151',
+                                '&:hover': {
+                                    backgroundColor: state.isSelected
+                                        ? '#3b82f6'
+                                        : '#f3f4f6',
+                                },
+                            }),
+                        }}
+                    />
                     <p className="text-xs text-gray-500">
                         Select the initial status for this semester
                     </p>
@@ -214,6 +238,11 @@ function UpdateSemesterModal({
         status: 'INACTIVE',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const statusOptions = [
+        { value: 'INACTIVE', label: 'Inactive' },
+        { value: 'ACTIVE', label: 'Active' },
+    ];
 
     useEffect(() => {
         if (semester) {
@@ -288,25 +317,52 @@ function UpdateSemesterModal({
                         Status *
                     </Label>
                     <Select
-                        value={formData.status}
-                        onValueChange={(
-                            value: 'ACTIVE' | 'INACTIVE' | string
-                        ) =>
+                        value={statusOptions.find(
+                            (option) => option.value === formData.status
+                        )}
+                        onChange={(selectedOption: any) =>
                             setFormData((prev) => ({
                                 ...prev,
-                                status: value as 'ACTIVE' | 'INACTIVE',
+                                status: selectedOption?.value as
+                                    | 'ACTIVE'
+                                    | 'INACTIVE',
                             }))
                         }
-                        disabled={isSubmitting}
-                    >
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="INACTIVE">Inactive</SelectItem>
-                            <SelectItem value="ACTIVE">Active</SelectItem>
-                        </SelectContent>
-                    </Select>
+                        options={statusOptions}
+                        isDisabled={isSubmitting}
+                        placeholder="Select status..."
+                        className="text-sm"
+                        classNamePrefix="react-select"
+                        styles={{
+                            control: (provided: any, state: any) => ({
+                                ...provided,
+                                minHeight: '40px',
+                                borderColor: state.isFocused
+                                    ? '#3b82f6'
+                                    : '#d1d5db',
+                                boxShadow: state.isFocused
+                                    ? '0 0 0 2px rgba(59, 130, 246, 0.2)'
+                                    : 'none',
+                                '&:hover': {
+                                    borderColor: '#3b82f6',
+                                },
+                            }),
+                            option: (provided: any, state: any) => ({
+                                ...provided,
+                                backgroundColor: state.isSelected
+                                    ? '#3b82f6'
+                                    : state.isFocused
+                                    ? '#f3f4f6'
+                                    : 'white',
+                                color: state.isSelected ? 'white' : '#374151',
+                                '&:hover': {
+                                    backgroundColor: state.isSelected
+                                        ? '#3b82f6'
+                                        : '#f3f4f6',
+                                },
+                            }),
+                        }}
+                    />
                     <p className="text-xs text-gray-500">
                         Select the status for this semester
                     </p>
