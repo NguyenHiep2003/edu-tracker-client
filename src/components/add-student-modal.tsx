@@ -226,15 +226,7 @@ export function AddStudentModal({
                         </div>
                         <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
                             <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                                    <span className="text-white font-medium">
-                                        {selectedStudent.name
-                                            .split(' ')
-                                            .map((n) => n[0])
-                                            .join('')
-                                            .toUpperCase()}
-                                    </span>
-                                </div>
+                                <Avatar name={selectedStudent.name} size={11} />
                                 <div className="flex-1">
                                     <p className="font-medium text-gray-900">
                                         {selectedStudent.name}

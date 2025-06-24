@@ -62,6 +62,7 @@ export function useAuthProtection({
                 !accessToken ||
                 !roles.some((userRole) => allowedRoles.includes(userRole))
             ) {
+                localStorage.clear()
                 router.push(redirectTo);
             }
             // Redirect to login if no auth data or wrong role

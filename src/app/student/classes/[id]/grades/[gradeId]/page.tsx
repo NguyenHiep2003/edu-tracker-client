@@ -242,9 +242,7 @@ export default function GradeDetailPage() {
                                                 `/student/classes/${params.id}/projects/${gradeDetail.project.id}`
                                             );
                                         if (gradeDetail.lecturerWorkItem)
-                                            router.push(
-                                                `/student/classes/${params.id}/work-items/${gradeDetail.lecturerWorkItem.id}`
-                                            );
+                                            return;
                                     }}
                                     className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 cursor-pointer hover:bg-indigo-100 hover:border-indigo-300 transition-all duration-200 hover:shadow-md group"
                                 >

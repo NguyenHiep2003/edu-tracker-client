@@ -28,18 +28,22 @@ interface SelectOption {
 }
 
 export default function LoginPage() {
-    const loginRole = localStorage.getItem('loginRole');
     const router = useRouter();
-    const accessToken = localStorage.getItem('accessToken');
-    if (loginRole && accessToken) {
-        if (loginRole === 'lecturer') {
-            router.push('/lecturer/home');
-        } else if (loginRole === 'student') {
-            router.push('/student/home');
-        } else if (loginRole === 'admin') {
-            router.push('/admin/home');
+
+    useEffect(() => {
+        const loginRole = localStorage.getItem('loginRole');
+        const accessToken = localStorage.getItem('accessToken');
+        if (loginRole && accessToken) {
+            if (loginRole === 'lecturer') {
+                router.push('/lecturer/home');
+            } else if (loginRole === 'student') {
+                router.push('/student/home');
+            } else if (loginRole === 'admin') {
+                router.push('/admin/home');
+            }
         }
-    }
+    }, [router]);
+
     const searchParams = useSearchParams();
     const [formData, setFormData] = useState({
         organization: '',
