@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Search, User, Mail, Plus, Loader2 } from 'lucide-react';
 import { getSuggestStudent } from '@/services/api/class';
+import { Avatar } from './avatar';
 
 interface StudentSuggestion {
     id: number;
@@ -182,21 +183,11 @@ export function AddStudentModal({
                             {suggestions.map((student) => (
                                 <button
                                     key={student.id}
-                                    onClick={() =>
-                                        handleSelectStudent(student)
-                                    }
+                                    onClick={() => handleSelectStudent(student)}
                                     className="w-full p-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
                                 >
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                                            <span className="text-white font-medium text-sm">
-                                                {student?.name
-                                                    ?.split(' ')
-                                                    ?.map((n) => n[0])
-                                                    ?.join('')
-                                                    ?.toUpperCase()}
-                                            </span>
-                                        </div>
+                                        <Avatar name={student.name} size={11} />
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium text-gray-900 truncate">
                                                 {student.name}

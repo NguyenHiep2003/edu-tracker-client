@@ -426,8 +426,8 @@ export default function StudentHomePage() {
                             {searchKeyword
                                 ? 'Try adjusting your search terms or filters.'
                                 : selectedSemester
-                                ? `You are not enrolled in any classes for ${selectedSemester.name}.`
-                                : 'You are not enrolled in any classes yet. Contact your instructor for enrollment.'}
+                                ? `You are not attending any classes for ${selectedSemester.name}.`
+                                : 'You are not attending any classes yet.'}
                         </p>
                     </CardContent>
                 </Card>
