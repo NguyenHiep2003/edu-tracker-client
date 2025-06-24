@@ -73,6 +73,7 @@ interface CreateWorkItemModalProps {
     onClose: () => void;
     onSubmit: (data: CreateWorkItemData) => Promise<void>;
     defaultType?: WorkItemType;
+    defaultAssigneeId?: number | null;
 }
 
 export function CreateWorkItemModal({
@@ -80,6 +81,7 @@ export function CreateWorkItemModal({
     onClose,
     onSubmit,
     defaultType = 'Task',
+    defaultAssigneeId,
 }: CreateWorkItemModalProps) {
     const { groupData } = useGroupContext();
     const [loading, setLoading] = useState(false);
@@ -117,7 +119,7 @@ export function CreateWorkItemModal({
         summary: '',
         description: '',
         status: 'TO DO',
-        assigneeId: undefined,
+        assigneeId: defaultAssigneeId || undefined,
         reporterId: undefined,
         parentItemId: undefined,
         sprintId: undefined,

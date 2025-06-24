@@ -70,6 +70,7 @@ import { WarningModal } from '@/components/warning-modal';
 import { formatDistanceToNow } from 'date-fns';
 import { formatDate } from '@/helper/date-formatter';
 import { useProfile } from '@/context/profile-context';
+import { useStudentProjectContext } from '@/context/student-project-context';
 
 // Sortable Item Component
 interface SortableItemProps {
@@ -226,7 +227,9 @@ function DraggableItem({
                             )}
                         </div>
                         <div className="flex items-center space-x-2 mt-1 text-xs text-gray-500">
-                            <span>Created {formatRelativeDate(item.createdAt)}</span>
+                            <span>
+                                Created {formatRelativeDate(item.createdAt)}
+                            </span>
                             {item.updatedAt !== item.createdAt && (
                                 <span>
                                     • Updated{' '}
@@ -772,6 +775,7 @@ const EditSprintModal = ({
 export default function ProgressManagement() {
     const { groupData, isGroupLeader } = useGroupContext();
     const { profile } = useProfile();
+    const { projectData } = useStudentProjectContext();
     // const [searchQuery, setSearchQuery] = useState('');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [sprints, setSprints] = useState<Partial<Sprint>[]>([]);
@@ -1409,7 +1413,7 @@ export default function ProgressManagement() {
                                                 sprint.endDate && (
                                                     <span className="text-sm text-gray-500">
                                                         {formatDate(
-                                                            sprint.startDate, 
+                                                            sprint.startDate,
                                                             'MMM d, yyyy'
                                                         )}{' '}
                                                         –{' '}
@@ -1827,11 +1831,13 @@ export default function ProgressManagement() {
                     isGroupLeader={isGroupLeader}
                     userId={profile?.id}
                     onOpenSubtask={(subtaskId) => {
-                        // Here you would:
-                        // 1. Update your state to show the new work item
                         setSelectedWorkItem({ id: subtaskId } as WorkItem);
-                        // 2. Open the modal again
                     }}
+                    defaultAssigneeId={
+                        projectData?.type == 'SOLO'
+                            ? projectData?.studentProjectId
+                            : undefined
+                    }
                 />
             )}
 
@@ -1840,6 +1846,11 @@ export default function ProgressManagement() {
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 onSubmit={handleCreateWorkItem}
+                defaultAssigneeId={
+                    projectData?.type == 'SOLO'
+                        ? projectData?.studentProjectId
+                        : undefined
+                }
             />
 
             {/* Add the ApprovalDialog */}

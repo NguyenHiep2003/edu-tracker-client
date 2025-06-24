@@ -101,6 +101,7 @@ export interface WorkItemDetailModalProps {
     onOpenSubtask?: (subtaskId: number) => void;
     viewOnly?: boolean;
     userId?: number;
+    defaultAssigneeId?: number | null;
 }
 
 interface RejectDialogProps {
@@ -115,6 +116,7 @@ interface SubtaskDialogProps {
     onClose: () => void;
     workItem: WorkItemWithFeedback;
     onSubtaskCreated?: () => void;
+    defaultAssigneeId?: number | null;
 }
 
 const RejectDialog = ({
@@ -214,6 +216,7 @@ const SubtaskDialog = ({
     onClose,
     workItem,
     onSubtaskCreated,
+    defaultAssigneeId,
 }: SubtaskDialogProps) => {
     const [summary, setSummary] = useState('');
     const [loading, setLoading] = useState(false);
@@ -242,6 +245,7 @@ const SubtaskDialog = ({
                 status: 'TO DO',
                 parentItemId: workItem.id,
                 reporterId: profile?.id,
+                assigneeId: defaultAssigneeId,
             });
 
             toast.success('Subtask created successfully');
@@ -359,6 +363,7 @@ export function WorkItemDetailModal({
     onOpenSubtask,
     viewOnly = false,
     userId,
+    defaultAssigneeId,
 }: WorkItemDetailModalProps) {
     const [workItem, setWorkItem] = useState<WorkItemWithFeedback | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -2276,6 +2281,7 @@ export function WorkItemDetailModal({
                         onClose={() => setShowSubtaskDialog(false)}
                         workItem={workItem}
                         onSubtaskCreated={onUpdate}
+                        defaultAssigneeId={defaultAssigneeId}
                     />
                 </>
             )}
