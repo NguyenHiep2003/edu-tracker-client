@@ -28,16 +28,18 @@ export function AddProjectModal({
     const [loading, setLoading] = useState(false);
 
     // Helper function to get current datetime in user's timezone for datetime-local input
-    const getCurrentDate = () => {
+    const getCurrentDateTimeLocal = () => {
         const now = new Date();
-        return now.toISOString().slice(0, 16);
+        const offset = now.getTimezoneOffset();
+        const localDate = new Date(now.getTime() - offset * 60 * 1000);
+        return localDate.toISOString().slice(0, 16);
     };
 
     const [formData, setFormData] = useState<CreateProjectRequest>({
         title: '',
         description: '',
         key: '',
-        startDate: getCurrentDate(),
+        startDate: getCurrentDateTimeLocal(),
         endDate: '',
         // status: 'SCHEDULED',
         type: 'TEAM',
@@ -101,7 +103,7 @@ export function AddProjectModal({
                 title: '',
                 description: '',
                 key: '',
-                startDate: getCurrentDate(),
+                startDate: getCurrentDateTimeLocal(),
                 endDate: '',
                 // status: defaultStatus,
                 type: 'TEAM',
