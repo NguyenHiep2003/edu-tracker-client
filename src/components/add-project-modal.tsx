@@ -26,11 +26,20 @@ export function AddProjectModal({
     classId,
 }: AddProjectModalProps) {
     const [loading, setLoading] = useState(false);
+
+    // Helper function to get current datetime in user's timezone for datetime-local input
+    const getCurrentDateTimeLocal = () => {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const localDate = new Date(now.getTime() - offset * 60 * 1000);
+        return localDate.toISOString().slice(0, 16);
+    };
+
     const [formData, setFormData] = useState<CreateProjectRequest>({
         title: '',
         description: '',
         key: '',
-        startDate: new Date().toISOString().split('T')[0],
+        startDate: getCurrentDateTimeLocal(),
         endDate: '',
         // status: 'SCHEDULED',
         type: 'TEAM',
@@ -90,16 +99,11 @@ export function AddProjectModal({
     // Reset form when modal opens
     useEffect(() => {
         if (isOpen) {
-            const today = new Date().toISOString().split('T')[0];
-            // const now = new Date();
-            // const startDate = new Date(today);
-            // const defaultStatus = startDate <= now ? 'OPEN' : 'SCHEDULED';
-
             setFormData({
                 title: '',
                 description: '',
                 key: '',
-                startDate: today,
+                startDate: getCurrentDateTimeLocal(),
                 endDate: '',
                 // status: defaultStatus,
                 type: 'TEAM',
@@ -413,18 +417,39 @@ export function AddProjectModal({
                                 htmlFor="startDate"
                                 className="text-gray-900 font-medium"
                             >
-                                Start Date *
+                                Start Date & Time *
                             </Label>
                             <Input
                                 id="startDate"
-                                type="date"
-                                value={formData.startDate}
-                                onChange={(e) =>
-                                    handleInputChange(
-                                        'startDate',
-                                        e.target.value
-                                    )
+                                type="datetime-local"
+                                value={
+                                    formData.startDate
+                                        ? (() => {
+                                              const date = new Date(
+                                                  formData.startDate
+                                              );
+                                              // Convert to local timezone for datetime-local input
+                                              const offset =
+                                                  date.getTimezoneOffset();
+                                              const localDate = new Date(
+                                                  date.getTime() -
+                                                      offset * 60 * 1000
+                                              );
+                                              return localDate
+                                                  .toISOString()
+                                                  .slice(0, 16);
+                                          })()
+                                        : ''
                                 }
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setFormData({
+                                        ...formData,
+                                        startDate: value
+                                            ? new Date(value).toISOString()
+                                            : '',
+                                    });
+                                }}
                                 className={`text-gray-900 ${
                                     errors.startDate ? 'border-red-500' : ''
                                 }`}
@@ -442,15 +467,39 @@ export function AddProjectModal({
                                 htmlFor="endDate"
                                 className="text-gray-900 font-medium"
                             >
-                                End Date *
+                                End Date & Time *
                             </Label>
                             <Input
                                 id="endDate"
-                                type="date"
-                                value={formData.endDate}
-                                onChange={(e) =>
-                                    handleInputChange('endDate', e.target.value)
+                                type="datetime-local"
+                                value={
+                                    formData.endDate
+                                        ? (() => {
+                                              const date = new Date(
+                                                  formData.endDate
+                                              );
+                                              // Convert to local timezone for datetime-local input
+                                              const offset =
+                                                  date.getTimezoneOffset();
+                                              const localDate = new Date(
+                                                  date.getTime() -
+                                                      offset * 60 * 1000
+                                              );
+                                              return localDate
+                                                  .toISOString()
+                                                  .slice(0, 16);
+                                          })()
+                                        : ''
                                 }
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setFormData({
+                                        ...formData,
+                                        endDate: value
+                                            ? new Date(value).toISOString()
+                                            : '',
+                                    });
+                                }}
                                 className={`text-gray-900 ${
                                     errors.endDate ? 'border-red-500' : ''
                                 }`}
@@ -647,14 +696,35 @@ export function AddProjectModal({
                             </Label>
                             <Input
                                 id="joinProjectDeadline"
-                                type="date"
-                                value={formData.joinProjectDeadline}
-                                onChange={(e) =>
-                                    handleInputChange(
-                                        'joinProjectDeadline',
-                                        e.target.value
-                                    )
+                                type="datetime-local"
+                                value={
+                                    formData.joinProjectDeadline
+                                        ? (() => {
+                                              const date = new Date(
+                                                  formData.joinProjectDeadline
+                                              );
+                                              // Convert to local timezone for datetime-local input
+                                              const offset =
+                                                  date.getTimezoneOffset();
+                                              const localDate = new Date(
+                                                  date.getTime() -
+                                                      offset * 60 * 1000
+                                              );
+                                              return localDate
+                                                  .toISOString()
+                                                  .slice(0, 16);
+                                          })()
+                                        : ''
                                 }
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setFormData({
+                                        ...formData,
+                                        joinProjectDeadline: value
+                                            ? new Date(value).toISOString()
+                                            : '',
+                                    });
+                                }}
                                 className={`text-gray-900 ${
                                     errors.joinProjectDeadline
                                         ? 'border-red-500'
@@ -711,14 +781,35 @@ export function AddProjectModal({
                                 </Label>
                                 <Input
                                     id="formGroupDeadline"
-                                    type="date"
-                                    value={formData.formGroupDeadline}
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            'formGroupDeadline',
-                                            e.target.value
-                                        )
+                                    type="datetime-local"
+                                    value={
+                                        formData.formGroupDeadline
+                                            ? (() => {
+                                                  const date = new Date(
+                                                      formData.formGroupDeadline
+                                                  );
+                                                  // Convert to local timezone for datetime-local input
+                                                  const offset =
+                                                      date.getTimezoneOffset();
+                                                  const localDate = new Date(
+                                                      date.getTime() -
+                                                          offset * 60 * 1000
+                                                  );
+                                                  return localDate
+                                                      .toISOString()
+                                                      .slice(0, 16);
+                                              })()
+                                            : ''
                                     }
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setFormData({
+                                            ...formData,
+                                            formGroupDeadline: value
+                                                ? new Date(value).toISOString()
+                                                : '',
+                                        });
+                                    }}
                                     className={`text-gray-900 ${
                                         errors.formGroupDeadline
                                             ? 'border-red-500'
@@ -874,14 +965,11 @@ export function AddProjectModal({
                                     type="number"
                                     min="0"
                                     step="1"
-                                    value={
-                                        formData.gradeComponent?.scale || ''
-                                    }
+                                    value={formData.gradeComponent?.scale || ''}
                                     onChange={(e) =>
                                         handleGradeComponentChange(
                                             'scale',
-                                            Number(e.target.value) ||
-                                                0
+                                            Number(e.target.value) || 0
                                         )
                                     }
                                     placeholder="Enter scale"

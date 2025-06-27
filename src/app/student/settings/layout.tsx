@@ -20,13 +20,13 @@ import { Button } from '@/components/ui/button';
 const settingsNavigation = [
     {
         name: 'GitHub',
-        href: '/lecturer/settings/github',
+        href: '/student/settings/github',
         icon: Github,
         description: 'Manage GitHub integrations',
     },
     {
         name: 'Profile',
-        href: '/lecturer/settings/profile',
+        href: '/student/settings/profile',
         icon: User,
         description: 'Personal information',
         disabled: true,

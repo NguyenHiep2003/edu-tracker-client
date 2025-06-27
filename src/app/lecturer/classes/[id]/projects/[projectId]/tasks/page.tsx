@@ -233,13 +233,7 @@ export default function TasksPage() {
         }
 
         // Validate start date if provided
-        if (newTask.startDate) {
-            const startDate = new Date(newTask.startDate);
-            const now = new Date();
-            if (startDate <= now) {
-                newErrors.startDate = 'Start date must be in the future';
-            }
-        }
+       
 
         // Validate end date if provided
         if (newTask.endDate) {
@@ -1135,7 +1129,7 @@ export default function TasksPage() {
                                         </CardTitle>
                                         <Badge
                                             variant="outline"
-                                            className="text-xs"
+                                            className="text-xs border-gray-300 text-gray-800"
                                         >
                                             {task.lecturer_item_type}
                                         </Badge>

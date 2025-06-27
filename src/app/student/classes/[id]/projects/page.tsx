@@ -22,6 +22,7 @@ import { getProjectsOfClassForStudent } from '@/services/api/class';
 import { toast } from 'react-toastify';
 import { addStudentsToProject } from '@/services/api/project';
 import { useClassContext } from '@/context/class-context';
+import { formatDate } from '@/helper/date-formatter';
 
 interface ProjectData {
     id: number;
@@ -124,14 +125,6 @@ export default function StudentProjectsPage() {
         return diffDays;
     };
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-        });
-    };
-
     if (loading) {
         return (
             <div className="p-6">
@@ -223,7 +216,10 @@ export default function StudentProjectsPage() {
                                                 Start Date
                                             </div>
                                             <div className="text-sm text-gray-600">
-                                                {formatDate(project.startDate)}
+                                                {formatDate(
+                                                    project.startDate,
+                                                    'dd/MM/yyyy HH:mm'
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -244,7 +240,10 @@ export default function StudentProjectsPage() {
                                                         : 'text-gray-600'
                                                 }`}
                                             >
-                                                {formatDate(project.endDate)}
+                                                {formatDate(
+                                                    project.endDate,
+                                                    'dd/MM/yyyy HH:mm'
+                                                )}
                                                 {isOverdue && (
                                                     <span className="ml-1 font-medium">
                                                         (
@@ -272,7 +271,8 @@ export default function StudentProjectsPage() {
                                             <div className="text-sm text-gray-600">
                                                 {project.joinProjectDeadline
                                                     ? formatDate(
-                                                          project.joinProjectDeadline
+                                                          project.joinProjectDeadline,
+                                                          'dd/MM/yyyy HH:mm'
                                                       )
                                                     : 'No deadline'}
                                             </div>
@@ -318,7 +318,8 @@ export default function StudentProjectsPage() {
                                                 </div>
                                                 <div className="text-sm text-yellow-700">
                                                     {formatDate(
-                                                        project.formGroupDeadline
+                                                        project.formGroupDeadline,
+                                                        'dd/MM/yyyy HH:mm'
                                                     )}
                                                 </div>
                                             </div>
@@ -333,7 +334,8 @@ export default function StudentProjectsPage() {
                                                     </div>
                                                     <div className="text-sm text-orange-700">
                                                         {formatDate(
-                                                            project.joinProjectDeadline
+                                                            project.joinProjectDeadline,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </div>
                                                 </div>

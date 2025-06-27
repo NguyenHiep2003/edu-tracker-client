@@ -335,20 +335,46 @@ export default function ProjectInformationPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <Label className="text-gray-700">Start Date</Label>
+                            <Label className="text-gray-700">
+                                Start Date & Time
+                            </Label>
                             {isEditing ? (
                                 <div>
                                     <Input
-                                        type="date"
+                                        type="datetime-local"
                                         value={
-                                            editedData?.startDate?.split('T')[0]
+                                            editedData?.startDate
+                                                ? (() => {
+                                                      const date = new Date(
+                                                          editedData.startDate
+                                                      );
+                                                      // Convert to local timezone for datetime-local input
+                                                      const offset =
+                                                          date.getTimezoneOffset();
+                                                      const localDate =
+                                                          new Date(
+                                                              date.getTime() -
+                                                                  offset *
+                                                                      60 *
+                                                                      1000
+                                                          );
+                                                      return localDate
+                                                          .toISOString()
+                                                          .slice(0, 16);
+                                                  })()
+                                                : ''
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const value = e.target.value;
                                             handleInputChange(
                                                 'startDate',
-                                                e.target.value
-                                            )
-                                        }
+                                                value
+                                                    ? new Date(
+                                                          value
+                                                      ).toISOString()
+                                                    : ''
+                                            );
+                                        }}
                                         className={
                                             errors.startDate
                                                 ? 'border-red-500'
@@ -365,27 +391,53 @@ export default function ProjectInformationPage() {
                                 <p className="font-medium">
                                     {formatDate(
                                         projectData.startDate,
-                                        'dd/MM/yyyy'
+                                        'dd/MM/yyyy HH:mm'
                                     )}
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <Label className="text-gray-700">End Date</Label>
+                            <Label className="text-gray-700">
+                                End Date & Time
+                            </Label>
                             {isEditing ? (
                                 <div>
                                     <Input
-                                        type="date"
+                                        type="datetime-local"
                                         value={
-                                            editedData?.endDate?.split('T')[0]
+                                            editedData?.endDate
+                                                ? (() => {
+                                                      const date = new Date(
+                                                          editedData.endDate
+                                                      );
+                                                      // Convert to local timezone for datetime-local input
+                                                      const offset =
+                                                          date.getTimezoneOffset();
+                                                      const localDate =
+                                                          new Date(
+                                                              date.getTime() -
+                                                                  offset *
+                                                                      60 *
+                                                                      1000
+                                                          );
+                                                      return localDate
+                                                          .toISOString()
+                                                          .slice(0, 16);
+                                                  })()
+                                                : ''
                                         }
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const value = e.target.value;
                                             handleInputChange(
                                                 'endDate',
-                                                e.target.value
-                                            )
-                                        }
+                                                value
+                                                    ? new Date(
+                                                          value
+                                                      ).toISOString()
+                                                    : ''
+                                            );
+                                        }}
                                         className={
                                             errors.endDate
                                                 ? 'border-red-500'
@@ -402,7 +454,7 @@ export default function ProjectInformationPage() {
                                 <p className="font-medium">
                                     {formatDate(
                                         projectData.endDate,
-                                        'dd/MM/yyyy'
+                                        'dd/MM/yyyy HH:mm'
                                     )}
                                 </p>
                             )}
@@ -555,20 +607,40 @@ export default function ProjectInformationPage() {
                                 {isEditing ? (
                                     <div>
                                         <Input
-                                            type="date"
+                                            type="datetime-local"
                                             value={
                                                 editedData?.joinProjectDeadline
-                                                    ? editedData.joinProjectDeadline.split(
-                                                          'T'
-                                                      )[0]
+                                                    ? (() => {
+                                                          const date = new Date(
+                                                              editedData.joinProjectDeadline
+                                                          );
+                                                          // Convert to local timezone for datetime-local input
+                                                          const offset =
+                                                              date.getTimezoneOffset();
+                                                          const localDate =
+                                                              new Date(
+                                                                  date.getTime() -
+                                                                      offset *
+                                                                          60 *
+                                                                          1000
+                                                              );
+                                                          return localDate
+                                                              .toISOString()
+                                                              .slice(0, 16);
+                                                      })()
                                                     : ''
                                             }
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                                const value = e.target.value;
                                                 handleInputChange(
                                                     'joinProjectDeadline',
-                                                    e.target.value || null
-                                                )
-                                            }
+                                                    value
+                                                        ? new Date(
+                                                              value
+                                                          ).toISOString()
+                                                        : null
+                                                );
+                                            }}
                                             placeholder="Optional - Set deadline for students to join"
                                             className={
                                                 errors.joinProjectDeadline
@@ -593,7 +665,7 @@ export default function ProjectInformationPage() {
                                             <p className="font-medium text-orange-600">
                                                 {formatDate(
                                                     projectData.joinProjectDeadline,
-                                                    'dd/MM/yyyy'
+                                                    'dd/MM/yyyy HH:mm'
                                                 )}
                                             </p>
                                         ) : (
@@ -647,20 +719,40 @@ export default function ProjectInformationPage() {
                                             Team Formation Deadline
                                         </Label>
                                         <Input
-                                            type="date"
+                                            type="datetime-local"
                                             value={
                                                 editedData.formGroupDeadline
-                                                    ? editedData.formGroupDeadline.split(
-                                                          'T'
-                                                      )[0]
+                                                    ? (() => {
+                                                          const date = new Date(
+                                                              editedData.formGroupDeadline
+                                                          );
+                                                          // Convert to local timezone for datetime-local input
+                                                          const offset =
+                                                              date.getTimezoneOffset();
+                                                          const localDate =
+                                                              new Date(
+                                                                  date.getTime() -
+                                                                      offset *
+                                                                          60 *
+                                                                          1000
+                                                              );
+                                                          return localDate
+                                                              .toISOString()
+                                                              .slice(0, 16);
+                                                      })()
                                                     : ''
                                             }
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                                const value = e.target.value;
                                                 handleInputChange(
                                                     'formGroupDeadline',
-                                                    e.target.value
-                                                )
-                                            }
+                                                    value
+                                                        ? new Date(
+                                                              value
+                                                          ).toISOString()
+                                                        : ''
+                                                );
+                                            }}
                                             className={
                                                 errors.formGroupDeadline
                                                     ? 'border-red-500'
@@ -705,7 +797,7 @@ export default function ProjectInformationPage() {
                                             <p className="font-medium text-purple-600">
                                                 {formatDate(
                                                     projectData.formGroupDeadline,
-                                                    'dd/MM/yyyy'
+                                                    'dd/MM/yyyy HH:mm'
                                                 )}
                                             </p>
                                         </div>

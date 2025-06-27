@@ -170,15 +170,13 @@ export default function ImportTemplateModal({
                 </DialogContent>
             </Dialog>
 
-            {selectedTemplate && (
-                <TemplatePreviewModal
-                    isOpen={showPreviewModal}
-                    onClose={() => setShowPreviewModal(false)}
-                    templateId={selectedTemplate.id}
-                    templateTitle={selectedTemplate.title}
-                    onConfirmImport={handleConfirmImport}
-                />
-            )}
+            <TemplatePreviewModal
+                isOpen={showPreviewModal}
+                onClose={() => setShowPreviewModal(false)}
+                templateId={selectedTemplate?.id || null}
+                templateTitle={selectedTemplate?.title || ''}
+                onConfirmImport={handleConfirmImport}
+            />
         </>
     );
 }
