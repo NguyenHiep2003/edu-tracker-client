@@ -792,25 +792,6 @@ export function WorkItemDetailModal({
                             <span className="text-sm font-mono text-blue-600">
                                 {workItem?.key}
                             </span>
-                            {isEditing &&
-                            !workItem?.parentLecturerWorkItemId ? (
-                                <input
-                                    type="text"
-                                    value={editedWorkItem?.summary || ''}
-                                    onChange={(e) =>
-                                        setEditedWorkItem((prev) => ({
-                                            ...prev,
-                                            summary: e.target.value,
-                                        }))
-                                    }
-                                    className="text-xl font-semibold text-gray-900 border border-gray-300 rounded px-2 py-1 w-full focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                    placeholder="Enter summary"
-                                />
-                            ) : (
-                                <h2 className="text-xl font-semibold text-gray-900">
-                                    {workItem?.summary}
-                                </h2>
-                            )}
                         </div>
                         {!viewOnly && (
                             <div className="flex items-center space-x-2">
@@ -911,6 +892,34 @@ export function WorkItemDetailModal({
                         <div className="grid grid-cols-3 gap-6">
                             {/* Left Column - Main Content */}
                             <div className="col-span-2 space-y-6">
+                                {/* Summary */}
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-medium text-gray-900">
+                                        Summary
+                                    </h3>
+                                    {isEditing &&
+                                    !workItem?.parentLecturerWorkItemId ? (
+                                        <input
+                                            type="text"
+                                            value={
+                                                editedWorkItem?.summary || ''
+                                            }
+                                            onChange={(e) =>
+                                                setEditedWorkItem((prev) => ({
+                                                    ...prev,
+                                                    summary: e.target.value,
+                                                }))
+                                            }
+                                            className="text-xl font-semibold text-gray-900 border border-gray-300 rounded px-3 py-2 w-full focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                            placeholder="Enter summary"
+                                        />
+                                    ) : (
+                                        <h2 className="text-xl font-semibold text-gray-900">
+                                            {workItem?.summary}
+                                        </h2>
+                                    )}
+                                </div>
+
                                 {/* Description */}
                                 <div className="space-y-2">
                                     <h3 className="text-sm font-medium text-gray-900">

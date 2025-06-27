@@ -318,6 +318,148 @@ export function CreateWorkItemModal({
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Left Column - Essential Info */}
                             <div className="md:col-span-2 space-y-6">
+                                {/* Summary */}
+                                <div className="space-y-2">
+                                    <Label
+                                        htmlFor="summary"
+                                        className="text-sm font-semibold text-gray-900"
+                                    >
+                                        Summary *
+                                    </Label>
+                                    <Input
+                                        id="summary"
+                                        value={formData.summary}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                summary: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="Enter a brief summary of the work item"
+                                        className="w-full text-gray-900 placeholder:text-gray-500"
+                                        required
+                                    />
+                                </div>
+
+                                {/* Description */}
+                                <div className="space-y-2">
+                                    <Label
+                                        htmlFor="description"
+                                        className="text-sm font-semibold text-gray-900"
+                                    >
+                                        Description
+                                    </Label>
+                                    <Textarea
+                                        id="description"
+                                        value={formData.description}
+                                        onChange={(e) =>
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                description: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="Provide a detailed description of the work item"
+                                        className="min-h-[150px] text-gray-900 placeholder:text-gray-500 bg-white"
+                                        rows={6}
+                                    />
+                                </div>
+
+                                {/* Attachments Section */}
+                                <div className="space-y-4">
+                                    <Label
+                                        htmlFor="attachments"
+                                        className="text-sm font-medium text-gray-900"
+                                    >
+                                        Attachments
+                                    </Label>
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-gray-400 transition-colors">
+                                        <div className="text-center">
+                                            <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                                            <div className="mt-4">
+                                                <label
+                                                    htmlFor="file-upload"
+                                                    className="cursor-pointer"
+                                                >
+                                                    <span className="text-blue-600 hover:text-blue-500 font-medium">
+                                                        Choose files
+                                                    </span>
+                                                    <span className="text-gray-500">
+                                                        {' '}
+                                                        or drag and drop
+                                                    </span>
+                                                </label>
+                                                <input
+                                                    id="file-upload"
+                                                    type="file"
+                                                    multiple
+                                                    className="hidden"
+                                                    onChange={handleFileChange}
+                                                    accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar"
+                                                />
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-2">
+                                                PDF, DOC, TXT, Images, ZIP up to
+                                                10MB each
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Selected Files List */}
+                                    {formData.attachments &&
+                                        formData.attachments.length > 0 && (
+                                            <div className="space-y-3">
+                                                <p className="text-sm font-medium text-gray-700">
+                                                    Selected Files (
+                                                    {
+                                                        formData.attachments
+                                                            .length
+                                                    }
+                                                    )
+                                                </p>
+                                                <div className="space-y-2 max-h-40 overflow-y-auto">
+                                                    {formData.attachments.map(
+                                                        (file, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                                                            >
+                                                                <div className="flex items-center space-x-3 flex-1 min-w-0">
+                                                                    <File className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                                                                    <div className="min-w-0 flex-1">
+                                                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                                                            {
+                                                                                file.name
+                                                                            }
+                                                                        </p>
+                                                                        <p className="text-xs text-gray-500">
+                                                                            {formatFileSize(
+                                                                                file.size
+                                                                            )}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        removeFile(
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                    className="p-1.5 text-gray-500 hover:text-red-500 transition-colors"
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </button>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                </div>
+                            </div>
+
+                            {/* Right Column - Details */}
+                            <div className="space-y-6">
                                 {/* Work Item Type */}
                                 <div className="space-y-2">
                                     <Label
@@ -389,89 +531,8 @@ export function CreateWorkItemModal({
                                     </Select>
                                 </div>
 
-                                {/* Summary */}
-                                <div className="space-y-2">
-                                    <Label
-                                        htmlFor="summary"
-                                        className="text-sm font-semibold text-gray-900"
-                                    >
-                                        Summary *
-                                    </Label>
-                                    <Input
-                                        id="summary"
-                                        value={formData.summary}
-                                        onChange={(e) =>
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                summary: e.target.value,
-                                            }))
-                                        }
-                                        placeholder="Enter a brief summary of the work item"
-                                        className="w-full text-gray-900 placeholder:text-gray-500"
-                                        required
-                                    />
-                                </div>
-
-                                {/* Description */}
-                                <div className="space-y-2">
-                                    <Label
-                                        htmlFor="description"
-                                        className="text-sm font-semibold text-gray-900"
-                                    >
-                                        Description
-                                    </Label>
-                                    <Textarea
-                                        id="description"
-                                        value={formData.description}
-                                        onChange={(e) =>
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                description: e.target.value,
-                                            }))
-                                        }
-                                        placeholder="Provide a detailed description of the work item"
-                                        className="min-h-[150px] text-gray-900 placeholder:text-gray-500 bg-white"
-                                        rows={6}
-                                    />
-                                </div>
-
                                 {/* Story Points */}
-                                {formData.type !== 'Epic' && (
-                                    <div className="space-y-2">
-                                        <Label
-                                            htmlFor="storyPoints"
-                                            className="text-sm font-semibold text-gray-900"
-                                        >
-                                            Story Points
-                                        </Label>
-                                        <Input
-                                            id="storyPoints"
-                                            type="number"
-                                            min={0}
-                                            max={100}
-                                            className="w-full text-gray-900"
-                                            value={formData.storyPoints || ''}
-                                            onChange={(e) => {
-                                                const value = e.target.value
-                                                    ? parseInt(e.target.value)
-                                                    : undefined;
-                                                setFormData((prev) => ({
-                                                    ...prev,
-                                                    storyPoints: value,
-                                                }));
-                                            }}
-                                            placeholder="Enter story points"
-                                        />
-                                        <p className="text-xs text-gray-500">
-                                            Optional: Estimate the complexity
-                                            (0-100)
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
 
-                            {/* Right Column - Details */}
-                            <div className="space-y-6">
                                 {/* Status */}
                                 <div className="space-y-2">
                                     <Label
@@ -769,6 +830,39 @@ export function CreateWorkItemModal({
                                     </div>
                                 )}
 
+                                {formData.type !== 'Epic' && (
+                                    <div className="space-y-2">
+                                        <Label
+                                            htmlFor="storyPoints"
+                                            className="text-sm font-semibold text-gray-900"
+                                        >
+                                            Story Points
+                                        </Label>
+                                        <Input
+                                            id="storyPoints"
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            className="w-full text-gray-900"
+                                            value={formData.storyPoints || ''}
+                                            onChange={(e) => {
+                                                const value = e.target.value
+                                                    ? parseInt(e.target.value)
+                                                    : undefined;
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    storyPoints: value,
+                                                }));
+                                            }}
+                                            placeholder="Enter story points"
+                                        />
+                                        <p className="text-xs text-gray-500">
+                                            Optional: Estimate the complexity
+                                            (0-100)
+                                        </p>
+                                    </div>
+                                )}
+
                                 {/* Dates */}
                                 <div className="space-y-4">
                                     <div className="space-y-2">
@@ -915,93 +1009,6 @@ export function CreateWorkItemModal({
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Attachments Section */}
-                        <div className="space-y-4 border-t pt-6 mt-6">
-                            <Label
-                                htmlFor="attachments"
-                                className="text-sm font-medium text-gray-900"
-                            >
-                                Attachments
-                            </Label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-gray-400 transition-colors">
-                                <div className="text-center">
-                                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                                    <div className="mt-4">
-                                        <label
-                                            htmlFor="file-upload"
-                                            className="cursor-pointer"
-                                        >
-                                            <span className="text-blue-600 hover:text-blue-500 font-medium">
-                                                Choose files
-                                            </span>
-                                            <span className="text-gray-500">
-                                                {' '}
-                                                or drag and drop
-                                            </span>
-                                        </label>
-                                        <input
-                                            id="file-upload"
-                                            type="file"
-                                            multiple
-                                            className="hidden"
-                                            onChange={handleFileChange}
-                                            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar"
-                                        />
-                                    </div>
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        PDF, DOC, TXT, Images, ZIP up to 10MB
-                                        each
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Selected Files List */}
-                            {formData.attachments &&
-                                formData.attachments.length > 0 && (
-                                    <div className="space-y-3">
-                                        <p className="text-sm font-medium text-gray-700">
-                                            Selected Files (
-                                            {formData.attachments.length})
-                                        </p>
-                                        <div className="space-y-2 max-h-40 overflow-y-auto">
-                                            {formData.attachments.map(
-                                                (file, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
-                                                    >
-                                                        <div className="flex items-center space-x-3 flex-1 min-w-0">
-                                                            <File className="h-5 w-5 text-gray-400 flex-shrink-0" />
-                                                            <div className="min-w-0 flex-1">
-                                                                <p className="text-sm font-medium text-gray-900 truncate">
-                                                                    {file.name}
-                                                                </p>
-                                                                <p className="text-xs text-gray-500">
-                                                                    {formatFileSize(
-                                                                        file.size
-                                                                    )}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                removeFile(
-                                                                    index
-                                                                )
-                                                            }
-                                                            className="p-1.5 text-gray-500 hover:text-red-500 transition-colors"
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </button>
-                                                    </div>
-                                                )
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
                         </div>
 
                         {/* Actions */}

@@ -250,16 +250,28 @@ export default function TemplatePreviewModal({
                                 value={
                                     projectStartDateTime
                                         ? (() => {
-                                              const date = new Date(projectStartDateTime);
-                                              const offset = date.getTimezoneOffset();
-                                              const localDate = new Date(date.getTime() - offset * 60 * 1000);
-                                              return localDate.toISOString().slice(0, 16);
+                                              const date = new Date(
+                                                  projectStartDateTime
+                                              );
+                                              const offset =
+                                                  date.getTimezoneOffset();
+                                              const localDate = new Date(
+                                                  date.getTime() -
+                                                      offset * 60 * 1000
+                                              );
+                                              return localDate
+                                                  .toISOString()
+                                                  .slice(0, 16);
                                           })()
                                         : ''
                                 }
-                                onChange={e => {
+                                onChange={(e) => {
                                     const value = e.target.value;
-                                    setProjectStartDateTime(value ? new Date(value).toISOString() : '');
+                                    setProjectStartDateTime(
+                                        value
+                                            ? new Date(value).toISOString()
+                                            : ''
+                                    );
                                 }}
                                 className="text-gray-700 mt-2"
                             />

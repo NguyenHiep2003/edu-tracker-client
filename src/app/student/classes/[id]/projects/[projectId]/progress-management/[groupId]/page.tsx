@@ -1050,8 +1050,9 @@ export default function ProgressManagement() {
                     selectedSprintToComplete.id,
                     data.moveToSprintId
                 );
+            } else {
+                await completeSprint(selectedSprintToComplete.id);
             }
-
             toast.success('Sprint completed successfully');
 
             // Reset modal state first
@@ -1302,6 +1303,16 @@ export default function ProgressManagement() {
                         </div> */}
                     </div>
                 </div>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                        setShowCreateModal(true);
+                    }}
+                >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Create work item
+                </Button>
             </div>
 
             {/* Search and Filters
