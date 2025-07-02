@@ -658,7 +658,7 @@ export function CreateGradeModal({
                                                                 />
                                                                 <Label
                                                                     htmlFor={`grade-${grade.id}`}
-                                                                    className="text-sm text-gray-900"
+                                                                    className="text-sm text-gray-900 min-w-[160px]"
                                                                 >
                                                                     {
                                                                         grade.title
@@ -667,7 +667,7 @@ export function CreateGradeModal({
                                                             </div>
                                                             {isSelected && (
                                                                 <div className="flex items-center gap-2">
-                                                                    <span className="text-xs text-gray-600 min-w-[40px]">
+                                                                    <span className="text-xs text-gray-600 min-w-[70px]">
                                                                         Trọng số:
                                                                     </span>
                                                                     <div className="flex items-center border rounded">
@@ -765,7 +765,7 @@ export function CreateGradeModal({
                                                                             step={
                                                                                 1
                                                                             }
-                                                                            className="w-12 h-8 text-sm text-center border-0 focus:ring-0"
+                                                                            className="w-12 h-8 text-sm text-center border-0 focus:ring-0 text-gray-900"
                                                                         />
                                                                         <button
                                                                             type="button"

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
@@ -26,6 +25,9 @@ import {
 import { toast } from 'react-toastify';
 import { getGradeDetail } from '@/services/api/grades';
 import { GradeType, GradeVisibility } from '@/services/api/grades/type';
+import { mapGradeType } from '@/helper/map-grade-type';
+import { formatDate } from '@/helper/date-formatter';
+import { mapGradeVisibility } from '@/helper/map-grade-visibility';
 
 interface Student {
     id: number;
@@ -183,11 +185,11 @@ export default function GradeDetailPage() {
                 <div className="text-center py-12">
                     <GraduationCap className="mx-auto h-12 w-12 text-gray-400" />
                     <h3 className="mt-2 text-sm font-semibold text-gray-900">
-                        Grade not found
+                        Điểm đánh giá không tồn tại
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
-                        The grade you&apos;re looking for doesn&apos;t exist or
-                        you don&apos;t have permission to view it.
+                        Điểm đánh giá không tồn tại hoặc bạn không có quyền
+                        xem nó.
                     </p>
                 </div>
             </div>
@@ -209,7 +211,7 @@ export default function GradeDetailPage() {
                             >
                                 <span className="flex items-center gap-1">
                                     {getTypeIcon(gradeDetail.type)}
-                                    {gradeDetail.type}
+                                    {mapGradeType(gradeDetail.type)}
                                 </span>
                             </Badge>
                         </div>
@@ -219,7 +221,7 @@ export default function GradeDetailPage() {
                         {gradeDetail.description && (
                             <div>
                                 <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                    Description
+                                    Mô tả
                                 </h3>
                                 <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
                                     {gradeDetail.description}
@@ -232,8 +234,8 @@ export default function GradeDetailPage() {
                             <div>
                                 <h3 className="text-sm font-medium text-gray-700 mb-2">
                                     {gradeDetail.project
-                                        ? 'Linked Project'
-                                        : 'Linked Work Item'}
+                                        ? 'Dự án liên kết'
+                                        : 'Công việc liên kết'}
                                 </h3>
                                 <div
                                     onClick={() => {
@@ -264,7 +266,7 @@ export default function GradeDetailPage() {
                                                 <div className="mt-2 space-y-1">
                                                     <p className="text-sm text-indigo-700 group-hover:text-indigo-600">
                                                         <span className="font-medium">
-                                                            Key:
+                                                            Mã:
                                                         </span>{' '}
                                                         {
                                                             gradeDetail.project
@@ -273,29 +275,25 @@ export default function GradeDetailPage() {
                                                     </p>
                                                     <p className="text-sm text-indigo-700 group-hover:text-indigo-600">
                                                         <span className="font-medium">
-                                                            Type:
+                                                            Loại:
                                                         </span>{' '}
                                                         {
                                                             gradeDetail.project
-                                                                .type
+                                                                .type === 'TEAM' ? 'Dự án nhóm' : 'Dự án cá nhân'
                                                         }
                                                     </p>
                                                     <p className="text-sm text-indigo-700 group-hover:text-indigo-600">
                                                         <span className="font-medium">
-                                                            Duration:
+                                                            Thời gian:
                                                         </span>{' '}
-                                                        {format(
-                                                            new Date(
-                                                                gradeDetail.project.startDate
-                                                            ),
-                                                            'MMM d, yyyy'
+                                                        {formatDate(
+                                                            gradeDetail.project.startDate,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}{' '}
                                                         -{' '}
-                                                        {format(
-                                                            new Date(
-                                                                gradeDetail.project.endDate
-                                                            ),
-                                                            'MMM d, yyyy'
+                                                        {formatDate(
+                                                            gradeDetail.project.endDate,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </p>
                                                     {gradeDetail.project
@@ -331,7 +329,7 @@ export default function GradeDetailPage() {
                                 <div className="flex items-center gap-2 mb-1">
                                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                     <span className="text-sm font-medium text-blue-900">
-                                        Max Score
+                                        Điểm tối đa
                                     </span>
                                 </div>
                                 <p className="text-2xl font-bold text-blue-900">
@@ -343,7 +341,7 @@ export default function GradeDetailPage() {
                                 <div className="flex items-center gap-2 mb-1">
                                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                                     <span className="text-sm font-medium text-purple-900">
-                                        Scale
+                                        Số chữ số sau dấu phẩy
                                     </span>
                                 </div>
                                 <p className="text-2xl font-bold text-purple-900">
@@ -359,11 +357,11 @@ export default function GradeDetailPage() {
                                 <div className="flex items-center gap-2 mb-1">
                                     {getVisibilityIcon(gradeDetail.visibility)}
                                     <span className="text-sm font-medium">
-                                        Visibility
+                                        Chế độ hiển thị
                                     </span>
                                 </div>
                                 <p className="text-2xl font-bold">
-                                    {gradeDetail.visibility}
+                                    {mapGradeVisibility(gradeDetail.visibility)}
                                 </p>
                             </div>
 
@@ -371,14 +369,11 @@ export default function GradeDetailPage() {
                                 <div className="flex items-center gap-2 mb-1">
                                     <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                                     <span className="text-sm font-medium text-gray-700">
-                                        Created
+                                        Ngày tạo
                                     </span>
                                 </div>
                                 <p className="text-lg font-semibold text-gray-900">
-                                    {format(
-                                        new Date(gradeDetail.createdAt),
-                                        'MMM d, yyyy'
-                                    )}
+                                    {formatDate(gradeDetail.createdAt, 'dd/MM/yyyy')}
                                 </p>
                             </div>
                         </div>
@@ -389,16 +384,16 @@ export default function GradeDetailPage() {
             <Card className="p-6">
                 <div className="space-y-4">
                     <h2 className="text-lg font-semibold text-gray-900">
-                        Student Grades
+                        Điểm của sinh viên
                     </h2>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Student ID</TableHead>
-                                <TableHead>Name</TableHead>
+                                <TableHead>Mã sinh viên</TableHead>
+                                <TableHead>Tên sinh viên</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead className="text-right">
-                                    Grade
+                                    Điểm
                                 </TableHead>
                                 <TableHead className="w-24"></TableHead>
                             </TableRow>

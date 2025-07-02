@@ -44,6 +44,8 @@ import {
 } from '@/services/api/grades';
 import { GradeType, GradeVisibility } from '@/services/api/grades/type';
 import { formatDate } from '@/helper/date-formatter';
+import { mapGradeType } from '@/helper/map-grade-type';
+import { mapGradeVisibility } from '@/helper/map-grade-visibility';
 
 interface Student {
     id: number;
@@ -392,7 +394,7 @@ export default function GradeDetailPage() {
                                     >
                                         <span className="flex items-center gap-1">
                                             {getTypeIcon(gradeDetail.type)}
-                                            {gradeDetail.type}
+                                            {mapGradeType(gradeDetail.type)}
                                         </span>
                                     </Badge>
                                 </>
@@ -782,7 +784,7 @@ export default function GradeDetailPage() {
                                         </span>
                                     </div>
                                     <p className="text-2xl font-bold">
-                                        {gradeDetail.visibility}
+                                        {mapGradeVisibility(gradeDetail.visibility)}
                                     </p>
                                 </div>
 

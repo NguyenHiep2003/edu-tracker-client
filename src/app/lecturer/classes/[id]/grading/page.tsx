@@ -25,6 +25,8 @@ import { getGrades } from '@/services/api/grades';
 import { CreateGradeModal } from '@/components/create-grade-modal';
 import { GradeType, GradeVisibility } from '@/services/api/grades/type';
 import { formatDate } from '@/helper/date-formatter';
+import { mapGradeType } from '@/helper/map-grade-type';
+import { mapGradeVisibility } from '@/helper/map-grade-visibility';
 
 
 interface Grade {
@@ -196,7 +198,7 @@ export default function GradingPage() {
                                     >
                                         <span className="flex items-center gap-1">
                                             {getTypeIcon(grade.type)}
-                                            {grade.type}
+                                            {mapGradeType(grade.type)}
                                         </span>
                                     </Badge>
                                     <Badge
@@ -209,7 +211,7 @@ export default function GradingPage() {
                                             {getVisibilityIcon(
                                                 grade.visibility
                                             )}
-                                            {grade.visibility}
+                                            {mapGradeVisibility(grade.visibility)}
                                         </span>
                                     </Badge>
                                     <span>•</span>

@@ -12,7 +12,6 @@ import {
     Lock,
     Settings2,
 } from 'lucide-react';
-import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +22,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { getGrades } from '@/services/api/grades';
 import { GradeType, GradeVisibility } from '@/services/api/grades/type';
+import { mapGradeType } from '@/helper/map-grade-type';
+import { mapGradeVisibility } from '@/helper/map-grade-visibility';
+import { formatDate } from '@/helper/date-formatter';
 
 
 interface Grade {
@@ -135,7 +137,7 @@ export default function GradingPage() {
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold text-gray-900">
-                    Grading Components
+                    Các điểm đánh giá
                 </h1>
             </div>
 
@@ -172,7 +174,7 @@ export default function GradingPage() {
                                     >
                                         <span className="flex items-center gap-1">
                                             {getTypeIcon(grade.type)}
-                                            {grade.type}
+                                            {mapGradeType(grade.type)}
                                         </span>
                                     </Badge>
                                     <Badge
@@ -185,18 +187,15 @@ export default function GradingPage() {
                                             {getVisibilityIcon(
                                                 grade.visibility
                                             )}
-                                            {grade.visibility}
+                                            {mapGradeVisibility(grade.visibility)}
                                         </span>
                                     </Badge>
                                     <span>•</span>
-                                    <span>Max Score: {grade.maxScore}</span>
+                                    <span>Điểm tối đa: {grade.maxScore}</span>
                                     <span>•</span>
                                     <span>
-                                        Created:{' '}
-                                        {format(
-                                            new Date(grade.createdAt),
-                                            'MMM d, yyyy'
-                                        )}
+                                        Ngày tạo:{' '}
+                                        {formatDate(grade.createdAt, 'dd/MM/yyyy')}
                                     </span>
                                 </div>
                                 {grade.description && (
@@ -210,7 +209,7 @@ export default function GradingPage() {
                                     <Button variant="ghost" size="sm">
                                         <Settings2 className="h-4 w-4" />
                                         <span className="sr-only">
-                                            Open menu
+                                            Mở menu
                                         </span>
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -222,7 +221,7 @@ export default function GradingPage() {
                                             )
                                         }
                                     >
-                                        View Grades
+                                        Xem điểm
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -234,7 +233,7 @@ export default function GradingPage() {
                     <div className="text-center py-12">
                         <GraduationCap className="mx-auto h-12 w-12 text-gray-400" />
                         <h3 className="mt-2 text-sm font-semibold text-gray-900">
-                            No grade components
+                            Không có điểm đánh giá
                         </h3>
                     </div>
                 )}
