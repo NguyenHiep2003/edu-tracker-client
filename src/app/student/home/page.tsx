@@ -232,7 +232,7 @@ export default function StudentHomePage() {
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                             <GraduationCap className="h-8 w-8 text-green-600" />
-                            My Classes
+                            Lớp học của tôi
                         </h1>
                         <p className="text-gray-600 mt-2">
                             {selectedSemester
