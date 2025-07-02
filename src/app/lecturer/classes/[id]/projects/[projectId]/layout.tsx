@@ -18,27 +18,27 @@ import { cn } from '@/lib/utils';
 
 const tabs = [
     {
-        name: 'Project Information',
+        name: 'Thông tin dự án',
         href: '',
         icon: Info,
     },
     {
-        name: 'Students',
+        name: 'Sinh viên',
         href: '/students',
         icon: Users,
     },
     {
-        name: 'Groups',
+        name: 'Nhóm',
         href: '/groups',
         icon: UsersIcon,
     },
     {
-        name: 'Topics',
+        name: 'Chủ đề',
         href: '/topics',
         icon: BookOpen,
     },
     {
-        name: 'Tasks',
+        name: 'Công việc',
         href: '/tasks',
         icon: CheckSquare,
     },
@@ -65,19 +65,18 @@ function ProjectHeader() {
                             </h1>
                         </div>
                         <p className="text-gray-600 mt-1">
-                            {projectData?.description ??
-                                'No description provided •'}{' '}
+                           
                             {projectData?.startDate
                                 ? formatDate(
                                       projectData?.startDate,
-                                      "MMMM dd, yyyy 'at' HH:mm"
+                                      "dd/MM/yyyy HH:mm"
                                   )
                                 : '-'}{' '}
                             -{' '}
                             {projectData?.endDate
                                 ? formatDate(
                                       projectData?.endDate,
-                                      "MMMM dd, yyyy 'at' HH:mm"
+                                      "dd/MM/yyyy HH:mm"
                                   )
                                 : '-'}
                         </p>
@@ -105,13 +104,13 @@ export default function ProjectLayout({
     const getCurrentTab = () => {
         const basePath = `/lecturer/classes/${classId}/projects/${projectId}`;
 
-        if (pathname === basePath) return 'Project Information';
-        if (pathname.includes('/students')) return 'Students';
-        if (pathname.includes('/groups')) return 'Groups';
-        if (pathname.includes('/topics')) return 'Topics';
-        if (pathname.includes('/tasks')) return 'Tasks';
+        if (pathname === basePath) return 'Thông tin dự án';
+        if (pathname.includes('/students')) return 'Sinh viên';
+        if (pathname.includes('/groups')) return 'Nhóm';
+        if (pathname.includes('/topics')) return 'Chủ đề';
+        if (pathname.includes('/tasks')) return 'Công việc';
 
-        return 'Project Information'; // Default fallback
+        return 'Thông tin dự án'; // Default fallback
     };
 
     const currentTab = getCurrentTab();

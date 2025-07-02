@@ -14,13 +14,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
     Download,
     Upload,
     Search,
@@ -49,6 +42,8 @@ import { UserRole } from '@/hooks/use-auth-protection';
 import { getAuthData } from '@/services/local-storage/auth';
 import { useOrganization } from '@/context/organization-context';
 import { toast } from 'react-toastify';
+import useDebounce from '@/hooks/use-debounce';
+import ReactSelect from 'react-select';
 
 interface UserListResponse {
     total: number;
@@ -74,7 +69,7 @@ function HelpModal({
             <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 p-6">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
-                        Import/Export Guide
+                        Hướng dẫn nhập/xuất dữ liệu bằng file Excel
                     </h3>
                     <button
                         onClick={onClose}
@@ -87,70 +82,70 @@ function HelpModal({
                 <div className="space-y-4 text-sm text-gray-600">
                     <div>
                         <h4 className="font-medium text-gray-900 mb-2">
-                            How to Import Users:
+                            Cách nhập dữ liệu:
                         </h4>
                         <ol className="list-decimal list-inside space-y-1">
                             <li>
-                                Download the template file by clicking
-                                &quot;Download Template&quot;
+                                Tải file template bằng cách nhấn vào nút
+                                &quot;Tải template&quot;
                             </li>
                             <li>
-                                Fill in the required fields: EMAIL, NAME
-                                (optional, if not provided we will use name
-                                return by auth provider when user login), ID
-                                (optional),
+                                Điền các trường bắt buộc: EMAIL, ID, NAME (tùy
+                                chọn, nếu bỏ trống thì hệ thống sẽ sử dụng tên
+                                trả về bởi nhà cung cấp xác thực khi người dùng
+                                đăng nhập)
                             </li>
-                            <li>Save the file as CSV or Excel format</li>
-                            <li>Use the import button to upload your file</li>
-                            <li>Check the Import Log for processing status</li>
+                            <li>Lưu file dưới dạng Excel</li>
+                            <li>Sử dụng nút nhập từ Excel để tải lên file</li>
+                            <li>
+                                Kiểm tra log nhập file để xem trạng thái xử lý
+                            </li>
                         </ol>
                     </div>
 
                     <div>
                         <h4 className="font-medium text-gray-900 mb-2">
-                            Template Fields:
+                            Các trường trong file template:
                         </h4>
                         <ul className="list-disc list-inside space-y-1">
                             <li>
-                                <strong>NAME:</strong> Full name of the user
-                                (optional)
+                                <strong>NAME:</strong> Tên người dùng (tùy chọn)
                             </li>
                             <li>
-                                <strong>EMAIL:</strong> Valid email address use
-                                in your organization (required)
+                                <strong>EMAIL:</strong> Email của người dùng sử
+                                dụng trong tổ chức (bắt buộc)
                             </li>
                             <li>
-                                <strong>ID:</strong> User ID in your
-                                organization (optional)
+                                <strong>ID:</strong> ID của người dùng trong tổ
+                                chức (bắt buộc nếu người dùng có vai trò là sinh
+                                viên)
                             </li>
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="font-medium text-gray-900 mb-2">
-                            Export Options:
+                            Các tùy chọn xuất dữ liệu:
                         </h4>
                         <ul className="list-disc list-inside space-y-1">
                             <li>
-                                Export Students: Downloads all users with
-                                STUDENT role
+                                Tải về danh sách sinh viên: Xuất ra file Excel
+                                chứa tất cả người dùng có vai trò &quot;Sinh
+                                viên&quot;
                             </li>
                             <li>
-                                Export Lecturers: Downloads all users with
-                                LECTURER role
-                            </li>
-                            <li>
-                                Files are exported in Excel format for easy
-                                editing
+                                Tải về danh sách giảng viên: Xuất ra file Excel
+                                chứa tất cả người dùng có vai trò &quot;Giảng
+                                viên&quot;
                             </li>
                         </ul>
                     </div>
 
                     <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
                         <p className="text-yellow-800">
-                            <strong>Note:</strong> Large imports may take some
-                            time to process. Check the Import Log page for
-                            detailed status and error reports.
+                            <strong>Lưu ý:</strong> Nhập file lớn có thể mất
+                            nhiều thời gian để xử lý. Kiểm tra log nhập file để
+                            xem trạng thái và báo cáo lỗi chi tiết.
                         </p>
                     </div>
                 </div>
@@ -181,6 +176,17 @@ function UpdateUserModal({
         externalId: '',
         roles: [] as UserRole[],
     });
+
+    // Function to get Vietnamese label for role
+    const getRoleLabel = (role: UserRole): string => {
+        const roleLabels: Record<UserRole, string> = {
+            [UserRole.STUDENT]: 'Sinh viên',
+            [UserRole.LECTURER]: 'Giảng viên',
+            [UserRole.ADMIN]: 'Quản trị viên',
+            [UserRole.SUPER_ADMIN]: 'Quản trị viên cấp cao',
+        };
+        return roleLabels[role] || role;
+    };
 
     useEffect(() => {
         if (user) {
@@ -231,7 +237,7 @@ function UpdateUserModal({
             <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
-                        Update User
+                        Cập nhật người dùng
                     </h3>
                     <button
                         onClick={onClose}
@@ -244,7 +250,7 @@ function UpdateUserModal({
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <Label htmlFor="name" className="text-gray-900">
-                            Full Name
+                            Tên người dùng
                         </Label>
                         <Input
                             className="text-gray-700"
@@ -256,13 +262,13 @@ function UpdateUserModal({
                                     name: e.target.value,
                                 })
                             }
-                            placeholder="Enter user's full name"
+                            placeholder="Nhập tên người dùng"
                         />
                     </div>
 
                     <div>
                         <Label htmlFor="externalId" className="text-gray-900">
-                            External ID
+                            ID người dùng
                         </Label>
                         <Input
                             className="text-gray-700"
@@ -274,16 +280,17 @@ function UpdateUserModal({
                                     externalId: e.target.value,
                                 })
                             }
-                            placeholder="Enter student/employee ID"
+                            placeholder="Nhập ID người dùng"
+                            required={formData.roles.includes(UserRole.STUDENT)}
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Optional - organization&apos;s internal user
-                            identifier
+                            Tùy chọn - ID người dùng trong tổ chức (bắt buộc nếu
+                            người dùng có vai trò là sinh viên)
                         </p>
                     </div>
 
                     <div>
-                        <Label>User Roles</Label>
+                        <Label>Vai trò người dùng</Label>
                         <div className="space-y-2 mt-2">
                             {availableRoles.map((role) => (
                                 <label
@@ -297,14 +304,15 @@ function UpdateUserModal({
                                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                     />
                                     <span className="text-sm text-gray-700">
-                                        {role.replace('_', ' ')}
+                                        {getRoleLabel(role)}
                                     </span>
                                 </label>
                             ))}
                         </div>
                         <p className="text-xs text-gray-500 mt-1">
-                            Required - select at least one role, student and
-                            lecturer roles are mutually exclusive
+                            Bắt buộc - cần chọn ít nhất một vai trò, vai trò
+                            sinh viên và giảng viên không thể cùng sử dụng cho
+                            người dùng
                         </p>
                     </div>
 
@@ -314,7 +322,7 @@ function UpdateUserModal({
                             className="flex-1"
                             disabled={formData.roles.length === 0}
                         >
-                            Update User
+                            Cập nhật người dùng
                         </Button>
                         <Button
                             type="button"
@@ -322,7 +330,7 @@ function UpdateUserModal({
                             onClick={onClose}
                             className="flex-1"
                         >
-                            Cancel
+                            Hủy
                         </Button>
                     </div>
                 </form>
@@ -354,6 +362,17 @@ function AddUserModal({
         externalId: '',
         roles: [] as UserRole[],
     });
+
+    // Function to get Vietnamese label for role
+    const getRoleLabel = (role: UserRole): string => {
+        const roleLabels: Record<UserRole, string> = {
+            [UserRole.STUDENT]: 'Sinh viên',
+            [UserRole.LECTURER]: 'Giảng viên',
+            [UserRole.ADMIN]: 'Quản trị viên',
+            [UserRole.SUPER_ADMIN]: 'Quản trị viên cấp cao',
+        };
+        return roleLabels[role] || role;
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -399,7 +418,7 @@ function AddUserModal({
             <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
-                        Add New User
+                        Thêm người dùng mới
                     </h3>
                     <button
                         onClick={onClose}
@@ -412,7 +431,7 @@ function AddUserModal({
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
                         <Label htmlFor="add-name" className="text-gray-900">
-                            Full Name
+                            Tên người dùng
                         </Label>
                         <Input
                             className="text-gray-700"
@@ -424,17 +443,17 @@ function AddUserModal({
                                     name: e.target.value,
                                 })
                             }
-                            placeholder="Enter user's full name"
+                            placeholder="Nhập tên người dùng"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Optional - will use name provided by auth provider
-                            when user login if left empty
+                            Tùy chọn - sẽ sử dụng tên được cung cấp bởi nhà cung
+                            cấp xác thực khi người dùng đăng nhập nếu bỏ trống
                         </p>
                     </div>
 
                     <div>
                         <Label htmlFor="add-email" className="text-gray-900">
-                            Email Address *
+                            Email người dùng *
                         </Label>
                         <Input
                             className="text-gray-700"
@@ -451,7 +470,8 @@ function AddUserModal({
                             required
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Required - must be a valid email address
+                            Bắt buộc - phải là một địa chỉ email hợp lệ và phải
+                            thuộc tổ chức
                         </p>
                     </div>
 
@@ -460,7 +480,7 @@ function AddUserModal({
                             htmlFor="add-externalId"
                             className="text-gray-900"
                         >
-                            External ID
+                            ID người dùng
                         </Label>
                         <Input
                             className="text-gray-700"
@@ -472,17 +492,19 @@ function AddUserModal({
                                     externalId: e.target.value,
                                 })
                             }
-                            placeholder="Enter student/employee ID"
+                            placeholder="Nhập ID người dùng"
                             required
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                            Required - organization&apos;s internal user
-                            identifier
+                            Bắt buộc - ID người dùng trong tổ chức (bắt buộc nếu
+                            người dùng có vai trò là sinh viên)
                         </p>
                     </div>
 
                     <div>
-                        <Label className="text-gray-900">User Roles *</Label>
+                        <Label className="text-gray-900">
+                            Vai trò người dùng *
+                        </Label>
                         <div className="space-y-2 mt-2">
                             {availableRoles.map((role) => (
                                 <label
@@ -496,14 +518,15 @@ function AddUserModal({
                                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                     />
                                     <span className="text-sm text-gray-700">
-                                        {role.replace('_', ' ')}
+                                        {getRoleLabel(role)}
                                     </span>
                                 </label>
                             ))}
                         </div>
                         <p className="text-xs text-gray-500 mt-1">
-                            Required - select at least one role, student and
-                            lecturer roles are mutually exclusive
+                            Bắt buộc - cần chọn ít nhất một vai trò, vai trò
+                            sinh viên và giảng viên không thể cùng sử dụng cho
+                            người dùng
                         </p>
                     </div>
 
@@ -515,7 +538,7 @@ function AddUserModal({
                                 !formData.email || formData.roles.length === 0
                             }
                         >
-                            Add User
+                            Thêm người dùng
                         </Button>
                         <Button
                             type="button"
@@ -523,7 +546,7 @@ function AddUserModal({
                             onClick={onClose}
                             className="flex-1"
                         >
-                            Cancel
+                            Hủy
                         </Button>
                     </div>
                 </form>
@@ -531,6 +554,7 @@ function AddUserModal({
         </div>
     );
 }
+
 // Delete Confirmation Modal Component
 function DeleteConfirmationModal({
     isOpen,
@@ -543,6 +567,17 @@ function DeleteConfirmationModal({
     onConfirm: () => void;
     user: IUser | null;
 }) {
+    // Function to get Vietnamese label for role
+    const getRoleLabel = (role: UserRole): string => {
+        const roleLabels: Record<UserRole, string> = {
+            [UserRole.STUDENT]: 'Sinh viên',
+            [UserRole.LECTURER]: 'Giảng viên',
+            [UserRole.ADMIN]: 'Quản trị viên',
+            [UserRole.SUPER_ADMIN]: 'Quản trị viên cấp cao',
+        };
+        return roleLabels[role] || role;
+    };
+
     if (!isOpen || !user) return null;
 
     return (
@@ -554,7 +589,7 @@ function DeleteConfirmationModal({
             <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold text-gray-900">
-                        Confirm Delete User
+                        Xác nhận xóa người dùng
                     </h3>
                     <button
                         onClick={onClose}
@@ -566,26 +601,26 @@ function DeleteConfirmationModal({
 
                 <div className="mb-6">
                     <p className="text-gray-600 mb-4">
-                        Are you sure you want to delete this user? This action
-                        cannot be undone.
+                        Bạn có chắc chắn muốn xóa người dùng này không? Hành
+                        động này không thể được hoàn tác.
                     </p>
 
                     <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                         <div className="flex justify-between">
                             <span className="font-medium text-gray-700">
-                                Name:
+                                Tên người dùng:
                             </span>
                             <span className="text-gray-900">{user.name}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium text-gray-700">
-                                Email:
+                                Email người dùng:
                             </span>
                             <span className="text-gray-900">{user.email}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium text-gray-700">
-                                Roles:
+                                Vai trò người dùng:
                             </span>
                             <div className="flex flex-wrap gap-1">
                                 {user.roles.map((role) => (
@@ -593,7 +628,7 @@ function DeleteConfirmationModal({
                                         key={role}
                                         className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-800"
                                     >
-                                        {role.replace('_', ' ')}
+                                        {getRoleLabel(role)}
                                     </span>
                                 ))}
                             </div>
@@ -606,7 +641,7 @@ function DeleteConfirmationModal({
                         onClick={onConfirm}
                         className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                     >
-                        Delete User
+                        Xóa người dùng
                     </Button>
                     <Button
                         type="button"
@@ -614,7 +649,7 @@ function DeleteConfirmationModal({
                         onClick={onClose}
                         className="flex-1"
                     >
-                        Cancel
+                        Hủy
                     </Button>
                 </div>
             </div>
@@ -648,31 +683,58 @@ export default function UserManagementPage() {
     const [isImportingStudent, setIsImportingStudent] = useState(false);
     const [isImportingLecturer, setIsImportingLecturer] = useState(false);
 
-    // Fetch users with API call and pagination
+    // Debounced search filters
+    const debouncedNameFilter = useDebounce(nameFilter, 500);
+    const debouncedEmailFilter = useDebounce(emailFilter, 500);
+    const debouncedExternalIdFilter = useDebounce(externalIdFilter, 500);
+
+    // Role options for react-select
+    const roleOptions = [
+        { value: '', label: 'Tất cả vai trò' },
+        { value: UserRole.SUPER_ADMIN, label: 'Quản trị viên cấp cao' },
+        { value: UserRole.ADMIN, label: 'Quản trị viên' },
+        { value: UserRole.LECTURER, label: 'Giảng viên' },
+        { value: UserRole.STUDENT, label: 'Sinh viên' },
+    ];
+
+    // Function to get Vietnamese label for role
+    const getRoleLabel = (role: UserRole): string => {
+        const roleLabels: Record<UserRole, string> = {
+            [UserRole.STUDENT]: 'Sinh viên',
+            [UserRole.LECTURER]: 'Giảng viên',
+            [UserRole.ADMIN]: 'Quản trị viên',
+            [UserRole.SUPER_ADMIN]: 'Quản trị viên cấp cao',
+        };
+        return roleLabels[role] || role;
+    };
+
     useEffect(() => {
         const fetchUsers = async () => {
             if (!organization) return;
 
             try {
                 setLoading(true);
+                const filters = {
+                    role: roleFilter ? (roleFilter as UserRole) : undefined,
+                    externalId: debouncedExternalIdFilter
+                        ? Number(debouncedExternalIdFilter)
+                        : undefined,
+                    email: debouncedEmailFilter,
+                    name: debouncedNameFilter,
+                };
+                console.log('🚀 ~ fetchUsers ~ filters:', filters);
+
                 const response = await getUsersInOrganization(
                     organization.id,
-                    {
-                        role: roleFilter as UserRole,
-                        externalId: externalIdFilter
-                            ? Number(externalIdFilter)
-                            : undefined,
-                        email: emailFilter,
-                        name: nameFilter,
-                    },
+                    filters,
                     currentPage,
                     itemsPerPage
                 );
                 setUsers(response.data);
                 setTotalUsers(response.total);
             } catch (error) {
-                console.error('Error fetching users:', error);
-                toast.error('Failed to load users');
+                console.log('🚀 ~ fetchUsers ~ error:', error);
+                toast.error('Đã xảy ra lỗi khi tải danh sách người dùng');
             } finally {
                 setLoading(false);
             }
@@ -680,9 +742,9 @@ export default function UserManagementPage() {
 
         fetchUsers();
     }, [
-        nameFilter,
-        emailFilter,
-        externalIdFilter,
+        debouncedNameFilter,
+        debouncedEmailFilter,
+        debouncedExternalIdFilter,
         roleFilter,
         currentPage,
         itemsPerPage,
@@ -711,20 +773,22 @@ export default function UserManagementPage() {
 
     const handleImportStudent = async (type: 'student') => {
         if (!selectedImportStudentFile) {
-            toast.error('Please select a file first');
+            toast.error('Vui lòng chọn file của bạn');
             return;
         }
         setIsImportingStudent(true);
         try {
             await importStudent(selectedImportStudentFile);
             toast.success(
-                `Importing ${type}s from ${selectedImportStudentFile.name}. View import log to check progress!`
+                `Đang nhập sinh viên từ ${selectedImportStudentFile.name}. Kiểm tra log nhập để xem tiến trình!`
             );
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || `Failed to import ${type}s`);
+                toast.error(
+                    error.message || `Đã xảy ra lỗi khi nhập sinh viên`
+                );
             }
         } finally {
             setIsImportingStudent(false);
@@ -743,20 +807,22 @@ export default function UserManagementPage() {
 
     const handleImportLecturer = async (type: 'lecturer') => {
         if (!selectedImportLecturerFile) {
-            toast.error('Please select a file first');
+            toast.error('Vui lòng chọn file của bạn');
             return;
         }
         setIsImportingLecturer(true);
         try {
             await importLecturer(selectedImportLecturerFile);
             toast.success(
-                `Importing ${type}s from ${selectedImportLecturerFile.name}. View import log to check progress!`
+                `Đang nhập giảng viên từ ${selectedImportLecturerFile.name}. Kiểm tra log nhập để xem tiến trình!`
             );
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || `Failed to import ${type}s`);
+                toast.error(
+                    error.message || `Đã xảy ra lỗi khi nhập giảng viên`
+                );
             }
         } finally {
             setIsImportingLecturer(false);
@@ -777,7 +843,7 @@ export default function UserManagementPage() {
             downloadImportTemplate(type);
             // showToast('Template downloaded successfully', 'success');
         } catch (error) {
-            toast.error('Failed to download template');
+            toast.error('Đã xảy ra lỗi khi tải template');
         }
     };
 
@@ -788,11 +854,11 @@ export default function UserManagementPage() {
         try {
             await updateUser(id, updatedUser);
             setShouldRefresh((val) => !val);
-            toast.success('Updated user successfully');
+            toast.success('Cập nhật người dùng thành công');
         } catch (error: any) {
             console.log('🚀 ~ UserManagementPage ~ error:', error);
             if (Array.isArray(error?.message)) toast.error(error.message[0]);
-            toast.error(error?.message ?? 'Internal server error');
+            toast.error(error?.message ?? 'Lỗi hệ thống');
         }
     };
 
@@ -800,13 +866,13 @@ export default function UserManagementPage() {
         try {
             await deleteUser(userId);
             setShouldRefresh((val) => !val);
-            toast.success('Deleted user successfully');
+            toast.success('Xóa người dùng thành công');
             setShowDeleteModal(false);
             setUserToDelete(null);
         } catch (error: any) {
             console.log('🚀 ~ UserManagementPage ~ error:', error);
             if (Array.isArray(error?.message)) toast.error(error.message[0]);
-            toast.error(error?.message ?? 'Internal server error');
+            toast.error(error?.message ?? 'Lỗi hệ thống');
         }
     };
 
@@ -876,11 +942,11 @@ export default function UserManagementPage() {
         try {
             await addUserToOrganization(newUserData);
             setShouldRefresh((val) => !val);
-            toast.success('User added successfully');
+            toast.success('Thêm người dùng thành công');
         } catch (error: any) {
             console.log('🚀 ~ UserManagementPage ~ error:', error);
             if (Array.isArray(error?.message)) toast.error(error.message[0]);
-            toast.error(error?.message ?? 'Internal server error');
+            toast.error(error?.message ?? 'Lỗi hệ thống');
         }
     };
 
@@ -888,10 +954,10 @@ export default function UserManagementPage() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                    User Management
+                    Quản lý người dùng
                 </h1>
                 <p className="text-gray-600">
-                    Manage users in your organization
+                    Quản lý người dùng trong tổ chức của bạn
                 </p>
             </div>
 
@@ -902,9 +968,9 @@ export default function UserManagementPage() {
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle>Student Management</CardTitle>
+                                <CardTitle>Quản lý sinh viên</CardTitle>
                                 <CardDescription>
-                                    Import and export student data
+                                    Nhập và xuất dữ liệu sinh viên
                                 </CardDescription>
                             </div>
                             <Button
@@ -914,7 +980,7 @@ export default function UserManagementPage() {
                                 className="flex items-center gap-2"
                             >
                                 <HelpCircle className="h-4 w-4" />
-                                Help
+                                Hướng dẫn
                             </Button>
                         </div>
                     </CardHeader>
@@ -927,7 +993,7 @@ export default function UserManagementPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Download className="h-4 w-4" />
-                                    Download Template
+                                    Tải template
                                 </Button>
                                 <Button
                                     onClick={() => handleExportUsers('student')}
@@ -935,7 +1001,7 @@ export default function UserManagementPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Download className="h-4 w-4" />
-                                    Export Students
+                                    Tải xuống danh sách sinh viên
                                 </Button>
                             </div>
 
@@ -957,12 +1023,12 @@ export default function UserManagementPage() {
                                     {isImportingStudent ? (
                                         <>
                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                            Importing...
+                                            Đang nhập file...
                                         </>
                                     ) : (
                                         <>
                                             <Upload className="h-4 w-4" />
-                                            Import Students
+                                            Nhập file sinh viên
                                         </>
                                     )}
                                 </Button>
@@ -976,9 +1042,9 @@ export default function UserManagementPage() {
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle>Lecturer Management</CardTitle>
+                                <CardTitle>Quản lý giảng viên</CardTitle>
                                 <CardDescription>
-                                    Import and export lecturer data
+                                    Nhập và xuất dữ liệu giảng viên
                                 </CardDescription>
                             </div>
                             <Button
@@ -988,7 +1054,7 @@ export default function UserManagementPage() {
                                 className="flex items-center gap-2"
                             >
                                 <HelpCircle className="h-4 w-4" />
-                                Help
+                                Hướng dẫn
                             </Button>
                         </div>
                     </CardHeader>
@@ -1001,7 +1067,7 @@ export default function UserManagementPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Download className="h-4 w-4" />
-                                    Download Template
+                                    Tải template
                                 </Button>
                                 <Button
                                     onClick={() =>
@@ -1011,7 +1077,7 @@ export default function UserManagementPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Download className="h-4 w-4" />
-                                    Export Lecturers
+                                    Tải xuống danh sách giảng viên
                                 </Button>
                             </div>
 
@@ -1032,12 +1098,12 @@ export default function UserManagementPage() {
                                     {isImportingLecturer ? (
                                         <>
                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                            Importing...
+                                            Đang nhập file...
                                         </>
                                     ) : (
                                         <>
                                             <Upload className="h-4 w-4" />
-                                            Import Lecturers
+                                            Nhập file giảng viên
                                         </>
                                     )}
                                 </Button>
@@ -1052,9 +1118,9 @@ export default function UserManagementPage() {
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div>
-                            <CardTitle>User List</CardTitle>
+                            <CardTitle>Danh sách người dùng</CardTitle>
                             <CardDescription>
-                                Filter and manage existing users
+                                Lọc và quản lý người dùng hiện có
                             </CardDescription>
                         </div>
                         <Button
@@ -1062,19 +1128,21 @@ export default function UserManagementPage() {
                             className="flex items-center gap-2"
                         >
                             <Users className="h-4 w-4" />
-                            Add User
+                            Thêm người dùng
                         </Button>
                     </div>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                         <div>
-                            <Label htmlFor="search-name">Search by Name</Label>
+                            <Label htmlFor="search-name">
+                                Tìm kiếm theo tên
+                            </Label>
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <Input
                                     id="search-name"
-                                    placeholder="Enter name..."
+                                    placeholder="Nhập tên..."
                                     value={nameFilter}
                                     onChange={(e) =>
                                         setNameFilter(e.target.value)
@@ -1086,13 +1154,13 @@ export default function UserManagementPage() {
 
                         <div>
                             <Label htmlFor="search-email">
-                                Search by Email
+                                Tìm kiếm theo email
                             </Label>
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <Input
                                     id="search-email"
-                                    placeholder="Enter email..."
+                                    placeholder="Nhập email..."
                                     value={emailFilter}
                                     onChange={(e) =>
                                         setEmailFilter(e.target.value)
@@ -1104,13 +1172,13 @@ export default function UserManagementPage() {
 
                         <div>
                             <Label htmlFor="search-external">
-                                Search by External ID
+                                Tìm kiếm theo ID người dùng
                             </Label>
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <Input
                                     id="search-external"
-                                    placeholder="Enter external ID..."
+                                    placeholder="Nhập ID người dùng..."
                                     value={externalIdFilter}
                                     onChange={(e) =>
                                         setExternalIdFilter(e.target.value)
@@ -1121,30 +1189,51 @@ export default function UserManagementPage() {
                         </div>
 
                         <div>
-                            <Label htmlFor="role-filter">Filter by Role</Label>
-                            <Select
-                                value={roleFilter}
-                                onValueChange={setRoleFilter}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="All roles" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value={''}>-</SelectItem>
-                                    <SelectItem value={UserRole.SUPER_ADMIN}>
-                                        Super Admin
-                                    </SelectItem>
-                                    <SelectItem value={UserRole.ADMIN}>
-                                        Admin
-                                    </SelectItem>
-                                    <SelectItem value={UserRole.LECTURER}>
-                                        Lecturer
-                                    </SelectItem>
-                                    <SelectItem value={UserRole.STUDENT}>
-                                        Student
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Label htmlFor="role-filter">
+                                Lọc theo vai trò
+                            </Label>
+                            <ReactSelect
+                                value={roleOptions.find(
+                                    (option) => option.value === roleFilter
+                                )}
+                                onChange={(selectedOption) => {
+                                    console.log(
+                                        '🚀 ~ roleFilter changed:',
+                                        selectedOption?.value
+                                    );
+                                    setRoleFilter(selectedOption?.value || '');
+                                }}
+                                options={roleOptions}
+                                placeholder="Tất cả vai trò"
+                                isClearable
+                                className="w-full"
+                                classNamePrefix="react-select"
+                                menuPortalTarget={
+                                    typeof window !== 'undefined'
+                                        ? document.body
+                                        : null
+                                }
+                                styles={{
+                                    control: (provided) => ({
+                                        ...provided,
+                                        minHeight: '40px',
+                                        border: '1px solid #d1d5db',
+                                        borderRadius: '6px',
+                                    }),
+                                    placeholder: (provided) => ({
+                                        ...provided,
+                                        color: '#9ca3af',
+                                    }),
+                                    menuPortal: (base) => ({
+                                        ...base,
+                                        zIndex: 9999,
+                                    }),
+                                    option: (base) => ({
+                                        ...base,
+                                        color: 'black',
+                                    }),
+                                }}
+                            />
                         </div>
                     </div>
 
@@ -1157,28 +1246,27 @@ export default function UserManagementPage() {
                                         Email
                                     </th>
                                     <th className="border border-gray-200 px-4 py-2 text-left">
-                                        Name
+                                        Tên người dùng
                                     </th>
                                     <th className="border border-gray-200 px-4 py-2 text-left">
                                         <div className="flex items-center gap-1">
-                                            External ID
+                                            ID người dùng
                                             <div className="group relative">
                                                 <Info className="h-3 w-3 text-gray-400 cursor-help" />
                                                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
-                                                    User ID in your organization
-                                                    system
+                                                    ID người dùng trong tổ chức
                                                 </div>
                                             </div>
                                         </div>
                                     </th>
                                     <th className="border border-gray-200 px-4 py-2 text-left">
-                                        Roles
+                                        Vai trò
                                     </th>
                                     <th className="border border-gray-200 px-4 py-2 text-left">
-                                        Added By
+                                        Thêm bởi
                                     </th>
                                     <th className="border border-gray-200 px-4 py-2 text-left">
-                                        Actions
+                                        Hành động
                                     </th>
                                 </tr>
                             </thead>
@@ -1192,7 +1280,8 @@ export default function UserManagementPage() {
                                             <div className="flex items-center justify-center">
                                                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                                                 <span className="ml-2">
-                                                    Loading users...
+                                                    Đang tải danh sách người
+                                                    dùng...
                                                 </span>
                                             </div>
                                         </td>
@@ -1203,7 +1292,7 @@ export default function UserManagementPage() {
                                             colSpan={6}
                                             className="border border-gray-200 px-4 py-8 text-center text-gray-500"
                                         >
-                                            No users found
+                                            Không tìm thấy người dùng
                                         </td>
                                     </tr>
                                 ) : (
@@ -1230,10 +1319,7 @@ export default function UserManagementPage() {
                                                                 role
                                                             )}`}
                                                         >
-                                                            {role.replace(
-                                                                '_',
-                                                                ' '
-                                                            )}
+                                                            {getRoleLabel(role)}
                                                         </span>
                                                     ))}
                                                 </div>
@@ -1262,7 +1348,7 @@ export default function UserManagementPage() {
                                                             className="flex items-center gap-1"
                                                         >
                                                             <Edit className="h-3 w-3" />
-                                                            Update
+                                                            Cập nhật
                                                         </Button>
                                                     )}
                                                     {canDeleteUser(user) && (
@@ -1277,7 +1363,7 @@ export default function UserManagementPage() {
                                                             className="flex items-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                                                         >
                                                             <Trash2 className="h-3 w-3" />
-                                                            Delete
+                                                            Xóa
                                                         </Button>
                                                     )}
                                                 </div>
@@ -1292,8 +1378,8 @@ export default function UserManagementPage() {
                     {/* Pagination */}
                     <div className="flex items-center justify-between mt-4">
                         <p className="text-sm text-gray-600">
-                            Showing {startIndex + 1} to {endIndex} of{' '}
-                            {totalUsers} users
+                            Hiển thị {startIndex + 1} đến {endIndex} trên{' '}
+                            {totalUsers} người dùng
                         </p>
 
                         <div className="flex items-center gap-2">
@@ -1308,11 +1394,11 @@ export default function UserManagementPage() {
                                 disabled={currentPage === 1 || loading}
                             >
                                 <ChevronLeft className="h-4 w-4" />
-                                Previous
+                                Trước
                             </Button>
 
                             <span className="text-sm text-gray-600">
-                                Page {currentPage} of {totalPages}
+                                Trang {currentPage} trên {totalPages}
                             </span>
 
                             <Button
@@ -1325,7 +1411,7 @@ export default function UserManagementPage() {
                                 }
                                 disabled={currentPage === totalPages || loading}
                             >
-                                Next
+                                Tiếp
                                 <ChevronRight className="h-4 w-4" />
                             </Button>
                         </div>

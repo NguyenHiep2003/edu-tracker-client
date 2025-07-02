@@ -42,25 +42,25 @@ function ClassSidebar({ classId }: { classId: string }) {
     const navigationItems: NavigationItem[] = [
         {
             id: 'info',
-            label: 'Class Info',
+            label: 'Thông tin lớp học',
             icon: Info,
             href: `/lecturer/classes/${classId}`,
             description:
-                'View and edit class details, manage lecturers and students',
+                'Quản lý thông tin lớp học, giảng viên và sinh viên',
         },
         {
             id: 'projects',
-            label: 'Projects',
+            label: 'Dự án',
             icon: FolderOpen,
             href: `/lecturer/classes/${classId}/projects`,
-            description: 'Manage class projects and assignments',
+            description: 'Quản lý dự án của lớp học',
         },
         {
             id: 'grading',
-            label: 'Grading Components',
+            label: 'Điểm quá trình',
             icon: BarChart3,
             href: `/lecturer/classes/${classId}/grading`,
-            description: 'Configure grading criteria and components',
+            description: 'Quản lý điểm quá trình của lớp học',
         },
         // {
         //     id: 'settings',
@@ -96,7 +96,7 @@ function ClassSidebar({ classId }: { classId: string }) {
                         className="flex items-center text-gray-600 hover:text-gray-900"
                     >
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        All Classes
+                        Tất cả lớp học
                     </Link>
                 </Button>
 
@@ -136,7 +136,7 @@ function ClassSidebar({ classId }: { classId: string }) {
                 >
                     <span className="flex items-center space-x-2">
                         <X className="h-4 w-4" />
-                        <span>Hide Sidebar</span>
+                        <span>Ẩn thanh bên</span>
                     </span>
                     <div className="flex items-center space-x-1 text-xs">
                         <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">
@@ -201,11 +201,11 @@ function ClassSidebar({ classId }: { classId: string }) {
             <div className="p-4 border-t border-gray-200">
                 <div className="text-xs text-gray-500">
                     <p>
-                        Created:{' '}
+                        Ngày tạo:{' '}
                         {new Date(classData.createdAt).toLocaleDateString()}
                     </p>
                     <p>
-                        Updated:{' '}
+                        Cập nhật:{' '}
                         {new Date(classData.updatedAt).toLocaleDateString()}
                     </p>
                 </div>
@@ -230,7 +230,7 @@ function ClassMainContent({
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">
-                        Loading class details...
+                        Đang tải thông tin lớp học...
                     </p>
                 </div>
             </div>
@@ -254,7 +254,7 @@ function ClassMainContent({
                             onClick={() => setSidebarCollapsed(false)}
                             className="flex items-center space-x-2"
                         >
-                            <span>Show Sidebar</span>
+                            <span>Hiện thanh bên</span>
                             <div className="flex items-center space-x-1 text-xs">
                                 <kbd className="px-1 py-0.5 bg-gray-100 rounded text-xs">
                                     Ctrl

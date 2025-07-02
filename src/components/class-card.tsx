@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, BookOpen, Users, UserCheck } from 'lucide-react';
 import type { Class } from '@/services/api/class/interface';
-import { format } from 'date-fns';
+import { formatDate } from '@/helper/date-formatter';
 
 interface ClassCardProps {
     classData: Class;
@@ -78,7 +78,7 @@ export function ClassCard({ classData, onClick, showLecturerNames = true }: Clas
             gradientClass: generateClassColor(classData.name),
             initials: generateInitials(classData.name),
             lecturerNames: getLecturerNames(classData.lecturers),
-            formattedDate: format(new Date(classData.createdAt), 'MMM d, yyyy'),
+            formattedDate: formatDate(classData.createdAt, 'dd/MM/yyyy'),
         });
     }, [classData]);
 
@@ -114,7 +114,7 @@ export function ClassCard({ classData, onClick, showLecturerNames = true }: Clas
             </CardHeader>
             <CardContent>
                 <CardTitle className="text-lg mb-3 line-clamp-2">
-                    {classData.name}
+                    {classData.externalId} - {classData.name}
                 </CardTitle>
 
                 <div className="space-y-2 text-sm text-gray-600">
@@ -126,8 +126,7 @@ export function ClassCard({ classData, onClick, showLecturerNames = true }: Clas
                     <div className="flex items-center gap-2">
                         <Users className="h-4 w-4" />
                         <span>
-                            {classData.numberOfStudents} student
-                            {classData.numberOfStudents !== 1 ? 's' : ''}
+                            {classData.numberOfStudents} sinh viên
                         </span>
                     </div>
 
@@ -145,7 +144,7 @@ export function ClassCard({ classData, onClick, showLecturerNames = true }: Clas
 
                     <div className="flex items-center gap-2">
                         <BookOpen className="h-4 w-4" />
-                        <span>Created {cardData.formattedDate}</span>
+                        <span>Tạo {cardData.formattedDate}</span>
                     </div>
 
                     {/* {classData.description && (

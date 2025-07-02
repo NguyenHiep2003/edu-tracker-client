@@ -61,23 +61,19 @@ export default function LandingPage() {
             <section className="py-20 px-4">
                 <div className="container mx-auto text-center">
                     <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-                        Empower Your Organization&apos;s
-                        <span className="text-blue-600 block">
-                            {' '}
-                            Learning Journey
-                        </span>
+                        Nâng cao trải nghiệm học tập của tổ chức
+                        <span className="text-blue-600 block"> của bạn</span>
                     </h1>
                     <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                        A comprehensive platform where organizations can manage
-                        their educational resources, lecturers can create
-                        engaging classes and projects, and students can track
-                        their progress seamlessly.
+                        Nền tảng giúp các trường đại học nâng cao khả năng quản
+                        lý quá trình học tập tập của sinh viên Công nghệ thông
+                        tin. Giúp giảng viên có thể triển khai và theo dõi, đánh
+                        giá các dự án trong lớp học. Bên cạnh đó, sinh viên có
+                        thể quản lý tiến độ dự án của mình.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button size="lg" className="text-lg px-8 py-4" asChild>
-                            <Link href="/register">
-                                Register Your Organization
-                            </Link>
+                            <Link href="/register">Đăng ký tổ chức</Link>
                         </Button>
                         <Button
                             size="lg"
@@ -85,7 +81,7 @@ export default function LandingPage() {
                             className="text-lg px-8 py-4"
                             asChild
                         >
-                            <Link href="/login">Login to Your Account</Link>
+                            <Link href="/login">Đăng nhập</Link>
                         </Button>
                     </div>
                 </div>
@@ -96,11 +92,11 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                            Everything Your Organization Needs
+                            Tất cả những gì tổ chức của bạn cần
                         </h2>
                         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                            From organization management to student progress
-                            tracking, we&apos;ve got you covered.
+                            Từ quản lý tổ chức, quản lý lớp học, quản lý dự án đến theo
+                            dõi tiến trình học tập của sinh viên.
                         </p>
                     </div>
 
@@ -108,11 +104,10 @@ export default function LandingPage() {
                         <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader>
                                 <Shield className="h-12 w-12 text-blue-600 mb-4" />
-                                <CardTitle>Organization Management</CardTitle>
+                                <CardTitle>Quản lý tổ chức</CardTitle>
                                 <CardDescription>
-                                    Admins can efficiently manage organization
-                                    resources, users, and settings with powerful
-                                    administrative tools.
+                                    Quản lý tài nguyên, người dùng, và cài đặt của
+                                    tổ chức với các công cụ quản lý mạnh mẽ.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -120,11 +115,9 @@ export default function LandingPage() {
                         <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader>
                                 <BookOpen className="h-12 w-12 text-green-600 mb-4" />
-                                <CardTitle>Class & Project Creation</CardTitle>
+                                <CardTitle>Quản lý lớp học và dự án</CardTitle>
                                 <CardDescription>
-                                    Lecturers can easily create engaging classes
-                                    and projects with rich content and
-                                    interactive elements.
+                                    Giảng viên có thể tạo lớp học và dự án. Theo dõi quá trình học tập của sinh viên.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -132,11 +125,11 @@ export default function LandingPage() {
                         <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader>
                                 <BarChart3 className="h-12 w-12 text-purple-600 mb-4" />
-                                <CardTitle>Progress Tracking</CardTitle>
+                                <CardTitle>Theo dõi tiến độ học tập</CardTitle>
                                 <CardDescription>
-                                    Students can join classes, complete
-                                    projects, and track their learning progress
-                                    in real-time.
+                                    Sinh viên có thể tham gia lớp học, hoàn thành
+                                    dự án, và theo dõi tiến độ học tập của mình
+                                    trong thời gian thực.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -144,11 +137,9 @@ export default function LandingPage() {
                         <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader>
                                 <Users className="h-12 w-12 text-orange-600 mb-4" />
-                                <CardTitle>Multi-Role Support</CardTitle>
+                                <CardTitle>Hỗ trợ nhiều vai trò</CardTitle>
                                 <CardDescription>
-                                    Support for different user roles:
-                                    Organization Admins, Lecturers, and Students
-                                    with tailored experiences.
+                                    Hỗ trợ cho các vai trò khác nhau: Quản trị viên, giảng viên, và sinh viên với trải nghiệm được tùy chỉnh.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -156,11 +147,9 @@ export default function LandingPage() {
                         <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader>
                                 <Zap className="h-12 w-12 text-yellow-600 mb-4" />
-                                <CardTitle>Real-time Collaboration</CardTitle>
+                                <CardTitle>Hỗ trợ hợp tác thời gian thực</CardTitle>
                                 <CardDescription>
-                                    Enable seamless collaboration between
-                                    lecturers and students with real-time
-                                    updates and notifications.
+                                    Hỗ trợ hợp tác thời gian thực giữa giảng viên và sinh viên với cập nhật và thông báo thời gian thực.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -168,11 +157,10 @@ export default function LandingPage() {
                         <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader>
                                 <Globe className="h-12 w-12 text-indigo-600 mb-4" />
-                                <CardTitle>Multi-Organization</CardTitle>
+                                <CardTitle>Hỗ trợ nhiều tổ chức</CardTitle>
                                 <CardDescription>
-                                    Support multiple organizations on a single
-                                    platform with complete data isolation and
-                                    security.
+                                    Hỗ trợ nhiều tổ chức trên một nền tảng với cách
+                                    xử lý dữ liệu được cách ly và bảo mật.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -185,10 +173,10 @@ export default function LandingPage() {
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                            How It Works
+                            Cách hoạt động
                         </h2>
                         <p className="text-xl text-gray-600">
-                            Simple steps to get your organization started
+                            Các bước đơn giản để bắt đầu tổ chức của bạn
                         </p>
                     </div>
 
@@ -198,11 +186,11 @@ export default function LandingPage() {
                                 1
                             </div>
                             <h3 className="text-xl font-semibold mb-2 text-black">
-                                Register Organization
+                                Đăng ký tổ chức
                             </h3>
                             <p className="text-gray-600">
-                                Sign up your organization and set up your admin
-                                account to get started.
+                                Đăng ký tổ chức của bạn và thiết lập tài khoản
+                                quản trị để bắt đầu.
                             </p>
                         </div>
 
@@ -211,11 +199,11 @@ export default function LandingPage() {
                                 2
                             </div>
                             <h3 className="text-xl font-semibold mb-2 text-black">
-                                Add Users & Create Content
+                                Thêm người dùng và tạo nội dung
                             </h3>
                             <p className="text-gray-600">
-                                Invite lecturers and students, then start
-                                creating classes and projects.
+                                Mời giảng viên và sinh viên, sau đó bắt đầu tạo
+                                lớp học và dự án.
                             </p>
                         </div>
 
@@ -224,11 +212,11 @@ export default function LandingPage() {
                                 3
                             </div>
                             <h3 className="text-xl font-semibold mb-2 text-black">
-                                Track & Learn
+                                Theo dõi và học
                             </h3>
                             <p className="text-gray-600">
-                                Students join classes, complete projects, and
-                                track their learning progress.
+                                Sinh viên tham gia lớp học, hoàn thành dự án, và
+                                theo dõi tiến độ học tập của mình.
                             </p>
                         </div>
                     </div>
@@ -239,11 +227,11 @@ export default function LandingPage() {
             <section className="py-20 bg-blue-600">
                 <div className="container mx-auto px-4 text-center">
                     <h2 className="text-4xl font-bold text-white mb-4">
-                        Ready to Transform Your Organization&apos;s Learning?
+                        Sẵn sàng chuyển đổi trải nghiệm học tập của tổ chức của bạn?
                     </h2>
                     <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                        Join thousands of organizations already using our
-                        platform to enhance their educational experience.
+                        Tham gia nền tảng của chúng tôi
+                        để nâng cao trải nghiệm học tập.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button
@@ -253,7 +241,7 @@ export default function LandingPage() {
                             asChild
                         >
                             <Link href="/register">
-                                Register your Organization
+                                Đăng ký tổ chức
                             </Link>
                         </Button>
                         {/* <Button
@@ -285,19 +273,18 @@ export default function LandingPage() {
                                 </span>
                             </div>
                             <p className="text-gray-400">
-                                Empowering organizations with comprehensive
-                                learning management solutions.
+                                    Nâng cao trải nghiệm học tập của tổ chức của bạn
                             </p>
                         </div>
                         <div>
-                            <h3 className="font-semibold mb-4">Product</h3>
+                            <h3 className="font-semibold mb-4">Sản phẩm</h3>
                             <ul className="space-y-2 text-gray-400">
                                 <li>
                                     <Link
                                         href="#"
                                         className="hover:text-white transition-colors"
                                     >
-                                        Features
+                                        Tính năng
                                     </Link>
                                 </li>
                                 <li>
@@ -305,7 +292,7 @@ export default function LandingPage() {
                                         href="#"
                                         className="hover:text-white transition-colors"
                                     >
-                                        Pricing
+                                        Giá cả
                                     </Link>
                                 </li>
                                 <li>
@@ -313,20 +300,20 @@ export default function LandingPage() {
                                         href="#"
                                         className="hover:text-white transition-colors"
                                     >
-                                        Security
+                                        Bảo mật
                                     </Link>
                                 </li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="font-semibold mb-4">Support</h3>
+                            <h3 className="font-semibold mb-4">Hỗ trợ</h3>
                             <ul className="space-y-2 text-gray-400">
                                 <li>
                                     <Link
                                         href="#"
                                         className="hover:text-white transition-colors"
                                     >
-                                        Documentation
+                                        Tài liệu
                                     </Link>
                                 </li>
                                 <li>
@@ -334,7 +321,7 @@ export default function LandingPage() {
                                         href="#"
                                         className="hover:text-white transition-colors"
                                     >
-                                        Help Center
+                                        Trung tâm trợ giúp
                                     </Link>
                                 </li>
                                 <li>
@@ -342,36 +329,20 @@ export default function LandingPage() {
                                         href="#"
                                         className="hover:text-white transition-colors"
                                     >
-                                        Contact
+                                        Liên hệ
                                     </Link>
                                 </li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="font-semibold mb-4">Company</h3>
+                            <h3 className="font-semibold mb-4">Công ty</h3>
                             <ul className="space-y-2 text-gray-400">
                                 <li>
                                     <Link
                                         href="#"
                                         className="hover:text-white transition-colors"
                                     >
-                                        About
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="#"
-                                        className="hover:text-white transition-colors"
-                                    >
-                                        Blog
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="#"
-                                        className="hover:text-white transition-colors"
-                                    >
-                                        Careers
+                                        Giới thiệu
                                     </Link>
                                 </li>
                             </ul>

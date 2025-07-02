@@ -43,6 +43,7 @@ export interface CreateProjectRequest {
     type: 'SOLO' | 'TEAM';
     participationMode: 'optional' | 'mandatory';
     allowStudentFormTeam: boolean;
+    allowStudentCreateTopic: boolean;
     formGroupDeadline?: string;
     joinProjectDeadline?: string;
     createGradeComponent: boolean;

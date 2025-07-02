@@ -26,5 +26,5 @@ export function getLoginUrl(
 export async function signOut() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('roles');
-    return instance.delete('/v1/auth/logout').finally(() => {});
+    return instance.delete('/v1/auth/logout');
 }

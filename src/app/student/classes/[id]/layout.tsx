@@ -23,17 +23,17 @@ function StudentClassLayoutContent({ children }: StudentClassLayoutProps) {
 
   const navigation = [
     {
-      name: "Class Info",
+      name: "Thông tin lớp học",
       href: `/student/classes/${classId}`,
       icon: BookOpen,
     },
     {
-      name: "Projects",
+      name: "Dự án",
       href: `/student/classes/${classId}/projects`,
       icon: FolderOpen,
     },
     {
-      name: "Grades",
+      name: "Điểm số",
       href: `/student/classes/${classId}/grades`,
       icon: BarChart3,
     },
@@ -60,7 +60,7 @@ function StudentClassLayoutContent({ children }: StudentClassLayoutProps) {
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setMobileMenuOpen(false)} />
           <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
             <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Navigation</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Điều hướng</h2>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
@@ -78,7 +78,7 @@ function StudentClassLayoutContent({ children }: StudentClassLayoutProps) {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to My Classes
+                  Quay lại danh sách lớp học
                 </Link>
               </Button>
             </div>
@@ -109,11 +109,11 @@ function StudentClassLayoutContent({ children }: StudentClassLayoutProps) {
       >
         {/* Sidebar header */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
-          {!sidebarCollapsed && <h2 className="text-lg font-semibold text-gray-900">Class Menu</h2>}
+          {!sidebarCollapsed && <h2 className="text-lg font-semibold text-gray-900">Menu lớp học</h2>}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-            title={sidebarCollapsed ? "Expand sidebar (Ctrl+B)" : "Collapse sidebar (Ctrl+B)"}
+            title={sidebarCollapsed ? "Mở rộng thanh bên (Ctrl+B)" : "Thu gọn thanh bên (Ctrl+B)"}
           >
             {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
@@ -122,7 +122,7 @@ function StudentClassLayoutContent({ children }: StudentClassLayoutProps) {
         {/* Back to Classes Button - Desktop */}
         <div className="px-4 py-3 border-b border-gray-200">
           {sidebarCollapsed ? (
-            <Button variant="outline" size="sm" asChild className="w-full p-2" title="Back to My Classes">
+            <Button variant="outline" size="sm" asChild className="w-full p-2" title="Quay lại danh sách lớp học">
               <Link href="/student/home" className="flex items-center justify-center">
                 <ArrowLeft className="h-4 w-4" />
               </Link>
@@ -131,7 +131,7 @@ function StudentClassLayoutContent({ children }: StudentClassLayoutProps) {
             <Button variant="outline" size="sm" asChild className="w-full">
               <Link href="/student/home" className="flex items-center text-gray-600 hover:text-gray-900">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Home
+                Quay lại trang chủ
               </Link>
             </Button>
           )}

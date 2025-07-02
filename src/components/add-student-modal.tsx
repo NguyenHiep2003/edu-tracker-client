@@ -71,8 +71,8 @@ export function AddStudentModal({
             const data = await getSuggestStudent(classId, term);
             setSuggestions(data || []);
         } catch (error: any) {
-            console.error('Error searching students:', error);
-            setError(error.message || 'Failed to search students');
+            console.log("🚀 ~ searchStudents ~ error:", error)
+            setError(error.message || 'Lỗi khi tìm kiếm sinh viên');
             setSuggestions([]);
         } finally {
             setIsSearching(false);
@@ -101,8 +101,8 @@ export function AddStudentModal({
             await onAddStudent(selectedStudent.id);
             handleClose();
         } catch (error: any) {
-            console.error('Error adding student:', error);
-            setError(error.message || 'Failed to add student');
+            console.log("🚀 ~ handleAddStudent ~ error:", error)
+            setError(error.message || 'Lỗi khi thêm sinh viên');
         } finally {
             setIsAdding(false);
         }
@@ -131,7 +131,7 @@ export function AddStudentModal({
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            title="Add Student to Class"
+            title="Thêm sinh viên vào lớp"
             size="md"
         >
             <div className="space-y-6">
@@ -141,7 +141,7 @@ export function AddStudentModal({
                         htmlFor="student-search"
                         className="text-sm font-medium text-gray-700"
                     >
-                        Search for Student
+                        Tìm kiếm sinh viên
                     </Label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -154,7 +154,7 @@ export function AddStudentModal({
                         <Input
                             id="student-search"
                             type="text"
-                            placeholder="Type student name or email..."
+                            placeholder="Nhập tên hoặc email sinh viên..."
                             value={searchTerm}
                             onChange={handleInputChange}
                             className="pl-10"
@@ -162,7 +162,7 @@ export function AddStudentModal({
                         />
                     </div>
                     <p className="text-xs text-gray-500">
-                        Start typing to search for students by name or email
+                        Nhập tên hoặc email sinh viên để tìm kiếm
                     </p>
                 </div>
 
@@ -177,7 +177,7 @@ export function AddStudentModal({
                 {suggestions.length > 0 && !selectedStudent && (
                     <div className="space-y-2">
                         <Label className="text-sm font-medium text-gray-700">
-                            Search Results
+                            Kết quả tìm kiếm
                         </Label>
                         <div className="border border-gray-200 rounded-md max-h-48 overflow-y-auto">
                             {suggestions.map((student) => (
@@ -209,7 +209,7 @@ export function AddStudentModal({
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
                             <Label className="text-sm font-medium text-gray-700">
-                                Selected Student
+                                Sinh viên đã chọn
                             </Label>
                             <Button
                                 variant="outline"
@@ -221,7 +221,7 @@ export function AddStudentModal({
                                 }}
                                 className="text-xs"
                             >
-                                Change Selection
+                                Thay đổi lựa chọn
                             </Button>
                         </div>
                         <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
@@ -248,9 +248,9 @@ export function AddStudentModal({
                     !selectedStudent && (
                         <div className="text-center py-8">
                             <User className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                            <p className="text-gray-500">No students found</p>
+                            <p className="text-gray-500">Không tìm thấy sinh viên</p>
                             <p className="text-sm text-gray-400">
-                                Try searching with a different name or email
+                                Vui lòng tìm kiếm với tên hoặc email khác
                             </p>
                         </div>
                     )}
@@ -262,7 +262,7 @@ export function AddStudentModal({
                         onClick={handleClose}
                         disabled={isAdding}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                     <Button
                         onClick={handleAddStudent}
@@ -272,12 +272,12 @@ export function AddStudentModal({
                         {isAdding ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Adding...
+                                Đang thêm...
                             </>
                         ) : (
                             <>
                                 <Plus className="h-4 w-4 mr-2" />
-                                Add Student
+                                Thêm sinh viên
                             </>
                         )}
                     </Button>

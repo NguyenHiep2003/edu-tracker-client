@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Bell, User, LogOut, Settings, ChevronDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 import { getProfile } from '@/services/api/user';
 import type { IUser } from '@/services/api/user/interface';
 import { useOrganization } from '@/context/organization-context';
@@ -35,7 +35,7 @@ export function StudentHeader({
                 const user = await getProfile();
                 setUserInfo(user);
             } catch (error) {
-                console.error('Error fetching user info:', error);
+                console.log("🚀 ~ fetchUserInfo ~ error:", error)
             }
         };
 
@@ -74,7 +74,7 @@ export function StudentHeader({
                                 EduTracker
                             </h1>
                             <p className="text-sm text-gray-500">
-                                Education Platform
+                                Nền tảng giáo dục
                             </p>
                         </div>
                     </div>
@@ -83,10 +83,10 @@ export function StudentHeader({
                     <div className="hidden md:block">
                         <div className="text-center">
                             <h2 className="text-lg font-semibold text-gray-900">
-                                {organization?.name || 'Loading...'}
+                                {organization?.name || 'Đang tải...'}
                             </h2>
                             <p className="text-sm text-green-600 font-medium">
-                                {isInClassContext ? 'Class Management' : title}
+                                {isInClassContext ? 'Quản lý lớp học' : title}
                             </p>
                         </div>
                     </div>
@@ -105,7 +105,7 @@ export function StudentHeader({
                                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
                             </button>
 
-                            {showNotifications && (
+                            {/* {showNotifications && (
                                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                                     <div className="p-4">
                                         <h3 className="text-sm font-medium text-gray-900 mb-3">
@@ -148,7 +148,7 @@ export function StudentHeader({
                                         </div>
                                     </div>
                                 </div>
-                            )}
+                            )} */}
                         </div>
 
                         {/* Profile Menu */}
@@ -167,7 +167,7 @@ export function StudentHeader({
                                         {userInfo?.name || 'Student'}
                                     </p>
                                     <p className="text-xs text-gray-500">
-                                        Student
+                                        Sinh viên
                                     </p>
                                 </div>
                                 <ChevronDown className="h-4 w-4 text-gray-600" />
@@ -187,7 +187,7 @@ export function StudentHeader({
                                                 {userInfo?.email}
                                             </p>
                                             <p className="text-xs text-green-600 font-medium mt-1">
-                                                Student Account
+                                                Tài khoản sinh viên
                                             </p>
                                         </div>
                                         <button
@@ -199,14 +199,14 @@ export function StudentHeader({
                                             }}
                                         >
                                             <Settings className="mr-3 h-4 w-4" />
-                                            Account Settings
+                                            Cài đặt tài khoản
                                         </button>
                                         <button
                                             onClick={handleLogout}
                                             className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
                                         >
                                             <LogOut className="mr-3 h-4 w-4" />
-                                            Logout
+                                            Đăng xuất
                                         </button>
                                     </div>
                                 </div>

@@ -65,14 +65,14 @@ export function GradeModal({
         if (value < 0) {
             setErrors((prev) => ({
                 ...prev,
-                [studentId]: 'Grade cannot be negative',
+                [studentId]: 'Điểm không thể âm',
             }));
             return false;
         }
         if (grade?.maxScore && value > grade.maxScore) {
             setErrors((prev) => ({
                 ...prev,
-                [studentId]: `Grade cannot exceed ${grade.maxScore}`,
+                [studentId]: `Điểm không thể vượt quá ${grade.maxScore}`,
             }));
             return false;
         }
@@ -91,7 +91,7 @@ export function GradeModal({
         if (isNaN(numValue)) {
             setErrors((prev) => ({
                 ...prev,
-                [studentId]: 'Please enter a valid number',
+                [studentId]: 'Vui lòng nhập một số hợp lệ',
             }));
             return;
         }
@@ -119,7 +119,7 @@ export function GradeModal({
             .filter((val) => val.value !== null);
 
         if (hasErrors) {
-            toast.error('Please fix the validation errors before saving');
+            toast.error('Vui lòng sửa lỗi trước khi lưu');
             return;
         }
 
@@ -127,7 +127,7 @@ export function GradeModal({
             await instance.patch(`/v1/grade/${grade.id}/student-grades`, {
                 studentGrades,
             });
-            toast.success('Grades saved successfully');
+            toast.success('Điểm đã được lưu thành công');
             setIsEditMode(false);
             onClose();
         } catch (error: any) {
@@ -182,12 +182,12 @@ export function GradeModal({
                                             as="h3"
                                             className="text-lg font-semibold leading-6 text-gray-900"
                                         >
-                                            Student Grades{' '}
+                                            Điểm sinh viên{' '}
                                             {grade?.maxScore
-                                                ? `(Max: ${grade.maxScore})`
+                                                ? `(Tối đa: ${grade.maxScore})`
                                                 : ''}{' '}
                                             {grade?.scale &&
-                                                `(Scale: ${grade.scale})`}
+                                                `(Số chữ số sau dấu phẩy: ${grade.scale})`}
                                         </Dialog.Title>
                                         <div className="flex gap-2">
                                             {!isEditMode ? (
@@ -200,7 +200,7 @@ export function GradeModal({
                                                         className="-ml-0.5 h-5 w-5"
                                                         aria-hidden="true"
                                                     />
-                                                    Edit Grades
+                                                    Chỉnh sửa điểm
                                                 </button>
                                             ) : (
                                                 <>
@@ -215,7 +215,7 @@ export function GradeModal({
                                                             className="-ml-0.5 h-5 w-5"
                                                             aria-hidden="true"
                                                         />
-                                                        Cancel
+                                                        Hủy
                                                     </button>
                                                     <button
                                                         type="button"
@@ -226,7 +226,7 @@ export function GradeModal({
                                                             className="-ml-0.5 h-5 w-5"
                                                             aria-hidden="true"
                                                         />
-                                                        Save Grades
+                                                        Lưu điểm
                                                     </button>
                                                 </>
                                             )}
@@ -242,7 +242,7 @@ export function GradeModal({
                                                         scope="col"
                                                         className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                                                     >
-                                                        Student Name
+                                                        Tên sinh viên
                                                     </th>
                                                     <th
                                                         scope="col"
@@ -254,13 +254,13 @@ export function GradeModal({
                                                         scope="col"
                                                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                                                     >
-                                                        Student ID
+                                                        Mã sinh viên
                                                     </th>
                                                     <th
                                                         scope="col"
                                                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                                                     >
-                                                        Grade
+                                                        Điểm
                                                     </th>
                                                 </tr>
                                             </thead>
@@ -336,7 +336,7 @@ export function GradeModal({
                                                                     {studentData
                                                                         .studentToGrades[0]
                                                                         ?.value ||
-                                                                        'Not graded'}
+                                                                        'Chưa có điểm'}
                                                                 </div>
                                                             )}
                                                         </td>

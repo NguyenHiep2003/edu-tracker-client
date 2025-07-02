@@ -184,7 +184,7 @@ const DraggableWorkItem = ({
                                     title="This task was assigned by your lecturer and is required for completion"
                                 >
                                     <User className="w-3 h-3 mr-1" />
-                                    Lecturer
+                                    Giảng viên
                                 </Badge>
                             )}
                         </div>
@@ -230,7 +230,7 @@ const DraggableWorkItem = ({
                         {workItem.summary}
                         {isLecturerAssigned && (
                             <span className="text-xs text-orange-600 font-medium ml-2">
-                                (Required)
+                                (Bắt buộc)
                             </span>
                         )}
                     </h3>
@@ -293,7 +293,7 @@ const DraggableWorkItem = ({
                             ) : (
                                 <div
                                     className="w-8 h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center shadow-md ring-2 ring-white group/unassigned hover:from-gray-300 hover:to-gray-400 transition-all"
-                                    title="Unassigned"
+                                    title="Chưa giao"
                                 >
                                     <User className="h-4 w-4 text-gray-500 group-hover/unassigned:text-gray-600 transition-colors" />
                                 </div>
@@ -305,9 +305,6 @@ const DraggableWorkItem = ({
                     <div className="absolute top-3 left-3 space-y-1">
                         {isLecturerAssigned && (
                             <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                        )}
-                        {workItem.storyPoints && workItem.storyPoints >= 8 && (
-                            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                         )}
                     </div>
                 </CardContent>
@@ -426,8 +423,8 @@ export default function BoardPage() {
             });
             setBoardData(response);
         } catch (error) {
-            console.error('Error loading board data:', error);
-            toast.error('Failed to load board data');
+            console.log('🚀 ~ BoardPage ~ error:', error);
+            toast.error('Lỗi khi tải bảng công việc');
         } finally {
             setLoading(false);
         }
@@ -438,8 +435,8 @@ export default function BoardPage() {
             const response = await getUserInGroup(groupData.id);
             setGroupMembers(response);
         } catch (error) {
-            console.error('Error loading group members:', error);
-            toast.error('Failed to load group members');
+            console.log('🚀 ~ loadGroupMembers ~ error:', error);
+            toast.error('Lỗi khi tải danh sách thành viên nhóm');
         }
     };
 
@@ -450,8 +447,8 @@ export default function BoardPage() {
             });
             setSprints(response);
         } catch (error) {
-            console.error('Error loading sprints:', error);
-            toast.error('Failed to load sprints');
+            console.log('🚀 ~ loadSprints ~ error:', error);
+            toast.error('Lỗi khi tải danh sách sprint đang diễn ra');
         }
     };
 
@@ -461,7 +458,7 @@ export default function BoardPage() {
         try {
             await approveWorkItem(selectedItemForApproval.id, rating, comment);
             await loadBoardData();
-            toast.success('Work item approved successfully');
+            toast.success('Công việc đã được phê duyệt thành công');
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
@@ -511,7 +508,7 @@ export default function BoardPage() {
 
         try {
             if (newStatus === 'DONE' && !isGroupLeader) {
-                toast.error('Only group leader can approve work items');
+                toast.error('Chỉ trưởng nhóm mới có quyền phê duyệt công việc');
                 return;
             }
             if (newStatus === 'DONE' && isGroupLeader) {
@@ -523,13 +520,13 @@ export default function BoardPage() {
 
             // Reload the board data
             await loadBoardData();
-            toast.success('Work item status updated successfully');
+            toast.success('Trạng thái công việc đã được cập nhật thành công');
         } catch (error: any) {
             // console.error('Error updating work item:', error);
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to update work item');
+                toast.error(error.message || 'Lỗi khi cập nhật trạng thái công việc');
             }
         } finally {
             setTimeout(() => {
@@ -594,7 +591,7 @@ export default function BoardPage() {
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-2 text-gray-600">Loading board...</p>
+                        <p className="mt-2 text-gray-600">Đang tải bảng công việc...</p>
                     </div>
                 </div>
             </div>
@@ -610,21 +607,21 @@ export default function BoardPage() {
                         <span className="text-white font-bold text-sm">📋</span>
                     </div>
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                        Project Board
+                        Bảng công việc
                     </h1>
                 </div>
                 <div className="ml-11 space-y-2">
                     <p className="text-gray-600 font-medium">
-                        Drag and drop work items to update their status
+                        Kéo thả công việc để cập nhật trạng thái
                     </p>
                     <div className="flex items-center space-x-6 text-sm text-gray-600">
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-white border border-gray-300 rounded shadow-sm"></div>
-                            <span>Self-created tasks</span>
+                            <span>Công việc tự tạo</span>
                         </div>
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-300 rounded border-l-4 border-l-orange-400"></div>
-                            <span>Lecturer-assigned tasks (Required)</span>
+                            <span>Công việc được giảng viên giao (Bắt buộc)</span>
                         </div>
                         {/* Task count summary */}
                     </div>
@@ -641,7 +638,7 @@ export default function BoardPage() {
                             </div>
                         )}
                         <Input
-                            placeholder="Search work items..."
+                            placeholder="Tìm kiếm công việc..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-10 pr-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-gray-700"
@@ -656,7 +653,7 @@ export default function BoardPage() {
                                 className="flex items-center space-x-2 bg-white border-gray-200 hover:bg-gray-50"
                             >
                                 <User className="h-4 w-4" />
-                                <span>Assignee</span>
+                                <span>Thành viên được giao</span>
                                 {filteredAssignees.size > 0 && (
                                     <Badge
                                         variant="secondary"
@@ -670,7 +667,7 @@ export default function BoardPage() {
                         <DropdownMenuContent className="w-64 p-2">
                             <div className="space-y-2">
                                 <div className="font-medium text-sm text-gray-700 px-2 py-1">
-                                    Filter by Assignee
+                                    Lọc theo thành viên được giao
                                 </div>
                                 <DropdownMenuSeparator />
 
@@ -696,7 +693,7 @@ export default function BoardPage() {
                                             <User className="h-3 w-3 text-gray-400" />
                                         </div>
                                         <span className="text-sm text-gray-700">
-                                            Unassigned
+                                            Chưa giao
                                         </span>
                                     </div>
                                 </div>
@@ -749,7 +746,7 @@ export default function BoardPage() {
                                             ) : (
                                                 <div
                                                     className="w-8 h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center shadow-md ring-2 ring-white group/unassigned hover:from-gray-300 hover:to-gray-400 transition-all"
-                                                    title="No name"
+                                                    title="Không có tên"
                                                 >
                                                     <User className="h-4 w-4 text-gray-500 group-hover/unassigned:text-gray-600 transition-colors" />
                                                 </div>
@@ -790,7 +787,7 @@ export default function BoardPage() {
                                                     loadBoardData();
                                                 }}
                                             >
-                                                Apply Filter
+                                                Áp dụng bộ lọc
                                             </Button>
                                             <Button
                                                 variant="ghost"
@@ -809,7 +806,7 @@ export default function BoardPage() {
                                                 }}
                                             >
                                                 <X className="h-3 w-3 mr-1" />
-                                                Clear
+                                                Xóa bộ lọc
                                             </Button>
                                         </div>
                                     </>
@@ -842,7 +839,7 @@ export default function BoardPage() {
                         <DropdownMenuContent className="w-64 p-2">
                             <div className="space-y-2">
                                 <div className="font-medium text-sm text-gray-700 px-2 py-1">
-                                    Filter by Sprint
+                                    Lọc theo sprint
                                 </div>
                                 <DropdownMenuSeparator />
 
@@ -890,7 +887,7 @@ export default function BoardPage() {
                                 {sprints.length === 0 && (
                                     <div className="text-center py-4 text-gray-400">
                                         <p className="text-sm">
-                                            No active sprints
+                                            Không có sprint đang diễn ra
                                         </p>
                                     </div>
                                 )}
@@ -908,7 +905,7 @@ export default function BoardPage() {
                                                     loadBoardData();
                                                 }}
                                             >
-                                                Apply Filter
+                                                Áp dụng bộ lọc
                                             </Button>
                                             <Button
                                                 variant="ghost"
@@ -928,7 +925,7 @@ export default function BoardPage() {
                                                 }}
                                             >
                                                 <X className="h-3 w-3 mr-1" />
-                                                Clear
+                                                Xóa bộ lọc
                                             </Button>
                                         </div>
                                     </>
@@ -997,10 +994,10 @@ export default function BoardPage() {
                                                         column.status
                                                     )}
                                                     <p className="text-sm font-medium">
-                                                        No items
+                                                        Không có công việc
                                                     </p>
                                                     <p className="text-xs">
-                                                        Drag items here
+                                                        Kéo công việc vào đây
                                                     </p>
                                                 </div>
                                             </div>

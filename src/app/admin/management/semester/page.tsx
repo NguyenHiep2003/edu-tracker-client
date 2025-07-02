@@ -37,6 +37,7 @@ import type {
     UpdateSemesterRequest,
 } from '@/services/api/semester/interface';
 import Select from 'react-select';
+import { formatDate } from '@/helper/date-formatter';
 
 // Create Semester Modal
 function CreateSemesterModal({
@@ -55,31 +56,31 @@ function CreateSemesterModal({
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const statusOptions = [
-        { value: 'INACTIVE', label: 'Inactive' },
-        { value: 'ACTIVE', label: 'Active' },
+        { value: 'INACTIVE', label: 'Không hoạt động' },
+        { value: 'ACTIVE', label: 'Đang diễn ra' },
     ];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!formData.name.trim()) {
-            toast.error('Semester name is required');
+            toast.error('Tên kỳ học là bắt buộc');
             return;
         }
 
         try {
             setIsSubmitting(true);
             await createSemester(formData);
-            toast.success('Semester created successfully');
+            toast.success('Kỳ học đã được tạo thành công');
             onSuccess();
             onClose();
             setFormData({ name: '', status: 'INACTIVE' });
         } catch (error: any) {
-            console.error('Error creating semester:', error);
+            console.log("🚀 ~ handleSubmit ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to create semester');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi tạo kỳ học');
             }
         } finally {
             setIsSubmitting(false);
@@ -95,13 +96,13 @@ function CreateSemesterModal({
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            title="Create New Semester"
+            title="Tạo kỳ học mới"
             size="md"
         >
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                     <Label htmlFor="create-name" className="text-gray-800">
-                        Semester Name *
+                        Tên kỳ học *
                     </Label>
                     <Input
                         className="text-gray-700"
@@ -113,18 +114,18 @@ function CreateSemesterModal({
                                 name: e.target.value,
                             }))
                         }
-                        placeholder="e.g., 2024.1, Spring 2024, Fall 2023"
+                        placeholder="Ví dụ: 2024.1, 2024.3, ..."
                         disabled={isSubmitting}
                         required
                     />
                     <p className="text-xs text-gray-500">
-                        Enter a unique name for the semester
+                        Nhập tên kỳ học (không trùng lặp)
                     </p>
                 </div>
 
                 <div className="space-y-2">
                     <Label htmlFor="create-status" className="text-gray-800">
-                        Status *
+                        Trạng thái *
                     </Label>
                     <Select
                         value={statusOptions.find(
@@ -140,7 +141,7 @@ function CreateSemesterModal({
                         }
                         options={statusOptions}
                         isDisabled={isSubmitting}
-                        placeholder="Select status..."
+                        placeholder="Chọn trạng thái..."
                         className="text-sm"
                         classNamePrefix="react-select"
                         styles={{
@@ -174,7 +175,7 @@ function CreateSemesterModal({
                         }}
                     />
                     <p className="text-xs text-gray-500">
-                        Select the initial status for this semester
+                        Chọn trạng thái cho kỳ học này
                     </p>
                 </div>
 
@@ -184,13 +185,10 @@ function CreateSemesterModal({
                             <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 mr-3" />
                             <div>
                                 <h4 className="font-medium text-yellow-900">
-                                    Important Notice
+                                    Lưu ý quan trọng
                                 </h4>
                                 <p className="text-sm text-yellow-700 mt-1">
-                                    Setting this semester as ACTIVE will
-                                    automatically set all other semesters to
-                                    INACTIVE. Only one semester can be active at
-                                    a time.
+                                    Đặt kỳ học này là <b>Đang diễn ra</b> sẽ tự động đặt tất cả các kỳ học khác là <b>Không hoạt động</b>. Chỉ có một kỳ học có thể diễn ra tại một thời điểm.
                                 </p>
                             </div>
                         </div>
@@ -204,7 +202,7 @@ function CreateSemesterModal({
                         disabled={isSubmitting}
                     >
                         <Save className="h-4 w-4 mr-2" />
-                        {isSubmitting ? 'Creating...' : 'Create Semester'}
+                        {isSubmitting ? 'Đang tạo...' : 'Tạo kỳ học'}
                     </Button>
                     <Button
                         type="button"
@@ -213,7 +211,7 @@ function CreateSemesterModal({
                         className="flex-1"
                         disabled={isSubmitting}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                 </div>
             </form>
@@ -240,8 +238,8 @@ function UpdateSemesterModal({
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const statusOptions = [
-        { value: 'INACTIVE', label: 'Inactive' },
-        { value: 'ACTIVE', label: 'Active' },
+        { value: 'INACTIVE', label: 'Không hoạt động' },
+        { value: 'ACTIVE', label: 'Đang diễn ra' },
     ];
 
     useEffect(() => {
@@ -257,22 +255,22 @@ function UpdateSemesterModal({
         e.preventDefault();
 
         if (!semester || !formData.name.trim()) {
-            toast.error('Semester name is required');
+            toast.error('Tên kỳ học là bắt buộc');
             return;
         }
 
         try {
             setIsSubmitting(true);
             await updateSemester(semester.id, formData);
-            toast.success('Semester updated successfully');
+            toast.success('Kỳ học đã được cập nhật thành công');
             onSuccess();
             onClose();
         } catch (error: any) {
-            console.error('Error updating semester:', error);
+            console.log("🚀 ~ handleSubmit ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to update semester');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi cập nhật kỳ học');
             }
         } finally {
             setIsSubmitting(false);
@@ -285,13 +283,13 @@ function UpdateSemesterModal({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Update Semester"
+            title="Cập nhật kỳ học"
             size="md"
         >
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                     <Label htmlFor="update-name" className="text-gray-800">
-                        Semester Name *
+                        Tên kỳ học *
                     </Label>
                     <Input
                         className="text-gray-600"
@@ -303,18 +301,18 @@ function UpdateSemesterModal({
                                 name: e.target.value,
                             }))
                         }
-                        placeholder="e.g., 2024.1, Spring 2024, Fall 2023"
+                        placeholder="Ví dụ: 2024.1, 2024.3, ..."
                         disabled={isSubmitting}
                         required
                     />
                     <p className="text-xs text-gray-500">
-                        Enter a unique name for the semester
+                        Nhập tên kỳ học (không trùng lặp)
                     </p>
                 </div>
 
                 <div className="space-y-2">
                     <Label htmlFor="update-status" className="text-gray-800">
-                        Status *
+                        Trạng thái *
                     </Label>
                     <Select
                         value={statusOptions.find(
@@ -330,7 +328,7 @@ function UpdateSemesterModal({
                         }
                         options={statusOptions}
                         isDisabled={isSubmitting}
-                        placeholder="Select status..."
+                        placeholder="Chọn trạng thái..."
                         className="text-sm"
                         classNamePrefix="react-select"
                         styles={{
@@ -364,7 +362,7 @@ function UpdateSemesterModal({
                         }}
                     />
                     <p className="text-xs text-gray-500">
-                        Select the status for this semester
+                        Chọn trạng thái cho kỳ học này
                     </p>
                 </div>
 
@@ -375,13 +373,10 @@ function UpdateSemesterModal({
                                 <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 mr-3" />
                                 <div>
                                     <h4 className="font-medium text-yellow-900">
-                                        Important Notice
+                                        Lưu ý quan trọng
                                     </h4>
                                     <p className="text-sm text-yellow-700 mt-1">
-                                        Setting this semester as ACTIVE will
-                                        automatically set all other semesters to
-                                        INACTIVE. Only one semester can be
-                                        active at a time.
+                                        Đặt kỳ học này là <b>Đang diễn ra</b> sẽ tự động đặt tất cả các kỳ học khác là <b>Không hoạt động</b>. Chỉ có một kỳ học có thể diễn ra tại một thời điểm.
                                     </p>
                                 </div>
                             </div>
@@ -395,7 +390,7 @@ function UpdateSemesterModal({
                         disabled={isSubmitting}
                     >
                         <Save className="h-4 w-4 mr-2" />
-                        {isSubmitting ? 'Updating...' : 'Update Semester'}
+                        {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật kỳ học'}
                     </Button>
                     <Button
                         type="button"
@@ -404,7 +399,7 @@ function UpdateSemesterModal({
                         className="flex-1"
                         disabled={isSubmitting}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                 </div>
             </form>
@@ -430,7 +425,7 @@ function DeleteConfirmationModal({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Confirm Delete Semester"
+            title="Xác nhận xóa kỳ học"
             size="md"
         >
             <div className="space-y-6">
@@ -438,17 +433,16 @@ function DeleteConfirmationModal({
                     <AlertCircle className="h-6 w-6 text-red-600 mt-0.5 mr-3" />
                     <div>
                         <h4 className="font-medium text-gray-900 mb-2">
-                            Are you sure you want to delete this semester?
+                            Bạn có chắc chắn muốn xóa kỳ học này?
                         </h4>
                         <p className="text-gray-600 mb-4">
-                            This action cannot be undone and may affect related
-                            data.
+                            Hành động này không thể được hoàn tác và có thể ảnh hưởng đến dữ liệu liên quan.
                         </p>
 
                         <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                             <div className="flex justify-between">
                                 <span className="font-medium text-gray-700">
-                                    Name:
+                                    Tên kỳ học:
                                 </span>
                                 <span className="text-gray-900">
                                     {semester.name}
@@ -456,7 +450,7 @@ function DeleteConfirmationModal({
                             </div>
                             <div className="flex justify-between">
                                 <span className="font-medium text-gray-700">
-                                    Status:
+                                    Trạng thái:
                                 </span>
                                 <span
                                     className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
@@ -475,16 +469,10 @@ function DeleteConfirmationModal({
                             </div>
                             <div className="flex justify-between">
                                 <span className="font-medium text-gray-700">
-                                    Created:
+                                    Thời gian tạo:
                                 </span>
                                 <span className="text-gray-900">
-                                    {new Date(
-                                        semester.createdAt
-                                    ).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                    })}
+                                    {formatDate(semester.createdAt, 'dd/MM/yyyy HH:mm')}
                                 </span>
                             </div>
                         </div>
@@ -497,7 +485,7 @@ function DeleteConfirmationModal({
                         className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                     >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Semester
+                        Xóa kỳ học
                     </Button>
                     <Button
                         type="button"
@@ -505,7 +493,7 @@ function DeleteConfirmationModal({
                         onClick={onClose}
                         className="flex-1"
                     >
-                        Cancel
+                        Hủy
                     </Button>
                 </div>
             </div>
@@ -538,11 +526,11 @@ export default function SemesterManagementPage() {
             const response = await getSemesters();
             setSemesters(response.data);
         } catch (error: any) {
-            console.error('Error fetching semesters:', error);
+            console.log("🚀 ~ fetchSemesters ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to load semesters');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi tải kỳ học');
             }
         } finally {
             setLoading(false);
@@ -572,16 +560,16 @@ export default function SemesterManagementPage() {
 
         try {
             await deleteSemester(selectedSemester.id);
-            toast.success('Semester deleted successfully');
+            toast.success('Kỳ học đã được xóa thành công');
             fetchSemesters();
             setShowDeleteModal(false);
             setSelectedSemester(null);
         } catch (error: any) {
-            console.error('Error deleting semester:', error);
+            console.log("🚀 ~ handleDeleteConfirm ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to delete semester');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi xóa kỳ học');
             }
         }
     };
@@ -594,17 +582,6 @@ export default function SemesterManagementPage() {
     const openDeleteModal = (semester: Semester) => {
         setSelectedSemester(semester);
         setShowDeleteModal(true);
-    };
-
-    // Format date
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
     };
 
     // Get status styling
@@ -627,11 +604,10 @@ export default function SemesterManagementPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Semester Management
+                        Quản lý kỳ học
                     </h1>
                     <p className="text-gray-600">
-                        Manage academic semesters and terms for your
-                        organization
+                        Quản lý kỳ học cho tổ chức của bạn
                     </p>
                 </div>
 
@@ -654,7 +630,7 @@ export default function SemesterManagementPage() {
                         className="flex items-center gap-2"
                     >
                         <Plus className="h-4 w-4" />
-                        Create Semester
+                        Tạo kỳ học
                     </Button>
                 </div>
             </div>
@@ -662,10 +638,9 @@ export default function SemesterManagementPage() {
             {/* Semesters List */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Semesters</CardTitle>
+                    <CardTitle>Kỳ học</CardTitle>
                     <CardDescription>
-                        Manage your organization&apos;s academic semesters. Only
-                        one semester can be active at a time.
+                        Quản lý kỳ học cho tổ chức của bạn. Chỉ có một kỳ học có thể diễn ra tại một thời điểm.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -674,7 +649,7 @@ export default function SemesterManagementPage() {
                             <div className="text-center">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                                 <p className="mt-4 text-gray-600">
-                                    Loading semesters...
+                                    Đang tải kỳ học...
                                 </p>
                             </div>
                         </div>
@@ -682,17 +657,17 @@ export default function SemesterManagementPage() {
                         <div className="text-center py-12">
                             <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                             <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                No semesters found
+                                Không tìm thấy kỳ học
                             </h3>
                             <p className="text-gray-500 mb-4">
-                                Get started by creating your first semester.
+                                Bắt đầu bằng cách tạo kỳ học đầu tiên.
                             </p>
                             <Button
                                 onClick={() => setShowCreateModal(true)}
                                 className="flex items-center gap-2"
                             >
                                 <Plus className="h-4 w-4" />
-                                Create First Semester
+                                Tạo kỳ học đầu tiên
                             </Button>
                         </div>
                     ) : (
@@ -701,19 +676,19 @@ export default function SemesterManagementPage() {
                                 <thead>
                                     <tr className="bg-gray-50">
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Name
+                                            Tên kỳ học
                                         </th>
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
+                                            Trạng thái
                                         </th>
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Created At
+                                            Thời gian tạo
                                         </th>
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Updated At
+                                            Thời gian cập nhật
                                         </th>
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
+                                            Hành động
                                         </th>
                                     </tr>
                                 </thead>
@@ -745,7 +720,8 @@ export default function SemesterManagementPage() {
                                                     <Calendar className="h-4 w-4 text-gray-400" />
                                                     <span className="text-sm text-gray-600">
                                                         {formatDate(
-                                                            semester.createdAt
+                                                            semester.createdAt,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </span>
                                                 </div>
@@ -755,7 +731,8 @@ export default function SemesterManagementPage() {
                                                     <Calendar className="h-4 w-4 text-gray-400" />
                                                     <span className="text-sm text-gray-600">
                                                         {formatDate(
-                                                            semester.updatedAt
+                                                            semester.updatedAt,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </span>
                                                 </div>
@@ -773,7 +750,7 @@ export default function SemesterManagementPage() {
                                                         className="flex items-center gap-1"
                                                     >
                                                         <Edit className="h-3 w-3" />
-                                                        Edit
+                                                        Sửa
                                                     </Button>
                                                     <Button
                                                         variant="outline"
@@ -786,7 +763,7 @@ export default function SemesterManagementPage() {
                                                         className="flex items-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                                                     >
                                                         <Trash2 className="h-3 w-3" />
-                                                        Delete
+                                                        Xóa
                                                     </Button>
                                                 </div>
                                             </td>

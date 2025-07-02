@@ -38,6 +38,7 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import { useParams } from 'next/navigation';
+import { formatDate } from '@/helper/date-formatter';
 
 interface GroupMember {
     id: number;
@@ -124,8 +125,8 @@ export default function GroupMembersManagement() {
             const data = await getUserInGroup(groupData.id);
             setMembers(data);
         } catch (error) {
-            console.error('Error loading group members:', error);
-            toast.error('Failed to load group members');
+            console.log("🚀 ~ loadGroupMembers ~ error:", error)
+            toast.error('Lỗi khi tải danh sách thành viên nhóm');
         } finally {
             setLoading(false);
         }
@@ -137,8 +138,8 @@ export default function GroupMembersManagement() {
             const data = await getJoinGroupRequest(groupData.id);
             setJoinRequests(data);
         } catch (error) {
-            console.error('Error loading join requests:', error);
-            toast.error('Failed to load join requests');
+            console.log("🚀 ~ loadJoinRequests ~ error:", error)
+            toast.error('Lỗi khi tải danh sách yêu cầu tham gia nhóm');
         } finally {
             setJoinRequestsLoading(false);
         }
@@ -152,7 +153,7 @@ export default function GroupMembersManagement() {
                 groupData.id,
                 selectedMember.studentProjectId
             );
-            toast.success(`Leadership transferred to ${selectedMember.name}`);
+            toast.success(`Quyền trưởng nhóm đã được chuyển cho ${selectedMember.name}`);
             await loadGroupMembers();
             setIsGroupLeader(false);
             setShowTransferDialog(false);
@@ -169,14 +170,14 @@ export default function GroupMembersManagement() {
     const handleAcceptJoinRequest = async (requestId: number) => {
         try {
             await acceptJoinGroupRequest(groupData.id, requestId);
-            toast.success('Join request accepted successfully');
+            toast.success('Yêu cầu tham gia nhóm đã được chấp nhận thành công');
             await loadJoinRequests();
             await loadGroupMembers();
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to accept join request');
+                toast.error(error.message || 'Lỗi khi chấp nhận yêu cầu tham gia nhóm');
             }
         }
     };
@@ -190,7 +191,7 @@ export default function GroupMembersManagement() {
                 groupData.id
             );
             toast.success(
-                `${selectedMember.name} has been removed from the group`
+                `${selectedMember.name} đã bị xóa khỏi nhóm`
             );
             await loadGroupMembers();
             setShowRemoveDialog(false);
@@ -199,7 +200,7 @@ export default function GroupMembersManagement() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to remove member');
+                toast.error(error.message || 'Lỗi khi xóa thành viên khỏi nhóm');
             }
         }
     };
@@ -207,14 +208,14 @@ export default function GroupMembersManagement() {
     const handleLeaveGroup = async () => {
         try {
             await leaveGroup(groupData.id);
-            toast.success('You have left the group');
+            toast.success('Bạn đã rời khỏi nhóm');
             // Redirect or refresh the page
             window.location.href = `/student/classes/${params.id}/projects`;
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to leave group');
+                toast.error(error.message || 'Lỗi khi rời khỏi nhóm');
             }
         }
     };
@@ -224,7 +225,7 @@ export default function GroupMembersManagement() {
             projectData?.formGroupDeadline &&
             new Date(projectData.formGroupDeadline) < new Date()
         ) {
-            return 'Group formation deadline has passed. Contact lecturer for changes.';
+            return 'Thời gian lập nhóm đã hết hạn. Vui lòng liên hệ giáo viên để thay đổi.';
         }
         return '';
     };
@@ -248,7 +249,7 @@ export default function GroupMembersManagement() {
         <div className="container mx-auto py-6 px-8 space-y-6">
             <Card>
                 <CardHeader>
-                    <CardTitle>Group Members</CardTitle>
+                    <CardTitle>Thành viên nhóm</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -299,7 +300,7 @@ export default function GroupMembersManagement() {
                                                         );
                                                     }}
                                                 >
-                                                    Transfer Leadership
+                                                    Chuyển quyền trưởng nhóm
                                                 </Button>
                                                 {projectData?.type === 'TEAM' &&
                                                     projectData.allowStudentFormTeam && (
@@ -324,7 +325,7 @@ export default function GroupMembersManagement() {
                                                                             className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                                                                         >
                                                                             <UserMinus className="h-4 w-4 mr-1" />
-                                                                            Remove
+                                                                            Xóa
                                                                         </Button>
                                                                     </div>
                                                                 </TooltipTrigger>
@@ -350,7 +351,7 @@ export default function GroupMembersManagement() {
                 projectData.allowStudentFormTeam && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Join Requests</CardTitle>
+                        <CardTitle>Yêu cầu tham gia nhóm</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {joinRequestsLoading ? (
@@ -400,10 +401,11 @@ export default function GroupMembersManagement() {
                                                 )}
                                             </div>
                                             <p className="text-xs text-gray-400">
-                                                Requested:{' '}
-                                                {new Date(
-                                                    request.createdAt
-                                                ).toLocaleString()}
+                                                Yêu cầu lúc:{' '}
+                                                {formatDate(
+                                                    request.createdAt,
+                                                    'dd/MM/yyyy HH:mm'
+                                                )}
                                             </p>
                                         </div>
                                         {isGroupLeader && (
@@ -423,7 +425,7 @@ export default function GroupMembersManagement() {
                                                                     className="bg-green-600 hover:bg-green-700"
                                                                 >
                                                                     <UserCheck className="h-4 w-4 mr-1" />
-                                                                    Accept
+                                                                    Chấp nhận
                                                                 </Button>
                                                             </div>
                                                         </TooltipTrigger>
@@ -443,7 +445,7 @@ export default function GroupMembersManagement() {
                             </div>
                         ) : (
                             <p className="text-gray-500 text-center py-4">
-                                No pending join requests
+                                Không có yêu cầu tham gia nhóm nào đang chờ duyệt
                             </p>
                         )}
                     </CardContent>
@@ -466,7 +468,7 @@ export default function GroupMembersManagement() {
                                     className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                                 >
                                     <LogOut className="h-4 w-4 mr-1" />
-                                    Leave Group
+                                    Rời nhóm
                                 </Button>
                             </div>
                         </TooltipTrigger>
@@ -489,11 +491,11 @@ export default function GroupMembersManagement() {
             >
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Transfer Group Leadership</DialogTitle>
+                        <DialogTitle>Chuyển quyền trưởng nhóm</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to transfer leadership to{' '}
-                            {selectedMember?.name}? This action cannot be undone
-                            and you will lose leader privileges.
+                            Bạn có chắc chắn muốn chuyển quyền trưởng nhóm cho{' '}
+                            {selectedMember?.name}? Việc này không thể hoàn tác
+                            và bạn sẽ mất quyền trưởng nhóm.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -501,14 +503,14 @@ export default function GroupMembersManagement() {
                             variant="outline"
                             onClick={() => setShowTransferDialog(false)}
                         >
-                            Cancel
+                            Hủy
                         </Button>
                         <Button
                             variant="default"
                             onClick={handleTransferLeadership}
                             className="bg-blue-600 hover:bg-blue-700"
                         >
-                            Transfer Leadership
+                            Chuyển quyền trưởng nhóm
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -518,11 +520,10 @@ export default function GroupMembersManagement() {
             <Dialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Remove Group Member</DialogTitle>
+                        <DialogTitle>Xóa thành viên nhóm</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to remove{' '}
-                            {selectedMember?.name} from the group? This action
-                            cannot be undone.
+                            Bạn có chắc chắn muốn xóa{' '}
+                            {selectedMember?.name} khỏi nhóm? Việc này không thể hoàn tác.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -530,13 +531,13 @@ export default function GroupMembersManagement() {
                             variant="outline"
                             onClick={() => setShowRemoveDialog(false)}
                         >
-                            Cancel
+                            Hủy
                         </Button>
                         <Button
                             variant="destructive"
                             onClick={handleRemoveMember}
                         >
-                            Remove Member
+                            Xóa thành viên
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -546,10 +547,9 @@ export default function GroupMembersManagement() {
             <Dialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Leave Group</DialogTitle>
+                        <DialogTitle>Rời nhóm</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to leave this group? You will
-                            lose access to all group activities and progress.
+                            Bạn có chắc chắn muốn rời khỏi nhóm? Bạn sẽ mất quyền truy cập vào tất cả hoạt động và tiến độ của nhóm.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -557,13 +557,13 @@ export default function GroupMembersManagement() {
                             variant="outline"
                             onClick={() => setShowLeaveDialog(false)}
                         >
-                            Cancel
+                            Hủy
                         </Button>
                         <Button
                             variant="destructive"
                             onClick={handleLeaveGroup}
                         >
-                            Leave Group
+                            Rời nhóm
                         </Button>
                     </DialogFooter>
                 </DialogContent>

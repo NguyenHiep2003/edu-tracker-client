@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useStudentProjectContext } from '@/context/student-project-context';
 import { getProjectTopics } from '@/services/api/project';
+import { formatDate } from '@/helper/date-formatter';
 
 interface Attachment {
     id: number;
@@ -57,16 +58,14 @@ export default function StudentProjectTopicsPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Mock data using your real structure - replace with real API call
     useEffect(() => {
         const fetchTopics = async () => {
             try {
-                // Simulate API call
                 const topics: any = await getProjectTopics(Number(projectId));
 
                 setTopics(topics);
             } catch (error) {
-                console.error('Error fetching topics:', error);
+                console.log("🚀 ~ fetchTopics ~ error:", error)
             } finally {
                 setLoading(false);
             }
@@ -104,7 +103,7 @@ export default function StudentProjectTopicsPage() {
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading topics...</p>
+                    <p className="mt-4 text-gray-600">Đang tải chủ đề...</p>
                 </div>
             </div>
         );
@@ -116,10 +115,10 @@ export default function StudentProjectTopicsPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Project Topics
+                        Danh sách chủ đề của bài tập lớn
                     </h1>
                     <p className="text-gray-600">
-                        {topics.length} topics available
+                        {topics.length} chủ đề đã được tạo
                     </p>
                 </div>
             </div>
@@ -128,7 +127,7 @@ export default function StudentProjectTopicsPage() {
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                    placeholder="Search topics by title or description..."
+                    placeholder="Tìm kiếm chủ đề theo tiêu đề hoặc mô tả..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -150,7 +149,7 @@ export default function StudentProjectTopicsPage() {
                                     </h3>
                                     <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
                                         {topic.description ||
-                                            'No description provided'}
+                                            'Không có mô tả'}
                                     </p>
                                 </div>
 
@@ -161,12 +160,10 @@ export default function StudentProjectTopicsPage() {
                                             className="flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-200"
                                         >
                                             <FileText className="h-3 w-3" />
-                                            {topic.attachments.length} files
+                                            {topic.attachments.length} tệp đính kèm
                                         </Badge>
                                         <span className="text-xs text-gray-500">
-                                            {new Date(
-                                                topic.createdAt
-                                            ).toLocaleDateString()}
+                                            {formatDate(topic.createdAt, 'dd/MM/yyyy')}
                                         </span>
                                     </div>
 
@@ -177,7 +174,7 @@ export default function StudentProjectTopicsPage() {
                                                 className="bg-blue-600 hover:bg-blue-700 text-white"
                                             >
                                                 <Eye className="h-3 w-3 mr-1" />
-                                                View Details
+                                                Xem chi tiết
                                             </Button>
                                         </DialogTrigger>
                                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-white">
@@ -191,12 +188,12 @@ export default function StudentProjectTopicsPage() {
                                                 {/* Full Description */}
                                                 <div>
                                                     <h4 className="font-semibold text-gray-900 mb-3">
-                                                        Description
+                                                        Mô tả
                                                     </h4>
                                                     <div className="bg-gray-50 rounded-lg p-4 border max-h-60 overflow-y-auto overflow-x-hidden">
                                                         <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-all overflow-wrap-anywhere">
                                                             {topic.description ||
-                                                                'No description provided'}
+                                                                'Không có mô tả'}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -206,7 +203,7 @@ export default function StudentProjectTopicsPage() {
                                                     0 && (
                                                     <div>
                                                         <h4 className="font-semibold text-gray-900 mb-3">
-                                                            Attachments (
+                                                            Tệp đính kèm (
                                                             {
                                                                 topic
                                                                     .attachments
@@ -259,8 +256,8 @@ export default function StudentProjectTopicsPage() {
                                                                                 }
                                                                             >
                                                                                 <Download className="h-3 w-3" />
-                                                                                View
-                                                                                File
+                                                                                Xem
+                                                                                tệp
                                                                             </a>
                                                                         </Button>
                                                                     </div>
@@ -275,9 +272,8 @@ export default function StudentProjectTopicsPage() {
                                                     <div className="text-center py-8">
                                                         <FileText className="h-12 w-12 text-gray-400 mx-auto mb-2" />
                                                         <p className="text-gray-500">
-                                                            No attachments
-                                                            available for this
-                                                            topic
+                                                            Không có tệp đính kèm
+                                                            cho chủ đề này
                                                         </p>
                                                     </div>
                                                 )}
@@ -298,8 +294,8 @@ export default function StudentProjectTopicsPage() {
                         <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                         <p className="text-gray-500">
                             {searchTerm
-                                ? 'No topics found matching your search.'
-                                : 'No topics have been created yet.'}
+                                ? 'Không tìm thấy chủ đề nào phù hợp với tìm kiếm của bạn.'
+                                : 'Không có chủ đề nào đã được tạo.'}
                         </p>
                     </CardContent>
                 </Card>

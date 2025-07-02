@@ -46,9 +46,9 @@ export function AutoDivideGroupsModal({
         const size = Number.parseInt(groupSize);
 
         if (!groupSize.trim() || isNaN(size) || size < 1) {
-            newErrors.groupSize = 'Group size must be a positive number';
+            newErrors.groupSize = 'Kích thước nhóm phải là số dương';
         } else if (size > totalStudents) {
-            newErrors.groupSize = `Group size cannot exceed total students (${totalStudents})`;
+            newErrors.groupSize = `Kích thước nhóm không được vượt quá tổng số sinh viên (${totalStudents})`;
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -64,14 +64,14 @@ export function AutoDivideGroupsModal({
             });
 
             toast.success(
-                `Groups have been successfully auto-divided. Formed ${numOfGroups} new groups`
+                `Nhóm đã được chia tự động thành công. Tạo ${numOfGroups} nhóm mới`
             );
             onGroupsDivided();
             handleClose();
         } catch (error: any) {
-            console.error('Error auto-dividing groups:', error);
+            console.error('Lỗi chia nhóm tự động:', error);
             if (Array.isArray(error.message)) toast.error(error.message?.[0]);
-            toast.error(error.message || 'Failed to auto-divide groups');
+            toast.error(error.message || 'Lỗi khi chia nhóm tự động');
         } finally {
             setLoading(false);
         }
@@ -93,7 +93,7 @@ export function AutoDivideGroupsModal({
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            title="Auto Divide Groups"
+            title="Chia nhóm tự động"
             size="md"
         >
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -103,21 +103,21 @@ export function AutoDivideGroupsModal({
                         <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                         <div>
                             <h4 className="text-blue-800 font-medium mb-2">
-                                How Auto Division Works
+                                Cách chia nhóm tự động hoạt động
                             </h4>
                             <div className="text-blue-700 text-sm space-y-1">
                                 <p>
-                                    Students are distributed into groups of
-                                    approximately{' '}
-                                    <strong>{groupSize || 'X'}</strong> members
-                                    each.
+                                    Sinh viên được phân phối vào nhóm với kích
+                                    thước tối đa{' '}
+                                    <strong>{groupSize || 'X'}</strong> thành
+                                    viên mỗi nhóm.
                                 </p>
                                 <p>
-                                    If the total number of students doesn&apos;t
-                                    divide evenly, extra students are evenly
-                                    assigned to existing groups, keeping the
-                                    difference between group sizes as small as
-                                    possible (maximum 1 student).
+                                    Nếu tổng số sinh viên không chia đều, sinh
+                                    viên thừa sẽ được phân phối đều vào các nhóm
+                                    hiện có, giữ cho sự khác biệt giữa kích
+                                    thước nhóm nhỏ nhất có thể (tối đa 1 sinh
+                                    viên).
                                 </p>
                             </div>
                         </div>
@@ -130,7 +130,7 @@ export function AutoDivideGroupsModal({
                         htmlFor="groupSize"
                         className="text-gray-700 font-medium"
                     >
-                        Group Size *
+                        Kích thước nhóm tối đa *
                     </Label>
                     <Input
                         id="groupSize"
@@ -147,7 +147,7 @@ export function AutoDivideGroupsModal({
                                 }));
                             }
                         }}
-                        placeholder="Enter number of students per group"
+                        placeholder="Nhập số lượng sinh viên tối đa trong nhóm"
                         className={`mt-1 bg-white text-gray-900 ${
                             errors.groupSize ? 'border-red-500' : ''
                         }`}
@@ -162,7 +162,7 @@ export function AutoDivideGroupsModal({
                 {/* Apply Option */}
                 <div>
                     <Label className="text-gray-700 font-medium">
-                        Apply To
+                        Áp dụng cho
                     </Label>
                     <RadioGroup
                         value={applyOption}
@@ -180,8 +180,8 @@ export function AutoDivideGroupsModal({
                                 htmlFor="without-group"
                                 className="text-gray-700 cursor-pointer"
                             >
-                                Students without groups only (
-                                {studentsWithoutGroup} students)
+                                Sinh viên không có nhóm ({studentsWithoutGroup}{' '}
+                                sinh viên)
                             </Label>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -190,7 +190,7 @@ export function AutoDivideGroupsModal({
                                 htmlFor="all"
                                 className="text-gray-700 cursor-pointer"
                             >
-                                All students ({totalStudents} students)
+                                Tất cả sinh viên ({totalStudents} sinh viên)
                             </Label>
                         </div>
                     </RadioGroup>
@@ -203,13 +203,13 @@ export function AutoDivideGroupsModal({
                             <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                             <div>
                                 <h4 className="text-yellow-800 font-medium">
-                                    Warning
+                                    Cảnh báo
                                 </h4>
                                 <p className="text-yellow-700 text-sm mt-1">
-                                    There are {existingGroupsCount} existing
-                                    groups. Choosing &quot;All students&quot;
-                                    will dissolve all current groups and create
-                                    new ones. This action cannot be undone.
+                                    Có {existingGroupsCount} nhóm hiện có. Chọn
+                                    &quot;Tất cả sinh viên&quot; sẽ xóa bỏ tất
+                                    cả nhóm hiện có và tạo nhóm mới. Hành động
+                                    này không thể được hoàn tác.
                                 </p>
                             </div>
                         </div>
@@ -223,7 +223,7 @@ export function AutoDivideGroupsModal({
                         variant="outline"
                         onClick={handleClose}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                     <Button
                         type="submit"
@@ -233,12 +233,12 @@ export function AutoDivideGroupsModal({
                         {loading ? (
                             <>
                                 <Shuffle className="h-4 w-4 mr-2 animate-spin" />
-                                Dividing Groups...
+                                Đang chia nhóm...
                             </>
                         ) : (
                             <>
                                 <Shuffle className="h-4 w-4 mr-2" />
-                                Auto Divide Groups
+                                Chia nhóm tự động
                             </>
                         )}
                     </Button>

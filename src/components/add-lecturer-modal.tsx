@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Search, User, Mail, Plus, Loader2 } from 'lucide-react';
 import { getSuggestLecturer } from '@/services/api/class';
+import { Avatar } from './avatar';
 
 interface LecturerSuggestion {
     id: number;
@@ -70,8 +71,8 @@ export function AddLecturerModal({
             const data = await getSuggestLecturer(classId, term);
             setSuggestions(data || []);
         } catch (error: any) {
-            console.error('Error searching lecturers:', error);
-            setError(error.message || 'Failed to search lecturers');
+            console.log("🚀 ~ searchLecturers ~ error:", error)
+            setError(error.message || 'Lỗi khi tìm kiếm giảng viên');
             setSuggestions([]);
         } finally {
             setIsSearching(false);
@@ -100,8 +101,8 @@ export function AddLecturerModal({
             await onAddLecturer(selectedLecturer.id);
             handleClose();
         } catch (error: any) {
-            console.error('Error adding lecturer:', error);
-            setError(error.message || 'Failed to add lecturer');
+            console.log("🚀 ~ handleAddLecturer ~ error:", error)
+            setError(error.message || 'Lỗi khi thêm giảng viên');
         } finally {
             setIsAdding(false);
         }
@@ -140,7 +141,7 @@ export function AddLecturerModal({
                         htmlFor="lecturer-search"
                         className="text-sm font-medium text-gray-700"
                     >
-                        Search for Lecturer
+                        Tìm kiếm giảng viên
                     </Label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -153,7 +154,7 @@ export function AddLecturerModal({
                         <Input
                             id="lecturer-search"
                             type="text"
-                            placeholder="Type lecturer name or email..."
+                            placeholder="Nhập tên hoặc email giảng viên..."
                             value={searchTerm}
                             onChange={handleInputChange}
                             className="pl-10"
@@ -161,7 +162,7 @@ export function AddLecturerModal({
                         />
                     </div>
                     <p className="text-xs text-gray-500">
-                        Start typing to search for lecturers by name or email
+                        Nhập tên hoặc email giảng viên để tìm kiếm
                     </p>
                 </div>
 
@@ -176,7 +177,7 @@ export function AddLecturerModal({
                 {suggestions.length > 0 && !selectedLecturer && (
                     <div className="space-y-2">
                         <Label className="text-sm font-medium text-gray-700">
-                            Search Results
+                            Kết quả tìm kiếm
                         </Label>
                         <div className="border border-gray-200 rounded-md max-h-48 overflow-y-auto">
                             {suggestions.map((lecturer) => (
@@ -218,7 +219,7 @@ export function AddLecturerModal({
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
                             <Label className="text-sm font-medium text-gray-700">
-                                Selected Lecturer
+                                Giảng viên đã chọn
                             </Label>
                             <Button
                                 variant="outline"
@@ -230,20 +231,12 @@ export function AddLecturerModal({
                                 }}
                                 className="text-xs"
                             >
-                                Change Selection
+                                Thay đổi lựa chọn
                             </Button>
                         </div>
                         <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
                             <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-                                    <span className="text-white font-medium">
-                                        {selectedLecturer.name
-                                            .split(' ')
-                                            .map((n) => n[0])
-                                            .join('')
-                                            .toUpperCase()}
-                                    </span>
-                                </div>
+                                <Avatar name={selectedLecturer.name} size={12} />
                                 <div className="flex-1">
                                     <p className="font-medium text-gray-900">
                                         {selectedLecturer.name}
@@ -265,9 +258,9 @@ export function AddLecturerModal({
                     !selectedLecturer && (
                         <div className="text-center py-8">
                             <User className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                            <p className="text-gray-500">No lecturers found</p>
+                            <p className="text-gray-500">Không tìm thấy giảng viên</p>
                             <p className="text-sm text-gray-400">
-                                Try searching with a different name or email
+                                Vui lòng tìm kiếm với tên hoặc email khác
                             </p>
                         </div>
                     )}
@@ -279,7 +272,7 @@ export function AddLecturerModal({
                         onClick={handleClose}
                         disabled={isAdding}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                     <Button
                         onClick={handleAddLecturer}
@@ -289,12 +282,12 @@ export function AddLecturerModal({
                         {isAdding ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Adding...
+                                Đang thêm giảng viên...
                             </>
                         ) : (
                             <>
                                 <Plus className="h-4 w-4 mr-2" />
-                                Add Lecturer
+                                Thêm giảng viên
                             </>
                         )}
                     </Button>

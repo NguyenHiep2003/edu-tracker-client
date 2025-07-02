@@ -88,8 +88,8 @@ export function EditTaskModal({
             setNewAttachments([]);
             setDeletedAttachmentIds([]);
         } catch (error: any) {
-            console.error('Error fetching task details:', error);
-            toast.error('Failed to load task details');
+            console.log("🚀 ~ fetchTaskDetails ~ error:", error)
+            toast.error('Lỗi khi tải dữ liệu');
         } finally {
             setLoading(false);
         }
@@ -102,7 +102,7 @@ export function EditTaskModal({
             editedTask.startDate &&
             new Date(editedTask.endDate) < new Date(editedTask.startDate)
         ) {
-            toast.error('End date cannot be before start date');
+            toast.error('Ngày kết thúc không thể trước ngày bắt đầu');
             return;
         }
         try {
@@ -121,7 +121,7 @@ export function EditTaskModal({
             };
             await updateLecturerAssignedItem(taskId, updatedData);
 
-            toast.success('Task updated successfully');
+            toast.success('Công việc đã được cập nhật thành công');
             setIsStartDateChanged(false);
             setNewAttachments([]);
             setDeletedAttachmentIds([]);
@@ -131,7 +131,7 @@ export function EditTaskModal({
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to update task');
+                toast.error(error.message || 'Lỗi khi cập nhật công việc');
             }
         } finally {
             setSaving(false);
@@ -195,7 +195,7 @@ export function EditTaskModal({
                                         as="h3"
                                         className="text-lg font-medium text-gray-900"
                                     >
-                                        Edit Task
+                                        Chỉnh sửa công việc
                                     </Dialog.Title>
                                     <button
                                         onClick={onClose}
@@ -209,7 +209,7 @@ export function EditTaskModal({
                                     <div className="flex items-center justify-center h-32">
                                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                                         <span className="ml-2 text-gray-600">
-                                            Loading task details...
+                                            Đang tải dữ liệu chi tiết...
                                         </span>
                                     </div>
                                 ) : task && editedTask ? (
@@ -252,7 +252,7 @@ export function EditTaskModal({
                                                 htmlFor="summary"
                                                 className="text-gray-900"
                                             >
-                                                Summary
+                                                Tóm tắt công việc
                                             </Label>
                                             <Input
                                                 id="summary"
@@ -266,7 +266,7 @@ export function EditTaskModal({
                                                         summary: e.target.value,
                                                     })
                                                 }
-                                                placeholder="Enter task summary"
+                                                placeholder="Nhập tóm tắt công việc"
                                                 className="text-gray-700"
                                             />
                                         </div>
@@ -277,7 +277,7 @@ export function EditTaskModal({
                                                 htmlFor="description"
                                                 className="text-gray-900"
                                             >
-                                                Description
+                                                Mô tả
                                             </Label>
                                             <Textarea
                                                 id="description"
@@ -292,7 +292,7 @@ export function EditTaskModal({
                                                             e.target.value,
                                                     })
                                                 }
-                                                placeholder="Enter task description"
+                                                placeholder="Nhập mô tả công việc"
                                                 className="text-gray-700"
                                                 rows={4}
                                             />
@@ -304,7 +304,7 @@ export function EditTaskModal({
                                                 htmlFor="startDate"
                                                 className="text-gray-900"
                                             >
-                                                Start Date
+                                                Ngày bắt đầu
                                             </Label>
                                             <Input
                                                 id="startDate"
@@ -350,8 +350,8 @@ export function EditTaskModal({
                                             />
                                             {jobStatus === 'DONE' && (
                                                 <p className="text-sm text-gray-500 mt-1">
-                                                    Start date cannot be edited
-                                                    when task is published
+                                                    Ngày bắt đầu không thể chỉnh sửa
+                                                    khi công việc đã được xuất bản
                                                 </p>
                                             )}
                                         </div>
@@ -362,7 +362,7 @@ export function EditTaskModal({
                                                 htmlFor="endDate"
                                                 className="text-gray-900"
                                             >
-                                                End Date
+                                                Ngày kết thúc
                                             </Label>
                                             <Input
                                                 id="endDate"
@@ -409,7 +409,7 @@ export function EditTaskModal({
                                         {/* Attachments */}
                                         <div>
                                             <Label className="text-gray-900">
-                                                Attachments
+                                                Tập tin đính kèm
                                             </Label>
 
                                             {/* Existing Attachments */}
@@ -417,7 +417,7 @@ export function EditTaskModal({
                                                 0 && (
                                                 <div className="mt-2 space-y-2">
                                                     <p className="text-sm font-medium text-gray-700">
-                                                        Existing attachments:
+                                                        Tập tin đính kèm đã có:
                                                     </p>
                                                     <div className="space-y-2 max-h-32 overflow-y-auto">
                                                         {getExistingAttachments().map(
@@ -482,10 +482,10 @@ export function EditTaskModal({
                                                     >
                                                         <div className="flex items-center space-x-2">
                                                             <div className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
-                                                                Choose Files
+                                                                Chọn tập tin
                                                             </div>
                                                             <span className="text-gray-500">
-                                                                or drag and drop
+                                                                hoặc kéo và thả
                                                             </span>
                                                         </div>
                                                     </label>
@@ -496,7 +496,7 @@ export function EditTaskModal({
                                             {newAttachments.length > 0 && (
                                                 <div className="mt-3 space-y-2">
                                                     <p className="text-sm font-medium text-gray-700">
-                                                        New attachments (
+                                                        Tập tin đính kèm mới (
                                                         {newAttachments.length}
                                                         ):
                                                     </p>
@@ -552,7 +552,7 @@ export function EditTaskModal({
                                                 htmlFor="assignType"
                                                 className="text-gray-900"
                                             >
-                                                Assign Type
+                                                Loại giao công việc
                                             </Label>
                                             <Input
                                                 id="assignType"
@@ -568,7 +568,7 @@ export function EditTaskModal({
                                                 variant="outline"
                                                 onClick={onClose}
                                             >
-                                                Cancel
+                                                Hủy
                                             </Button>
                                             <Button
                                                 onClick={handleSave}
@@ -577,10 +577,10 @@ export function EditTaskModal({
                                                 {saving ? (
                                                     <div className="flex items-center space-x-2">
                                                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                                        <span>Saving...</span>
+                                                        <span>Đang lưu...</span>
                                                     </div>
                                                 ) : (
-                                                    'Save Changes'
+                                                    'Lưu thay đổi'
                                                 )}
                                             </Button>
                                         </div>
@@ -588,7 +588,7 @@ export function EditTaskModal({
                                 ) : (
                                     <div className="text-center py-8">
                                         <p className="text-gray-600">
-                                            Failed to load task details
+                                            Lỗi khi tải dữ liệu chi tiết
                                         </p>
                                     </div>
                                 )}

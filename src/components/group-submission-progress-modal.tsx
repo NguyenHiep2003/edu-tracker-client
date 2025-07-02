@@ -119,8 +119,8 @@ export function GroupSubmissionProgressModal({
                 );
             setData(response);
         } catch (error: any) {
-            console.error('Error fetching submission progress:', error);
-            toast.error(error.message || 'Failed to load submission progress');
+            console.log("🚀 ~ fetchData ~ error:", error)
+            toast.error(error.message || 'Lỗi khi tải dữ liệu bài nộp');
         } finally {
             setLoading(false);
         }
@@ -130,7 +130,7 @@ export function GroupSubmissionProgressModal({
         if (!commits || commits.length === 0) {
             return (
                 <div className="text-sm text-gray-500 italic">
-                    No commits for {title}.
+                    Không có commit cho {title}.
                 </div>
             );
         }
@@ -172,7 +172,7 @@ export function GroupSubmissionProgressModal({
                                     window.open(commit.url, '_blank')
                                 }
                                 className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                title="View Commit"
+                                title="Xem Commit"
                             >
                                 <ExternalLink className="h-4 w-4" />
                             </button>
@@ -185,7 +185,7 @@ export function GroupSubmissionProgressModal({
                                         )
                                     }
                                     className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
-                                    title="View Source"
+                                    title="Xem mã nguồn"
                                 >
                                     <FileText className="h-4 w-4" />
                                 </button>
@@ -204,7 +204,7 @@ export function GroupSubmissionProgressModal({
         if (!attachments || attachments.length === 0) {
             return (
                 <div className="text-sm text-gray-500 italic">
-                    No attachments for {title}.
+                    Không có tập tin đính kèm cho {title}.
                 </div>
             );
         }
@@ -239,7 +239,7 @@ export function GroupSubmissionProgressModal({
                             }
                         >
                             <ExternalLink className="h-3 w-3 mr-1" />
-                            View
+                            Xem
                         </Button>
                     </div>
                 ))}
@@ -289,7 +289,7 @@ export function GroupSubmissionProgressModal({
                             <div className="text-center">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                                 <p className="mt-2 text-gray-600">
-                                    Loading submission progress...
+                                    Đang tải dữ liệu bài nộp...
                                 </p>
                             </div>
                         </div>
@@ -320,7 +320,7 @@ export function GroupSubmissionProgressModal({
                             <div className="text-center">
                                 <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                                 <p className="text-gray-600">
-                                    No submission data found
+                                    Không tìm thấy dữ liệu bài nộp
                                 </p>
                             </div>
                         </div>
@@ -366,8 +366,7 @@ export function GroupSubmissionProgressModal({
                                             as="h3"
                                             className="text-lg font-semibold text-gray-900"
                                         >
-                                            Group {groupNumber} Submission
-                                            Progress
+                                            Tiến độ bài nộp nhóm {groupNumber}
                                         </Dialog.Title>
                                     </div>
                                     <button
@@ -396,7 +395,7 @@ export function GroupSubmissionProgressModal({
                                                             cloneItem.status
                                                         )}
                                                         <span className="text-sm text-gray-600">
-                                                            Last updated:{' '}
+                                                            Cập nhật gần nhất:{' '}
                                                             {formatDate(
                                                                 cloneItem.updatedAt,
                                                                 'dd/MM/yyyy HH:mm'
@@ -418,7 +417,7 @@ export function GroupSubmissionProgressModal({
 
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                                        Assignee
+                                                        Thành viên được giao
                                                     </h4>
                                                     {renderAssignee(
                                                         cloneItem.assignee
@@ -427,7 +426,7 @@ export function GroupSubmissionProgressModal({
 
                                                 <div>
                                                     <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                                        Files Evidence
+                                                        Tài liệu minh chứng
                                                     </h4>
                                                     {renderAttachments(
                                                         cloneItem.itemToAttachments,
@@ -441,7 +440,7 @@ export function GroupSubmissionProgressModal({
                                                     </h4>
                                                     {renderCommits(
                                                         cloneItem.commits,
-                                                        `main task "${data.summary}"`
+                                                        `công việc chính "${data.summary}"`
                                                     )}
                                                 </div>
                                             </CardContent>
@@ -454,7 +453,7 @@ export function GroupSubmissionProgressModal({
                                                     <CardHeader>
                                                         <CardTitle className="text-lg flex items-center gap-2">
                                                             <CheckCircle className="h-5 w-5" />
-                                                            Subtasks (
+                                                            Công việc con (
                                                             {
                                                                 cloneItem
                                                                     .subItems
@@ -513,7 +512,7 @@ export function GroupSubmissionProgressModal({
 
                                                                         <div>
                                                                             <h5 className="text-sm font-medium text-gray-900 mb-2">
-                                                                                Assignee
+                                                                                Thành viên được giao
                                                                             </h5>
                                                                             {renderAssignee(
                                                                                 subItem.assignee
@@ -522,8 +521,7 @@ export function GroupSubmissionProgressModal({
 
                                                                         <div>
                                                                             <h5 className="text-sm font-medium text-gray-900 mb-2">
-                                                                                Files
-                                                                                Evidence
+                                                                                Tài liệu minh chứng
                                                                             </h5>
                                                                             {renderAttachments(
                                                                                 subItem.itemToAttachments,
@@ -537,7 +535,7 @@ export function GroupSubmissionProgressModal({
                                                                             </h5>
                                                                             {renderCommits(
                                                                                 subItem.commits,
-                                                                                `subtask "${subItem.summary}"`
+                                                                                `công việc con "${subItem.summary}"`
                                                                             )}
                                                                         </div>
                                                                     </div>

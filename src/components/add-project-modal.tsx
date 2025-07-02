@@ -26,7 +26,7 @@ export function AddProjectModal({
     classId,
 }: AddProjectModalProps) {
     const [loading, setLoading] = useState(false);
-
+    const [useDefaultGradeTitle, setUseDefaultGradeTitle] = useState(true);
     // Helper function to get current datetime in user's timezone for datetime-local input
     const getCurrentDateTimeLocal = () => {
         const now = new Date();
@@ -45,6 +45,7 @@ export function AddProjectModal({
         type: 'TEAM',
         participationMode: 'mandatory',
         allowStudentFormTeam: false,
+        allowStudentCreateTopic: false,
         formGroupDeadline: '',
         joinProjectDeadline: '',
         createGradeComponent: true,
@@ -79,11 +80,10 @@ export function AddProjectModal({
             formData.title &&
             formData.gradeComponent
         ) {
-            const defaultGradeTitle = `${formData.title} Grade`;
+            const defaultGradeTitle = `Điểm ${formData.title}`;
             // Only update if it's still the default or empty
             if (
-                !formData.gradeComponent.title ||
-                formData.gradeComponent.title.endsWith(' Grade')
+             useDefaultGradeTitle
             ) {
                 setFormData((prev) => ({
                     ...prev,
@@ -94,7 +94,7 @@ export function AddProjectModal({
                 }));
             }
         }
-    }, [formData.title, formData.createGradeComponent]);
+    }, [formData.title, formData.createGradeComponent, useDefaultGradeTitle]);
 
     // Reset form when modal opens
     useEffect(() => {
@@ -109,6 +109,7 @@ export function AddProjectModal({
                 type: 'TEAM',
                 participationMode: 'mandatory',
                 allowStudentFormTeam: false,
+                allowStudentCreateTopic: false,
                 formGroupDeadline: '',
                 joinProjectDeadline: '',
                 createGradeComponent: true,
@@ -128,38 +129,40 @@ export function AddProjectModal({
 
         // Required fields
         if (!formData.title.trim()) {
-            newErrors.title = 'Project title is required';
+            newErrors.title = 'Tên dự án là bắt buộc';
         }
 
         if (!formData.key.trim()) {
-            newErrors.key = 'Project key is required';
+            newErrors.key = 'Mã dự án là bắt buộc';
         }
 
         if (!formData.startDate) {
-            newErrors.startDate = 'Start date is required';
+            newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
         }
 
         if (!formData.endDate) {
-            newErrors.endDate = 'End date is required';
+            newErrors.endDate = 'Ngày kết thúc là bắt buộc';
         }
 
         // Grade component validation
         if (formData.createGradeComponent && formData.gradeComponent) {
             if (!formData.gradeComponent.title.trim()) {
-                newErrors.gradeTitle = 'Grade component title is required';
+                newErrors.gradeTitle = 'Tên đầu điểm là bắt buộc';
             }
 
             if (
                 !formData.gradeComponent.maxScore ||
-                formData.gradeComponent.maxScore <= 0
+                formData.gradeComponent.maxScore <= 0 || 
+                formData.gradeComponent.maxScore > 10000
             ) {
-                newErrors.gradeMaxScore = 'Max score must be greater than 0';
+                newErrors.gradeMaxScore = 'Điểm tối đa phải lớn hơn 0 và nhỏ hơn 10000';
             }
             if (
                 !formData.gradeComponent.scale ||
-                formData.gradeComponent.scale <= 0
+                formData.gradeComponent.scale <= 0 || 
+                formData.gradeComponent.scale > 4
             ) {
-                newErrors.gradeScale = 'Scale must be greater than 0';
+                newErrors.gradeScale = 'Số chữ số sau dấu phẩy phải lớn hơn 0 và nhỏ hơn 4';
             }
         }
 
@@ -169,29 +172,29 @@ export function AddProjectModal({
         const endDate = new Date(formData.endDate);
 
         if (formData.endDate && endDate <= now) {
-            newErrors.endDate = 'End date must be in the future';
+            newErrors.endDate = 'Ngày kết thúc phải là ngày trong tương lai';
         }
 
         if (formData.startDate && formData.endDate && endDate <= startDate) {
-            newErrors.endDate = 'End date must be after start date';
+            newErrors.endDate = 'Ngày kết thúc phải là ngày sau ngày bắt đầu';
         }
         if (
             formData.type === 'TEAM' &&
             formData.allowStudentFormTeam &&
             !formData.formGroupDeadline
         ) {
-            newErrors.formGroupDeadline = 'Form group deadline must be set';
+            newErrors.formGroupDeadline = 'Ngày kết thúc nhóm phải được đặt';
         }
         // Team-specific validations
         if (formData.type === 'TEAM' && formData.formGroupDeadline) {
             const formGroupDate = new Date(formData.formGroupDeadline);
             if (formGroupDate <= startDate) {
                 newErrors.formGroupDeadline =
-                    'Form group deadline must be after start date';
+                    'Ngày kết thúc nhóm phải sau ngày bắt đầu';
             }
             if (formGroupDate >= endDate) {
                 newErrors.formGroupDeadline =
-                    'Form group deadline must be before end date';
+                    'Hạn lập nhóm phải trước ngày kết thúc';
             }
         }
 
@@ -203,11 +206,11 @@ export function AddProjectModal({
             const joinDate = new Date(formData.joinProjectDeadline);
             if (joinDate <= startDate) {
                 newErrors.joinProjectDeadline =
-                    'Join project deadline must be after start date';
+                    'Hạn đăng ký tham gia dự án phải sau ngày bắt đầu';
             }
             if (joinDate >= endDate) {
                 newErrors.joinProjectDeadline =
-                    'Join project deadline must be before end date';
+                    'Hạn đăng ký tham gia dự án phải trước ngày kết thúc';
             }
         }
 
@@ -268,14 +271,14 @@ export function AddProjectModal({
 
             toast.success(
                 formData.createGradeComponent
-                    ? 'Project and grade component created successfully!'
-                    : 'Project created successfully!'
+                    ? 'Dự án và điểm được tạo thành công!'
+                    : 'Dự án được tạo thành công!'
             );
             onProjectAdded();
             onClose();
         } catch (error: any) {
-            console.error('Error creating project:', error);
-            toast.error(error.message || 'Failed to create project');
+            console.log("🚀 ~ handleSubmit ~ error:", error)
+            toast.error(error.message || 'Tạo dự án thất bại');
         } finally {
             setLoading(false);
         }
@@ -318,14 +321,14 @@ export function AddProjectModal({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Create New Project"
+            title="Tạo dự án mới"
             size="lg"
         >
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Basic Information */}
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900">
-                        Basic Information
+                        Thông tin cơ bản
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -334,7 +337,7 @@ export function AddProjectModal({
                                 htmlFor="title"
                                 className="text-gray-900 font-medium"
                             >
-                                Project Title *
+                                Tên dự án *
                             </Label>
                             <Input
                                 id="title"
@@ -342,7 +345,7 @@ export function AddProjectModal({
                                 onChange={(e) =>
                                     handleInputChange('title', e.target.value)
                                 }
-                                placeholder="Enter project title"
+                                placeholder="Nhập tên dự án"
                                 className={`text-gray-900 placeholder-gray-500 ${
                                     errors.title ? 'border-red-500' : ''
                                 }`}
@@ -360,7 +363,7 @@ export function AddProjectModal({
                                 htmlFor="key"
                                 className="text-gray-900 font-medium"
                             >
-                                Project Key *
+                                Mã dự án *
                             </Label>
                             <Input
                                 id="key"
@@ -371,7 +374,7 @@ export function AddProjectModal({
                                         e.target.value.toUpperCase()
                                     )
                                 }
-                                placeholder="e.g., KAN"
+                                placeholder="Ví dụ: KAN"
                                 className={`text-gray-900 placeholder-gray-500 ${
                                     errors.key ? 'border-red-500' : ''
                                 }`}
@@ -390,7 +393,7 @@ export function AddProjectModal({
                             htmlFor="description"
                             className="text-gray-900 font-medium"
                         >
-                            Description
+                            Mô tả
                         </Label>
                         <textarea
                             id="description"
@@ -398,7 +401,7 @@ export function AddProjectModal({
                             onChange={(e) =>
                                 handleInputChange('description', e.target.value)
                             }
-                            placeholder="Enter project description (optional)"
+                            placeholder="Nhập mô tả dự án (tùy chọn)"
                             className="w-full min-h-[80px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
                         />
                     </div>
@@ -408,7 +411,7 @@ export function AddProjectModal({
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
-                        Project Timeline
+                        Mốc thời gian dự án
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -417,7 +420,7 @@ export function AddProjectModal({
                                 htmlFor="startDate"
                                 className="text-gray-900 font-medium"
                             >
-                                Start Date & Time *
+                                Ngày bắt đầu *
                             </Label>
                             <Input
                                 id="startDate"
@@ -467,7 +470,7 @@ export function AddProjectModal({
                                 htmlFor="endDate"
                                 className="text-gray-900 font-medium"
                             >
-                                End Date & Time *
+                                Ngày kết thúc *
                             </Label>
                             <Input
                                 id="endDate"
@@ -513,79 +516,18 @@ export function AddProjectModal({
                         </div>
                     </div>
 
-                    {/* <div>
-                        <Label className="text-gray-900 font-medium">
-                            Status
-                        </Label> */}
-                    {/* <div className="mt-2 space-y-2">
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="OPEN"
-                                    checked={formData.status === 'OPEN'}
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            'status',
-                                            e.target.value
-                                        )
-                                    }
-                                    className="text-blue-600"
-                                />
-                                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                <span className="text-gray-900">Open</span>
-                            </label>
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="SCHEDULED"
-                                    checked={formData.status === 'SCHEDULED'}
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            'status',
-                                            e.target.value
-                                        )
-                                    }
-                                    className="text-blue-600"
-                                />
-                                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                                <span className="text-gray-900">Scheduled</span>
-                            </label>
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    value="CLOSE"
-                                    checked={formData.status === 'CLOSE'}
-                                    onChange={(e) =>
-                                        handleInputChange(
-                                            'status',
-                                            e.target.value
-                                        )
-                                    }
-                                    className="text-blue-600"
-                                />
-                                <div className="w-3 h-3 rounded-full bg-gray-500"></div>
-                                <span className="text-gray-900">Closed</span>
-                            </label>
-                        </div> */}
-                    {/* <p className="text-sm text-gray-600 mt-1">
-                            Default is auto-calculated based on start date
-                        </p> */}
-                    {/* </div> */}
                 </div>
 
                 {/* Project Settings */}
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900">
-                        Project Settings
+                        Cấu hình dự án
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <Label className="text-gray-900 font-medium">
-                                Project Type
+                                Loại dự án
                             </Label>
                             <div className="mt-2 space-y-2">
                                 <label className="flex items-center gap-2">
@@ -604,7 +546,7 @@ export function AddProjectModal({
                                     />
                                     <Users className="h-4 w-4" />
                                     <span className="text-gray-900">
-                                        Team Project
+                                        Dự án nhóm
                                     </span>
                                 </label>
                                 <label className="flex items-center gap-2">
@@ -623,7 +565,7 @@ export function AddProjectModal({
                                     />
                                     <User className="h-4 w-4" />
                                     <span className="text-gray-900">
-                                        Solo Project
+                                        Dự án cá nhân
                                     </span>
                                 </label>
                             </div>
@@ -631,7 +573,7 @@ export function AddProjectModal({
 
                         <div>
                             <Label className="text-gray-900 font-medium">
-                                Participation Mode
+                                Chế độ tham gia
                             </Label>
                             <div className="mt-2 space-y-2">
                                 <label className="flex items-center gap-2">
@@ -652,7 +594,7 @@ export function AddProjectModal({
                                         className="text-blue-600"
                                     />
                                     <span className="text-gray-900">
-                                        Mandatory
+                                        Bắt buộc
                                     </span>
                                 </label>
                                 <label className="flex items-center gap-2">
@@ -673,7 +615,7 @@ export function AddProjectModal({
                                         className="text-blue-600"
                                     />
                                     <span className="text-gray-900">
-                                        Optional
+                                        Tùy chọn
                                     </span>
                                 </label>
                             </div>
@@ -685,14 +627,14 @@ export function AddProjectModal({
                 {formData.participationMode === 'optional' && (
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium text-gray-900">
-                            Optional Project Settings
+                            Cấu hình dự án tùy chọn
                         </h3>
                         <div>
                             <Label
                                 htmlFor="joinProjectDeadline"
                                 className="text-gray-900 font-medium"
                             >
-                                Join Project Deadline
+                                Hạn đăng ký tham gia dự án
                             </Label>
                             <Input
                                 id="joinProjectDeadline"
@@ -738,7 +680,7 @@ export function AddProjectModal({
                                 </p>
                             )}
                             <p className="text-sm text-gray-600 mt-1">
-                                Must be between start date and end date
+                                Phải nằm giữa ngày bắt đầu và ngày kết thúc
                             </p>
                         </div>
                     </div>
@@ -749,7 +691,7 @@ export function AddProjectModal({
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                             <Users className="h-5 w-5" />
-                            Team Settings
+                            Cấu hình nhóm
                         </h3>
 
                         <div>
@@ -766,7 +708,7 @@ export function AddProjectModal({
                                     className="text-blue-600"
                                 />
                                 <span className="text-gray-900">
-                                    Allow students to form their own teams
+                                    Cho phép sinh viên lập nhóm
                                 </span>
                             </label>
                         </div>
@@ -777,7 +719,7 @@ export function AddProjectModal({
                                     htmlFor="formGroupDeadline"
                                     className="text-gray-900 font-medium"
                                 >
-                                    Form Group Deadline
+                                    Hạn lập nhóm
                                 </Label>
                                 <Input
                                     id="formGroupDeadline"
@@ -823,18 +765,43 @@ export function AddProjectModal({
                                     </p>
                                 )}
                                 <p className="text-sm text-gray-600 mt-1">
-                                    Must be between start date and end date
+                                    Phải nằm giữa ngày bắt đầu và ngày kết thúc
                                 </p>
                             </div>
                         )}
                     </div>
                 )}
+                <div className="space-y-4">
+                        <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                            <Users className="h-5 w-5" />
+                            Cấu hình chủ đề
+                        </h3>
+
+                        <div>
+                            <label className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.allowStudentCreateTopic}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            'allowStudentCreateTopic',
+                                            e.target.checked
+                                        )
+                                    }
+                                    className="text-blue-600"
+                                />
+                                <span className="text-gray-900">
+                                    Cho phép sinh viên yêu cầu tạo chủ đề mới
+                                </span>
+                            </label>
+                        </div>
+                </div>
 
                 {/* Grade Component Settings */}
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                         <BarChart3 className="h-5 w-5" />
-                        Grade Component
+                        Điểm thành phần
                     </h3>
 
                     <div>
@@ -851,12 +818,11 @@ export function AddProjectModal({
                                 className="text-blue-600"
                             />
                             <span className="text-gray-900">
-                                Create grade component for this project
+                                Tạo điểm thành phần cho dự án này
                             </span>
                         </label>
                         <p className="text-sm text-gray-600 mt-1">
-                            Automatically create a grading component to track
-                            student performance
+                            Tự động tạo điểm thành phần để theo dõi hiệu suất sinh viên
                         </p>
                     </div>
 
@@ -867,18 +833,19 @@ export function AddProjectModal({
                                     htmlFor="gradeTitle"
                                     className="text-gray-900 font-medium"
                                 >
-                                    Grade Component Title *
+                                    Tên điểm thành phần *
                                 </Label>
                                 <Input
                                     id="gradeTitle"
                                     value={formData.gradeComponent?.title || ''}
-                                    onChange={(e) =>
+                                    onChange={(e) => {
+                                        setUseDefaultGradeTitle(false);
                                         handleGradeComponentChange(
                                             'title',
                                             e.target.value
                                         )
-                                    }
-                                    placeholder="Enter grade component title"
+                                    }}
+                                    placeholder="Nhập tên điểm thành phần"
                                     className={`text-gray-900 placeholder-gray-500 ${
                                         errors.gradeTitle
                                             ? 'border-red-500'
@@ -898,7 +865,7 @@ export function AddProjectModal({
                                     htmlFor="gradeDescription"
                                     className="text-gray-900 font-medium"
                                 >
-                                    Grade Component Description
+                                    Mô tả điểm thành phần
                                 </Label>
                                 <textarea
                                     id="gradeDescription"
@@ -912,7 +879,7 @@ export function AddProjectModal({
                                             e.target.value
                                         )
                                     }
-                                    placeholder="Enter grade component description (optional)"
+                                    placeholder="Nhập mô tả điểm thành phần (tùy chọn)"
                                     className="w-full min-h-[60px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
                                 />
                             </div>
@@ -922,12 +889,13 @@ export function AddProjectModal({
                                     htmlFor="gradeMaxScore"
                                     className="text-gray-900 font-medium"
                                 >
-                                    Max Score *
+                                    Điểm tối đa *
                                 </Label>
                                 <Input
                                     id="gradeMaxScore"
                                     type="number"
                                     min="1"
+                                    max="10000"
                                     step="0.1"
                                     value={
                                         formData.gradeComponent?.maxScore || ''
@@ -939,7 +907,7 @@ export function AddProjectModal({
                                                 0
                                         )
                                     }
-                                    placeholder="Enter maximum score"
+                                    placeholder="Nhập điểm tối đa"
                                     className={`text-gray-900 placeholder-gray-500 ${
                                         errors.gradeMaxScore
                                             ? 'border-red-500'
@@ -958,12 +926,13 @@ export function AddProjectModal({
                                     htmlFor="gradeScale"
                                     className="text-gray-900 font-medium"
                                 >
-                                    Scale *
+                                    Số chữ số sau dấu phẩy *
                                 </Label>
                                 <Input
                                     id="gradeScale"
                                     type="number"
                                     min="0"
+                                    max="4"
                                     step="1"
                                     value={formData.gradeComponent?.scale || ''}
                                     onChange={(e) =>
@@ -972,7 +941,7 @@ export function AddProjectModal({
                                             Number(e.target.value) || 0
                                         )
                                     }
-                                    placeholder="Enter scale"
+                                    placeholder="Nhập số chữ số sau dấu phẩy"
                                     className={`text-gray-900 placeholder-gray-500 ${
                                         errors.gradeScale
                                             ? 'border-red-500'
@@ -998,16 +967,16 @@ export function AddProjectModal({
                         onClick={onClose}
                         disabled={loading}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                     <Button type="submit" disabled={loading}>
                         {loading ? (
                             <>
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                Creating...
+                                Đang tạo...
                             </>
                         ) : (
-                            'Create Project'
+                            'Tạo dự án'
                         )}
                     </Button>
                 </div>

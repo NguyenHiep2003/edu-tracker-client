@@ -84,7 +84,7 @@ export default function LecturerHomePage() {
                     currentSemester = await getCurrentSemester();
                     setActiveSemester(currentSemester);
                 } catch (error) {
-                    console.log('No current semester found', error);
+                    console.log('🚀 ~ fetchInitialData ~ error:', error);
                 }
 
                 // Determine which semester to select
@@ -109,11 +109,13 @@ export default function LecturerHomePage() {
                 // Fetch classes for the selected semester
                 await fetchClasses(targetSemester?.id, keywordParam);
             } catch (error: any) {
-                console.error('Error fetching initial data:', error);
+                console.log('🚀 ~ fetchInitialData ~ error:', error);
                 if (Array.isArray(error?.message)) {
                     toast.error(error.message[0]);
                 } else {
-                    toast.error(error?.message ?? 'Failed to load data');
+                    toast.error(
+                        error?.message ?? 'Đã xảy ra lỗi khi tải dữ liệu'
+                    );
                 }
             } finally {
                 setLoading(false);
@@ -176,22 +178,22 @@ export default function LecturerHomePage() {
     // Fetch classes with filters
     const fetchClasses = async (
         semesterId?: number,
-        searchKeyword?: string | null,
+        searchKeyword?: string | null
     ) => {
         try {
-
-
             const response = await getTeachingClassesBySemester(
                 semesterId,
                 searchKeyword
             );
             setClasses(response.data);
         } catch (error: any) {
-            console.error('Error fetching classes:', error);
+            console.log('🚀 ~ fetchClasses ~ error:', error);
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to load classes');
+                toast.error(
+                    error?.message ?? 'Đã xảy ra lỗi khi tải danh sách lớp học'
+                );
             }
         }
     };
@@ -235,10 +237,8 @@ export default function LecturerHomePage() {
         }
     };
 
-
     // Handle class click
     const handleClassClick = (classData: Class) => {
-        // TODO: Navigate to class detail page
         router.push(`/lecturer/classes/${classData.id}`);
     };
 
@@ -246,7 +246,7 @@ export default function LecturerHomePage() {
     const handleCreateClass = () => {
         if (!activeSemester) {
             toast.error(
-                'No active semester found. Please contact your administrator.'
+                'Không tìm thấy kỳ học đang diễn ra. Vui lòng liên hệ với quản trị viên tổ chức của bạn.'
             );
             return;
         }
@@ -264,17 +264,17 @@ export default function LecturerHomePage() {
 
             await createClass(data.classId, data.name, data.description);
 
-            toast.success('Class created successfully!');
+            toast.success('Lớp học đã được tạo thành công!');
             setShowCreateModal(false);
 
             // Refresh classes list
             fetchClasses(selectedSemester?.id, searchKeyword);
         } catch (error: any) {
-            console.error('Error creating class:', error);
+            console.log('🚀 ~ handleCreateClassSubmit ~ error:', error);
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to create class');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi tạo lớp học');
             }
         } finally {
             setCreatingClass(false);
@@ -291,7 +291,7 @@ export default function LecturerHomePage() {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">
-                        Loading your classes...
+                        Đang tải danh sách lớp học của bạn...
                     </p>
                 </div>
             </div>
@@ -306,7 +306,7 @@ export default function LecturerHomePage() {
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                             <GraduationCap className="h-8 w-8 text-green-600" />
-                            My Classes
+                            Danh sách lớp học
                         </h1>
                         <p className="text-gray-600 mt-2">
                             {selectedSemester
@@ -331,12 +331,12 @@ export default function LecturerHomePage() {
                             disabled={isCreateClassDisabled}
                         >
                             <Plus className="h-4 w-4" />
-                            Create Class
+                            Tạo lớp học
                         </Button>
                         {isCreateClassDisabled && (
                             <div className="flex items-center gap-1 text-xs text-amber-600">
                                 <AlertTriangle className="h-3 w-3" />
-                                <span>No active semester</span>
+                                <span>Không có kỳ học đang diễn ra</span>
                             </div>
                         )}
                     </div>
@@ -351,12 +351,12 @@ export default function LecturerHomePage() {
                             <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
                             <div>
                                 <h3 className="font-medium text-amber-900">
-                                    No Active Semester
+                                    Không có kỳ học đang diễn ra
                                 </h3>
                                 <p className="text-sm text-amber-700 mt-1">
-                                    There is currently no active semester. You
-                                    cannot create new classes until an
-                                    administrator activates a semester.
+                                    Hiện tại không có kỳ học đang diễn ra. Bạn
+                                    không thể tạo lớp học mới cho đến khi quản
+                                    trị viên tổ chức kích hoạt kỳ học.
                                 </p>
                             </div>
                         </div>
@@ -369,18 +369,18 @@ export default function LecturerHomePage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Filter className="h-5 w-5" />
-                        Filters
+                        Bộ lọc
                     </CardTitle>
                     <CardDescription>
-                        Filter classes by semester and search by keyword
+                        Lọc lớp học theo kỳ học và tìm kiếm theo từ khóa
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex flex-row gap-2">
                         {/* Semester Filter */}
-                        <div className="space-y-2">
+                        <div className="max-w-[220px] w-full">
                             <label className="text-sm font-medium text-gray-700">
-                                Semester
+                                Kỳ học
                             </label>
                             <Select
                                 value={
@@ -391,14 +391,14 @@ export default function LecturerHomePage() {
                                           }
                                         : {
                                               value: 'all',
-                                              label: 'All Semesters',
+                                              label: 'Tất cả kỳ học',
                                           }
                                 }
                                 onChange={(option) =>
                                     handleSemesterChange(option?.value || 'all')
                                 }
                                 options={[
-                                    { value: 'all', label: 'All Semesters' },
+                                    { value: 'all', label: 'Tất cả kỳ học' },
                                     ...semesters.map((semester) => ({
                                         value: semester.id.toString(),
                                         label: semester.name,
@@ -416,14 +416,14 @@ export default function LecturerHomePage() {
                                         {option.label}
                                         {option.isActive && (
                                             <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                Active
+                                                Đang diễn ra
                                             </span>
                                         )}
                                     </span>
                                 )}
                                 classNames={{
                                     control: () =>
-                                        'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                                        'flex h-10 w-full rounded-md border border-input bg-background px-3 py-0.5 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
                                     menu: () =>
                                         'relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
                                     option: (state) =>
@@ -438,14 +438,14 @@ export default function LecturerHomePage() {
                                         }`,
                                 }}
                                 isSearchable={false}
-                                placeholder="Select semester"
+                                placeholder="Chọn kỳ học"
                             />
                         </div>
 
                         {/* Keyword Search */}
-                        <div className="space-y-2">
+                        <div className="max-w-lg w-full">
                             <label className="text-sm font-medium text-gray-700">
-                                Search Classes
+                                Tìm kiếm lớp học
                             </label>
                             <div className="flex gap-2">
                                 <div className="relative flex-1">
@@ -456,7 +456,7 @@ export default function LecturerHomePage() {
                                             handleKeywordChange(e.target.value)
                                         }
                                         onKeyPress={handleKeywordKeyPress}
-                                        placeholder="Search by class name or ID..."
+                                        placeholder="Tìm kiếm theo tên lớp học hoặc ID..."
                                         className="pl-10"
                                     />
                                 </div>
@@ -465,16 +465,10 @@ export default function LecturerHomePage() {
                                     variant="outline"
                                     size="default"
                                 >
-                                    Search
+                                    Tìm kiếm
                                 </Button>
                             </div>
-                            {keyword !== searchKeyword && keyword.trim() && (
-                                <p className="text-xs text-gray-500">
-                                    Press Enter or click Search to apply filter
-                                </p>
-                            )}
                         </div>
-                    
                     </div>
                 </CardContent>
             </Card>
@@ -482,21 +476,21 @@ export default function LecturerHomePage() {
             {/* Classes Grid */}
             {classes.length === 0 ? (
                 <Card>
-                    <CardContent className="text-center py-12">
+                    <CardContent className="text-center py-12 pt-7">
                         <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-xl font-medium text-gray-900 mb-2">
                             {searchKeyword
-                                ? `No classes found matching "${searchKeyword}"`
+                                ? `Không tìm thấy lớp học phù hợp với từ khóa "${searchKeyword}"`
                                 : selectedSemester
-                                ? 'No classes in this semester'
-                                : 'No classes found'}
+                                ? 'Không có lớp học trong kỳ học này'
+                                : 'Không tìm thấy lớp học'}
                         </h3>
                         <p className="text-gray-500 mb-6">
                             {searchKeyword
-                                ? 'Try adjusting your search terms or filters.'
+                                ? 'Vui lòng điều chỉnh từ khóa tìm kiếm hoặc bộ lọc.'
                                 : selectedSemester
-                                ? `You haven't created any classes for ${selectedSemester.name} yet.`
-                                : "You haven't created any classes yet. Get started by creating your first class."}
+                                ? `Bạn chưa giảng dạy lớp học nào cho kỳ học ${selectedSemester.name} này.`
+                                : 'Bạn chưa giảng dạy lớp học nào. Hãy bắt đầu bằng cách tạo lớp học đầu tiên.'}
                         </p>
                         <Button
                             onClick={handleCreateClass}
@@ -504,7 +498,7 @@ export default function LecturerHomePage() {
                             disabled={isCreateClassDisabled}
                         >
                             <Plus className="h-4 w-4" />
-                            Create Your First Class
+                            Tạo lớp học đầu tiên
                         </Button>
                     </CardContent>
                 </Card>
@@ -527,7 +521,7 @@ export default function LecturerHomePage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Total Classes
+                                Tổng số lớp học
                             </CardTitle>
                             <BookOpen className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
@@ -537,10 +531,10 @@ export default function LecturerHomePage() {
                             </div>
                             <p className="text-xs text-muted-foreground">
                                 {selectedSemester
-                                    ? `In ${selectedSemester.name}`
-                                    : 'Across all semesters'}
+                                    ? `Trong kỳ học ${selectedSemester.name}`
+                                    : 'Trong tất cả kỳ học'}
                                 {searchKeyword &&
-                                    ` matching "${searchKeyword}"`}
+                                    ` phù hợp với từ khóa "${searchKeyword}"`}
                             </p>
                         </CardContent>
                     </Card>
@@ -548,16 +542,17 @@ export default function LecturerHomePage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Active Semester
+                                Kỳ học đang diễn ra
                             </CardTitle>
                             <GraduationCap className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {activeSemester?.name || 'None'}
+                                {activeSemester?.name ||
+                                    'Không có kỳ học đang diễn ra'}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                Current active semester
+                                Kỳ học đang diễn ra
                             </p>
                         </CardContent>
                     </Card>
@@ -565,7 +560,7 @@ export default function LecturerHomePage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Available Semesters
+                                Tổng số kỳ học
                             </CardTitle>
                             <Filter className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
@@ -574,7 +569,7 @@ export default function LecturerHomePage() {
                                 {semesters.length}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                Total semesters in organization
+                                Tổng số kỳ học trong tổ chức
                             </p>
                         </CardContent>
                     </Card>

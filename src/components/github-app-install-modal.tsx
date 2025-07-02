@@ -28,7 +28,7 @@ export function GitHubAppInstallModal({
                     <div className="flex items-center gap-2">
                         <AlertTriangle className="h-5 w-5 text-yellow-600" />
                         <h2 className="text-lg font-semibold text-gray-900">
-                            GitHub App Installation Required
+                            Yêu cầu cài đặt GitHub App
                         </h2>
                     </div>
                     <button
@@ -47,13 +47,13 @@ export function GitHubAppInstallModal({
                             <Github className="h-6 w-6 text-yellow-600 mt-0.5" />
                             <div>
                                 <h3 className="text-sm font-medium text-yellow-900 mb-1">
-                                    App Installation Missing
+                                    Github App chưa được cài đặt
                                 </h3>
                                 <p className="text-sm text-yellow-800">
-                                    Your GitHub account{' '}
-                                    <strong>{username}</strong> has been
-                                    connected successfully, but our GitHub App
-                                    is not installed on your repositories.
+                                    Tài khoản GitHub của bạn{' '}
+                                    <strong>{username}</strong> đã được kết nối
+                                    đã được kết nối thành công, nhưng GitHub App
+                                    chưa được cài đặt trên tài khoản của bạn.
                                 </p>
                             </div>
                         </div>
@@ -62,24 +62,20 @@ export function GitHubAppInstallModal({
                     {/* Benefits */}
                     <div className="space-y-3">
                         <h4 className="text-sm font-medium text-gray-900">
-                            Installing the GitHub App enables:
+                            Cài đặt GitHub App cho phép:
                         </h4>
                         <ul className="text-sm text-gray-600 space-y-2">
                             <li className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                Automatic repository synchronization
+                                Đồng bộ danh sách repository
                             </li>
                             <li className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                Student project management
+                                Liên kết repository vào dự án
                             </li>
                             <li className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                Assignment distribution and collection
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                                Code review and grading tools
+                                Cập nhật các thay đổi mã nguồn vào trong các công việc tương ứng
                             </li>
                         </ul>
                     </div>
@@ -87,9 +83,9 @@ export function GitHubAppInstallModal({
                     {/* Note */}
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                         <p className="text-sm text-blue-800">
-                            <strong>Note:</strong> You can install the app later
-                            from your account settings, but some features will
-                            be limited until installation is complete.
+                            <strong>Lưu ý:</strong> Bạn có thể cài đặt GitHub App sau
+                            từ cài đặt tài khoản của bạn, nhưng một số tính năng sẽ
+                            bị giới hạn cho đến khi cài đặt hoàn tất.
                         </p>
                     </div>
                 </div>
@@ -101,11 +97,11 @@ export function GitHubAppInstallModal({
                         onClick={onInstallLater}
                         className="flex-1"
                     >
-                        Install Later
+                        Cài đặt sau
                     </Button>
                     <Button onClick={onInstallNow} className="flex-1">
                         <ExternalLink className="h-4 w-4 mr-2" />
-                        Install Now
+                        Cài đặt ngay
                     </Button>
                 </div>
             </div>

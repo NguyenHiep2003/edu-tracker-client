@@ -47,7 +47,7 @@ export default function StudentProjectStudentsPage() {
 
                 setStudents(students);
             } catch (error) {
-                console.error('Error fetching students:', error);
+                console.log("🚀 ~ fetchStudents ~ error:", error)
             } finally {
                 setLoading(false);
             }
@@ -72,7 +72,7 @@ export default function StudentProjectStudentsPage() {
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading students...</p>
+                    <p className="mt-4 text-gray-600">Đang tải danh sách sinh viên...</p>
                 </div>
             </div>
         );
@@ -84,10 +84,10 @@ export default function StudentProjectStudentsPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Project Students
+                        Danh sách sinh viên tham gia dự án
                     </h1>
                     <p className="text-gray-600">
-                        {students.length} students enrolled in this project
+                        {students.length} sinh viên đã tham gia dự án
                     </p>
                 </div>
             </div>
@@ -96,7 +96,7 @@ export default function StudentProjectStudentsPage() {
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                    placeholder="Search students by name, email, ID, or group number..."
+                    placeholder="Tìm kiếm sinh viên theo tên, email, ID hoặc số nhóm..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -108,10 +108,10 @@ export default function StudentProjectStudentsPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <UsersIcon className="h-5 w-5" />
-                        Students List ({filteredStudents.length})
+                        Danh sách sinh viên ({filteredStudents.length})
                     </CardTitle>
                     <CardDescription>
-                        All students enrolled in this project
+                        Tất cả sinh viên đã tham gia dự án
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -120,7 +120,7 @@ export default function StudentProjectStudentsPage() {
                             <thead>
                                 <tr className="border-b border-gray-200">
                                     <th className="text-left py-3 px-4 font-medium text-gray-900">
-                                        Name
+                                        Tên
                                     </th>
                                     <th className="text-left py-3 px-4 font-medium text-gray-900">
                                         Email
@@ -129,13 +129,13 @@ export default function StudentProjectStudentsPage() {
                                         ID
                                     </th>
                                     <th className="text-left py-3 px-4 font-medium text-gray-900">
-                                        Group
+                                        Nhóm
                                     </th>
                                     <th className="text-left py-3 px-4 font-medium text-gray-900">
-                                        Role
+                                        Vai trò
                                     </th>
                                     <th className="text-left py-3 px-4 font-medium text-gray-900">
-                                        Actions
+                                        Hành động
                                     </th>
                                 </tr>
                             </thead>
@@ -150,7 +150,7 @@ export default function StudentProjectStudentsPage() {
                                                 <Avatar name={student.name} size={11} />
                                                 <span className="font-medium text-gray-900">
                                                     {student.name ||
-                                                        'Unnamed User'}
+                                                        'Không có tên'}
                                                 </span>
                                             </div>
                                         </td>
@@ -166,11 +166,11 @@ export default function StudentProjectStudentsPage() {
                                                     variant="outline"
                                                     className="text-xs text-gray-600"
                                                 >
-                                                    Group {student.groupNumber}
+                                                    Nhóm {student.groupNumber}
                                                 </Badge>
                                             ) : (
                                                 <span className="text-gray-400 text-sm">
-                                                    No Group
+                                                    Chưa có nhóm
                                                 </span>
                                             )}
                                         </td>
@@ -178,11 +178,11 @@ export default function StudentProjectStudentsPage() {
                                             {student.role === 'LEADER' ? (
                                                 <Badge className="bg-yellow-100 text-yellow-800 text-xs flex items-center gap-1 w-fit">
                                                     <Crown className="h-3 w-3" />
-                                                    Leader
+                                                    Trưởng nhóm
                                                 </Badge>
                                             ) : student.role === 'MEMBER' ? (
                                                 <span className="text-gray-600 text-sm">
-                                                    Member
+                                                    Thành viên
                                                 </span>
                                             ) : (
                                                 <span className="text-gray-400 text-sm">
@@ -213,8 +213,8 @@ export default function StudentProjectStudentsPage() {
                             <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                             <p className="text-gray-500">
                                 {searchTerm
-                                    ? 'No students found matching your search.'
-                                    : 'No students found for this project.'}
+                                    ? 'Không tìm thấy sinh viên nào phù hợp với tìm kiếm của bạn.'
+                                    : 'Không có sinh viên nào đã tham gia dự án.'}
                             </p>
                         </div>
                     )}

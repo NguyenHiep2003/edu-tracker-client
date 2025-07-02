@@ -10,7 +10,6 @@ import {
     Calendar,
     FileText,
     Settings,
-    Bell,
     User,
     LogOut,
     Menu,
@@ -59,16 +58,16 @@ const sidebarItems: SidebarItem[] = [
         icon: LayoutDashboard,
     },
     {
-        name: 'Management',
+        name: 'Quản lý',
         icon: Wrench,
         children: [
             {
-                name: 'User',
+                name: 'Người dùng',
                 href: '/admin/management/users',
                 icon: Users,
             },
             {
-                name: 'Semester',
+                name: 'Học kỳ',
                 href: '/admin/management/semester',
                 icon: Calendar,
             },
@@ -79,14 +78,14 @@ const sidebarItems: SidebarItem[] = [
         icon: FileText,
         children: [
             {
-                name: 'Import File Log',
+                name: 'Log nhập file',
                 href: '/admin/log/import-file',
                 icon: FileText,
             },
         ],
     },
     {
-        name: 'Organization Setting',
+        name: 'Cài đặt tổ chức',
         href: '/admin/setting',
         icon: Settings,
     },
@@ -101,7 +100,7 @@ function SidebarNavigation({
 }) {
     const pathname = usePathname();
     const [expandedItems, setExpandedItems] = useState<string[]>([
-        'Management',
+        'Quản lý',
         'Log',
     ]); // Default expanded
 
@@ -215,12 +214,11 @@ function Header({
     setSidebarOpen: (open: boolean) => void;
 }) {
     const [showProfileMenu, setShowProfileMenu] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false);
+    // const [showNotifications, setShowNotifications] = useState(false);
     const { organization, setOrganization } = useOrganization();
     useEffect(() => {
         getOwnOrganization().then((data) => setOrganization(data));
     }, []);
-    // Get organization name from localStorage or default
     return (
         <header className="bg-white shadow-sm border-b border-gray-200">
             <div className="flex items-center justify-between h-16 px-4">
@@ -238,7 +236,7 @@ function Header({
                             {organization?.name}
                         </h1>
                         <p className="text-sm text-gray-500">
-                            Administrator Page
+                            Trang quản trị viên
                         </p>
                     </div>
                 </div>
@@ -246,7 +244,7 @@ function Header({
                 {/* Right side */}
                 <div className="flex items-center space-x-4">
                     {/* Notifications */}
-                    <div className="relative">
+                    {/* <div className="relative">
                         <button
                             onClick={() =>
                                 setShowNotifications(!showNotifications)
@@ -284,7 +282,7 @@ function Header({
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </div> */}
 
                     {/* Profile Menu */}
                     <div className="relative">
@@ -302,13 +300,13 @@ function Header({
                         {showProfileMenu && (
                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
                                 <div className="py-1">
-                                    <Link
+                                    {/* <Link
                                         href="/admin/profile"
                                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                     >
                                         <User className="mr-3 h-4 w-4" />
-                                        Profile Settings
-                                    </Link>
+                                        Cài đặt hồ sơ
+                                    </Link> */}
                                     <button
                                         onClick={() => {
                                             signOut().catch((err) => {
@@ -323,7 +321,7 @@ function Header({
                                         className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                     >
                                         <LogOut className="mr-3 h-4 w-4" />
-                                        Logout
+                                        Đăng xuất
                                     </button>
                                 </div>
                             </div>
@@ -356,7 +354,7 @@ export default function AdminLayout({
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">
-                        Loading Admin Dashboard...
+                        Đang tải trang quản trị viên...
                     </p>
                 </div>
             </div>

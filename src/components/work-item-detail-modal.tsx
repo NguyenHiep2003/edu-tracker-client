@@ -132,7 +132,6 @@ const RejectDialog = ({
     }, [isOpen]);
 
     const handleSubmit = () => {
-        console.log('comment', comment);
         onSubmit(comment);
         onClose();
     };
@@ -172,20 +171,20 @@ const RejectDialog = ({
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-gray-900"
                                 >
-                                    Reject {workItem?.key} {workItem?.summary}
+                                    Từ chối {workItem?.key} {workItem?.summary}
                                 </HeadlessDialog.Title>
 
                                 <div className="mt-4">
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            Comment (optional)
+                                            Nhận xét (tùy chọn)
                                         </Label>
                                         <Textarea
                                             value={comment}
                                             onChange={(e) =>
                                                 setComment(e.target.value)
                                             }
-                                            placeholder="Add your feedback..."
+                                            placeholder="Thêm nhận xét..."
                                             className="min-h-[100px] w-full bg-white text-black"
                                         />
                                     </div>
@@ -193,13 +192,13 @@ const RejectDialog = ({
 
                                 <div className="mt-6 flex justify-end space-x-3">
                                     <Button variant="outline" onClick={onClose}>
-                                        Cancel
+                                        Hủy
                                     </Button>
                                     <Button
                                         variant="destructive"
                                         onClick={handleSubmit}
                                     >
-                                        Reject
+                                        Từ chối
                                     </Button>
                                 </div>
                             </HeadlessDialog.Panel>
@@ -228,12 +227,12 @@ const SubtaskDialog = ({
 
     const handleSubmit = async () => {
         if (!summary.trim()) {
-            toast.error('Please enter a summary');
+            toast.error('Vui lòng nhập tóm tắt');
             return;
         }
 
         if (!workItem.reporter?.id) {
-            toast.error('Reporter information is missing');
+            toast.error('Thông tin người tạo công việc bị thiếu');
             return;
         }
 
@@ -248,15 +247,15 @@ const SubtaskDialog = ({
                 assigneeId: defaultAssigneeId,
             });
 
-            toast.success('Subtask created successfully');
+            toast.success('Công việc con đã được tạo thành công');
             onSubtaskCreated?.();
             onClose();
         } catch (error: any) {
-            console.error('Error creating subtask:', error);
+            console.log('🚀 ~ handleSubmit ~ error:', error);
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to create subtask');
+                toast.error(error.message || 'Lỗi khi tạo công việc con');
             }
         } finally {
             setLoading(false);
@@ -298,13 +297,13 @@ const SubtaskDialog = ({
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-gray-900"
                                 >
-                                    Create Subtask
+                                    Tạo subtask
                                 </HeadlessDialog.Title>
 
                                 <div className="mt-4">
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            Summary
+                                            Tóm tắt
                                         </Label>
                                         <input
                                             type="text"
@@ -312,7 +311,7 @@ const SubtaskDialog = ({
                                             onChange={(e) =>
                                                 setSummary(e.target.value)
                                             }
-                                            placeholder="What needs to be done?"
+                                            placeholder="Nhập tóm tắt subtask"
                                             className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             onKeyDown={(e) => {
                                                 if (
@@ -329,7 +328,7 @@ const SubtaskDialog = ({
 
                                 <div className="mt-6 flex justify-end space-x-3">
                                     <Button variant="outline" onClick={onClose}>
-                                        Cancel
+                                        Hủy
                                     </Button>
                                     <Button
                                         onClick={handleSubmit}
@@ -338,10 +337,10 @@ const SubtaskDialog = ({
                                         {loading ? (
                                             <div className="flex items-center">
                                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                                Creating...
+                                                Đang tạo...
                                             </div>
                                         ) : (
-                                            'Create'
+                                            'Tạo'
                                         )}
                                     </Button>
                                 </div>
@@ -415,8 +414,8 @@ export function WorkItemDetailModal({
             setSprints(sprintsData || []);
             setEpics(epicsData || []);
         } catch (error) {
-            console.error('Error loading modal data:', error);
-            toast.error('Failed to load data');
+            console.log('🚀 ~ loadModalData ~ error:', error);
+            toast.error('Lỗi khi tải dữ liệu');
         } finally {
             setLoading(false);
         }
@@ -434,11 +433,11 @@ export function WorkItemDetailModal({
         ) {
             if (workItem.type == 'Epic') {
                 toast.error(
-                    'All child work items must be done before the epic can be marked as done'
+                    'Tất cả công việc con phải được hoàn thành trước khi epic được đánh dấu là hoàn thành'
                 );
             } else {
                 toast.error(
-                    'All subtasks must be done before the work item can be marked as done'
+                    'Tất cả subtask phải được hoàn thành trước khi công việc được đánh dấu là hoàn thành'
                 );
             }
             return;
@@ -463,13 +462,13 @@ export function WorkItemDetailModal({
             setEditedWorkItem(updated);
             setIsEditing(false);
             setDeletedAttachmentIds([]);
-            toast.success('Work item updated successfully');
+            toast.success('Công việc đã được cập nhật thành công');
             onUpdate?.();
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message);
+                toast.error(error.message || 'Lỗi khi cập nhật công việc');
             }
         } finally {
             setLoading(false);
@@ -567,11 +566,11 @@ export function WorkItemDetailModal({
                 ...prev,
                 [type]: [],
             }));
-            toast.success('Files uploaded successfully');
+            toast.success('Tập tin đã được tải lên thành công');
             onUpdate?.();
         } catch (error) {
-            console.error('Error uploading files:', error);
-            toast.error('Failed to upload files');
+            console.log('🚀 ~ handleAttachmentUpload ~ error:', error);
+            toast.error('Lỗi khi tải lên tập tin');
         } finally {
             setLoading(false);
         }
@@ -579,39 +578,35 @@ export function WorkItemDetailModal({
 
     const handleApproval = async (rating: number, comment: string) => {
         try {
-            // TODO: Add your API call to approve the work item
             await approveWorkItem(workItemId, rating, comment);
-            // Refresh work item data
             const updatedWorkItem = await getWorkItemDetail(workItemId);
             setWorkItem(updatedWorkItem);
-            toast.success('Work item approved successfully');
+            toast.success('Công việc đã được phê duyệt thành công');
             onUpdate?.();
             onClose();
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message);
+                toast.error(error.message || 'Lỗi khi phê duyệt công việc');
             }
         }
     };
 
     const handleReject = async (comment: string) => {
         try {
-            // TODO: Add your API call to reject the work item
             await rejectWorkItem(workItemId, comment);
 
-            // Refresh work item data
             const updatedWorkItem = await getWorkItemDetail(workItemId);
             setWorkItem(updatedWorkItem);
-            toast.success('Work item rejected successfully');
+            toast.success('Công việc đã được từ chối thành công');
             onUpdate?.();
             onClose();
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message);
+                toast.error(error.message || 'Lỗi khi từ chối công việc');
             }
         }
     };
@@ -619,14 +614,14 @@ export function WorkItemDetailModal({
     const handleDelete = async () => {
         try {
             await deleteWorkItem(workItemId);
-            toast.success('Work item deleted successfully');
+            toast.success('Công việc đã được xóa thành công');
             onUpdate?.();
             onClose();
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message);
+                toast.error(error.message || 'Lỗi khi xóa công việc');
             }
         }
     };
@@ -697,7 +692,7 @@ export function WorkItemDetailModal({
 
                     <div className="flex items-center gap-2 flex-shrink-0">
                         <div className="text-xs text-gray-500">
-                            Added{' '}
+                            Đã thêm{' '}
                             {formatDate(item.createdAt, 'dd/MM/yyyy HH:mm')}
                         </div>
 
@@ -707,7 +702,7 @@ export function WorkItemDetailModal({
                             rel="noopener noreferrer"
                             className="text-sm text-blue-600 hover:text-blue-700"
                         >
-                            View File
+                            Xem
                         </a>
 
                         {isEditing && (
@@ -727,11 +722,7 @@ export function WorkItemDetailModal({
                                     }
                                 }}
                                 className="text-gray-400 hover:text-red-500 p-1"
-                                title={
-                                    isDeleted
-                                        ? 'Undo delete'
-                                        : 'Delete attachment'
-                                }
+                                title={isDeleted ? 'Hủy xóa' : 'Xóa tập tin'}
                             >
                                 <Trash2 className="h-4 w-4" />
                             </button>
@@ -741,7 +732,7 @@ export function WorkItemDetailModal({
 
                 {isDeleted && (
                     <div className="text-xs text-red-600 mt-1">
-                        This file will be deleted when you save
+                        Tập tin này sẽ bị xóa khi bạn lưu
                     </div>
                 )}
             </div>
@@ -808,7 +799,7 @@ export function WorkItemDetailModal({
                                             disabled={loading}
                                         >
                                             <Plus className="h-4 w-4 mr-1" />
-                                            Add Subtask
+                                            Tạo subtask
                                         </Button>
                                     )}
                                 <Button
@@ -824,15 +815,15 @@ export function WorkItemDetailModal({
                                         loading ? (
                                             <div className="flex items-center space-x-2">
                                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                                                <span>Saving...</span>
+                                                <span>Đang lưu...</span>
                                             </div>
                                         ) : (
-                                            'Save'
+                                            'Lưu'
                                         )
                                     ) : (
                                         <>
                                             <Edit2 className="h-4 w-4 mr-1" />
-                                            Edit
+                                            Sửa
                                         </>
                                     )}
                                 </Button>
@@ -843,7 +834,7 @@ export function WorkItemDetailModal({
                                         onClick={handleCancelEdit}
                                         className="text-gray-600 hover:text-gray-900"
                                     >
-                                        Cancel
+                                        Hủy
                                     </Button>
                                 )}
 
@@ -869,7 +860,7 @@ export function WorkItemDetailModal({
                                                 className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:text-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
                                             >
                                                 <Trash2 className="h-4 w-4" />
-                                                Delete Work Item
+                                                Xóa công việc
                                             </button>
                                         </div>
                                     )}
@@ -895,7 +886,7 @@ export function WorkItemDetailModal({
                                 {/* Summary */}
                                 <div className="space-y-2">
                                     <h3 className="text-sm font-medium text-gray-900">
-                                        Summary
+                                        Tóm tắt
                                     </h3>
                                     {isEditing &&
                                     !workItem?.parentLecturerWorkItemId ? (
@@ -911,7 +902,7 @@ export function WorkItemDetailModal({
                                                 }))
                                             }
                                             className="text-xl font-semibold text-gray-900 border border-gray-300 rounded px-3 py-2 w-full focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                            placeholder="Enter summary"
+                                            placeholder="Nhập tóm tắt"
                                         />
                                     ) : (
                                         <h2 className="text-xl font-semibold text-gray-900">
@@ -923,7 +914,7 @@ export function WorkItemDetailModal({
                                 {/* Description */}
                                 <div className="space-y-2">
                                     <h3 className="text-sm font-medium text-gray-900">
-                                        Description
+                                        Mô tả
                                     </h3>
                                     {isEditing &&
                                     !workItem?.parentLecturerWorkItemId ? (
@@ -943,13 +934,13 @@ export function WorkItemDetailModal({
                                                     )
                                                 }
                                                 className="w-full min-h-[200px] p-3 text-gray-900 border border-gray-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                                placeholder="Enter a description..."
+                                                placeholder="Nhập mô tả..."
                                             />
                                         </div>
                                     ) : (
                                         <div className="prose prose-sm max-w-none text-gray-700">
                                             {workItem?.description ||
-                                                'No description provided.'}
+                                                'Không có mô tả.'}
                                         </div>
                                     )}
                                 </div>
@@ -961,7 +952,7 @@ export function WorkItemDetailModal({
                                             <div className="flex items-center justify-between">
                                                 <h3 className="text-sm font-medium text-gray-900">
                                                     {workItem.type == 'Epic'
-                                                        ? 'Child work items'
+                                                        ? 'Công việc con'
                                                         : 'Subtasks'}{' '}
                                                     (
                                                     {(
@@ -1039,8 +1030,8 @@ export function WorkItemDetailModal({
                                     <div className="space-y-2">
                                         <h3 className="text-sm font-medium text-gray-900">
                                             {workItem?.type == 'Subtask'
-                                                ? 'Parent Task'
-                                                : 'Parent Epic'}
+                                                ? 'Công việc cha'
+                                                : 'Epic cha'}
                                         </h3>
                                         {isEditing &&
                                         !workItem?.parentLecturerWorkItemId &&
@@ -1090,8 +1081,8 @@ export function WorkItemDetailModal({
                                                         label:
                                                             workItem?.type ==
                                                             'Task'
-                                                                ? 'No parent epic'
-                                                                : 'No parent item',
+                                                                ? 'Không epic cha'
+                                                                : 'Không công việc cha',
                                                     },
                                                     ...epics.map((epic) => ({
                                                         value: epic.id.toString(),
@@ -1102,8 +1093,8 @@ export function WorkItemDetailModal({
                                                 classNamePrefix="react-select"
                                                 placeholder={
                                                     workItem?.type != 'Subtask'
-                                                        ? 'Select parent epic'
-                                                        : 'Select parent item'
+                                                        ? 'Chọn epic cha'
+                                                        : 'Chọn công việc cha'
                                                 }
                                                 isClearable
                                                 styles={selectStyles}
@@ -1135,8 +1126,8 @@ export function WorkItemDetailModal({
                                                     <span className="text-gray-500">
                                                         {workItem?.type ==
                                                         'Task'
-                                                            ? 'No parent epic'
-                                                            : 'No parent item'}
+                                                            ? 'Không có epic cha'
+                                                            : 'Không có công việc cha'}
                                                     </span>
                                                 )}
                                             </div>
@@ -1148,7 +1139,7 @@ export function WorkItemDetailModal({
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-sm font-semibold text-gray-900">
-                                            Attachments
+                                            Tập tin đính kèm
                                         </h3>
                                     </div>
 
@@ -1165,12 +1156,11 @@ export function WorkItemDetailModal({
                                                                 className="cursor-pointer"
                                                             >
                                                                 <span className="text-blue-600 hover:text-blue-500 font-medium">
-                                                                    Choose files
+                                                                    Chọn tập tin
                                                                 </span>
                                                                 <span className="text-gray-500">
                                                                     {' '}
-                                                                    or drag and
-                                                                    drop
+                                                                    hoặc kéo thả
                                                                 </span>
                                                             </label>
                                                             <input
@@ -1188,9 +1178,9 @@ export function WorkItemDetailModal({
                                                             />
                                                         </div>
                                                         <p className="text-xs text-gray-500 mt-2">
-                                                            PDF, DOC, TXT,
-                                                            Images, ZIP up to
-                                                            10MB each
+                                                            PDF, DOC, TXT, Ảnh,
+                                                            ZIP dung lượng tối
+                                                            đa 5MB mỗi tập tin
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1201,7 +1191,8 @@ export function WorkItemDetailModal({
                                                     <div className="space-y-2">
                                                         <div className="flex items-center justify-between">
                                                             <p className="text-sm font-medium text-gray-700">
-                                                                Selected Files (
+                                                                Tập tin đã chọn
+                                                                (
                                                                 {
                                                                     newAttachments
                                                                         .ATTACHMENT
@@ -1225,11 +1216,13 @@ export function WorkItemDetailModal({
                                                                     <div className="flex items-center space-x-2">
                                                                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                                                                         <span>
-                                                                            Uploading...
+                                                                            Đang
+                                                                            tải
+                                                                            lên...
                                                                         </span>
                                                                     </div>
                                                                 ) : (
-                                                                    'Upload Attachments'
+                                                                    'Tải lên tập tin'
                                                                 )}
                                                             </Button>
                                                         </div>
@@ -1296,7 +1289,7 @@ export function WorkItemDetailModal({
                                         </div>
                                     ) : (
                                         <p className="text-sm text-gray-700">
-                                            No attachments yet
+                                            Không có tập tin
                                         </p>
                                     )}
                                 </div>
@@ -1305,7 +1298,7 @@ export function WorkItemDetailModal({
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-sm font-semibold text-gray-900">
-                                            Work Evidence
+                                            Tài liệu minh chứng
                                         </h3>
                                     </div>
 
@@ -1321,11 +1314,11 @@ export function WorkItemDetailModal({
                                                             className="cursor-pointer"
                                                         >
                                                             <span className="text-blue-600 hover:text-blue-500 font-medium">
-                                                                Choose files
+                                                                Chọn tập tin
                                                             </span>
                                                             <span className="text-gray-500">
                                                                 {' '}
-                                                                or drag and drop
+                                                                hoặc kéo thả
                                                             </span>
                                                         </label>
                                                         <input
@@ -1344,7 +1337,8 @@ export function WorkItemDetailModal({
                                                     </div>
                                                     <p className="text-xs text-gray-500 mt-2">
                                                         PDF, DOC, TXT, Images,
-                                                        ZIP up to 10MB each
+                                                        ZIP dung lượng tối đa
+                                                        5MB mỗi tập tin
                                                     </p>
                                                 </div>
                                             </div>
@@ -1355,7 +1349,7 @@ export function WorkItemDetailModal({
                                                 <div className="space-y-2">
                                                     <div className="flex items-center justify-between">
                                                         <p className="text-sm font-medium text-gray-700">
-                                                            Selected Files (
+                                                            Tập tin đã chọn (
                                                             {
                                                                 newAttachments[
                                                                     'WORK EVIDENCE'
@@ -1377,11 +1371,12 @@ export function WorkItemDetailModal({
                                                                 <div className="flex items-center space-x-2">
                                                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                                                                     <span>
-                                                                        Uploading...
+                                                                        Đang tải
+                                                                        lên...
                                                                     </span>
                                                                 </div>
                                                             ) : (
-                                                                'Upload Evidence'
+                                                                'Tải lên tài liệu minh chứng'
                                                             )}
                                                         </Button>
                                                     </div>
@@ -1443,7 +1438,7 @@ export function WorkItemDetailModal({
                                         </div>
                                     ) : (
                                         <p className="text-sm text-gray-700">
-                                            No work evidence yet
+                                            Không có tài liệu minh chứng
                                         </p>
                                     )}
                                 </div>
@@ -1451,7 +1446,7 @@ export function WorkItemDetailModal({
                                 {/* Development Section */}
                                 <div className="space-y-3">
                                     <h3 className="text-sm font-semibold text-gray-900">
-                                        Development
+                                        Phát triển mã nguồn
                                     </h3>
                                     {workItem?.commits &&
                                     workItem.commits.length > 0 ? (
@@ -1506,16 +1501,16 @@ export function WorkItemDetailModal({
                                     ) : (
                                         <div className="space-y-3">
                                             <p className="text-sm text-gray-700">
-                                                No commits linked yet
+                                                Không có commits liên kết
                                             </p>
                                             <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
                                                 <h4 className="text-sm font-medium text-blue-900 mb-2">
-                                                    How to link commits
+                                                    Cách liên kết commits
                                                 </h4>
                                                 <div className="space-y-2 text-sm text-blue-800">
                                                     <p>
-                                                        Include the work item
-                                                        key in your commit
+                                                        Bao gồm mã công việc
+                                                        (key) trong commit
                                                         message:
                                                     </p>
                                                     <pre className="bg-blue-100 p-2 rounded font-mono text-xs">
@@ -1523,7 +1518,7 @@ export function WorkItemDetailModal({
                                                         {workItem?.key} your
                                                         commit message&quot;
                                                     </pre>
-                                                    <p>Example:</p>
+                                                    <p>Ví dụ:</p>
                                                     <pre className="bg-blue-100 p-2 rounded font-mono text-xs">
                                                         git commit -m &quot;
                                                         {workItem?.key} add user
@@ -1535,26 +1530,10 @@ export function WorkItemDetailModal({
                                                         </p>
                                                         <ul className="list-disc list-inside mt-1 space-y-1">
                                                             <li>
-                                                                Always include
-                                                                the work item
-                                                                key at the start
-                                                                of your commit
+                                                                Luôn bao gồm mã
+                                                                công việc (key)
+                                                                ở đầu commit
                                                                 message
-                                                            </li>
-                                                            <li>
-                                                                Use clear and
-                                                                descriptive
-                                                                commit messages
-                                                            </li>
-                                                            <li>
-                                                                Keep each commit
-                                                                focused on a
-                                                                single change
-                                                            </li>
-                                                            <li>
-                                                                Use the present
-                                                                tense in commit
-                                                                messages
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -1567,7 +1546,7 @@ export function WorkItemDetailModal({
                                 {/* Feedback Section */}
                                 <div className="space-y-3">
                                     <h3 className="text-sm font-semibold text-gray-900">
-                                        Feedback History
+                                        Lịch sử nhận xét
                                     </h3>
                                     {workItem?.feedbacks &&
                                     workItem.feedbacks.length > 0 ? (
@@ -1605,8 +1584,8 @@ export function WorkItemDetailModal({
                                                                 >
                                                                     {feedback.type ===
                                                                     'APPROVE'
-                                                                        ? 'Approved'
-                                                                        : 'Rejected'}
+                                                                        ? 'Phê duyệt'
+                                                                        : 'Từ chối'}
                                                                 </p>
                                                                 <span className="text-xs text-gray-500">
                                                                     {formatDate(
@@ -1661,7 +1640,7 @@ export function WorkItemDetailModal({
                                         </div>
                                     ) : (
                                         <p className="text-sm text-gray-700">
-                                            No feedback yet
+                                            Không có nhận xét
                                         </p>
                                     )}
                                 </div>
@@ -1672,7 +1651,7 @@ export function WorkItemDetailModal({
                                 {/* Status */}
                                 <div className="space-y-2">
                                     <h3 className="text-xs font-semibold text-gray-700">
-                                        STATUS
+                                        TRẠNG THÁI
                                     </h3>
                                     {isEditing ? (
                                         <Select
@@ -1733,7 +1712,7 @@ export function WorkItemDetailModal({
                                             }
                                             className="text-sm"
                                             classNamePrefix="react-select"
-                                            placeholder="Select status"
+                                            placeholder="Chọn trạng thái"
                                             styles={selectStyles}
                                         />
                                     ) : (
@@ -1742,14 +1721,14 @@ export function WorkItemDetailModal({
                                                 workItem?.status || ''
                                             )}`}
                                         >
-                                            {workItem?.status || 'No status'}
+                                            {workItem?.status || 'Không có trạng thái'}
                                         </div>
                                     )}
                                 </div>
                                 {/* Type */}
                                 <div className="space-y-2">
                                     <h3 className="text-xs font-medium text-gray-500">
-                                        TYPE
+                                        LOẠI
                                     </h3>
                                     <div
                                         className={`inline-flex items-center px-2.5 py-1 rounded-md text-sm font-medium ${getTypeColor(
@@ -1814,7 +1793,7 @@ export function WorkItemDetailModal({
                                                     options={[
                                                         {
                                                             value: '',
-                                                            label: 'No sprint',
+                                                            label: 'Không sprint',
                                                         },
                                                         ...sprints.map(
                                                             (sprint) => ({
@@ -1837,7 +1816,7 @@ export function WorkItemDetailModal({
                                                         ? workItem.sprint
                                                               .name ||
                                                           `SPRINT ${workItem.sprint.number}`
-                                                        : 'Not assigned to any sprint'}
+                                                        : 'Không thuộc sprint nào'}
                                                 </span>
                                             )}
                                         </div>
@@ -1845,7 +1824,7 @@ export function WorkItemDetailModal({
                                 {/* Assignee */}
                                 <div className="space-y-2">
                                     <h3 className="text-xs font-semibold text-gray-700">
-                                        ASSIGNEE
+                                        THÀNH VIÊN ĐƯỢC GIAO
                                     </h3>
                                     {isEditing ? (
                                         <Select
@@ -1879,7 +1858,7 @@ export function WorkItemDetailModal({
                                             options={[
                                                 {
                                                     value: '',
-                                                    label: 'Unassigned',
+                                                    label: 'Chưa giao',
                                                 },
                                                 ...groupMembers.map(
                                                     (member) => ({
@@ -1890,7 +1869,7 @@ export function WorkItemDetailModal({
                                             ]}
                                             className="text-sm"
                                             classNamePrefix="react-select"
-                                            placeholder="Select assignee"
+                                            placeholder="Chọn thành viên được giao"
                                             isClearable
                                             styles={selectStyles}
                                         />
@@ -1923,7 +1902,7 @@ export function WorkItemDetailModal({
                                         <div className="flex items-center space-x-2 text-gray-500">
                                             <User className="h-5 w-5" />
                                             <span className="text-sm">
-                                                Unassigned
+                                                Chưa giao
                                             </span>
                                         </div>
                                     )}
@@ -1957,7 +1936,7 @@ export function WorkItemDetailModal({
                                                     );
                                                 }}
                                                 className="w-full text-gray-700 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="Enter story points"
+                                                placeholder="Nhập story points"
                                             />
                                         ) : (
                                             <span className="text-sm text-gray-900">
@@ -1965,7 +1944,7 @@ export function WorkItemDetailModal({
                                                     undefined &&
                                                 workItem?.storyPoints !== null
                                                     ? workItem.storyPoints
-                                                    : 'Not estimated'}
+                                                    : 'Chưa ước tính'}
                                             </span>
                                         )}
                                     </div>
@@ -1973,7 +1952,7 @@ export function WorkItemDetailModal({
                                 {/* Start Date */}
                                 <div className="space-y-2">
                                     <h3 className="text-xs font-semibold text-gray-700">
-                                        START DATE
+                                        NGÀY BẮT ĐẦU
                                     </h3>
                                     {isEditing &&
                                     !workItem?.parentLecturerWorkItemId ? (
@@ -2033,14 +2012,14 @@ export function WorkItemDetailModal({
                                                       workItem.startDate,
                                                       'dd/MM/yyyy HH:mm'
                                                   )
-                                                : 'No start date set'}
+                                                : 'Không đặt ngày bắt đầu'}
                                         </span>
                                     )}
                                 </div>
                                 {/* End Date */}
                                 <div className="space-y-2">
                                     <h3 className="text-xs font-semibold text-gray-700">
-                                        END DATE
+                                        NGÀY KẾT THÚC
                                     </h3>
                                     {isEditing &&
                                     !workItem?.parentLecturerWorkItemId ? (
@@ -2133,14 +2112,14 @@ export function WorkItemDetailModal({
                                                       workItem.endDate,
                                                       'dd/MM/yyyy HH:mm'
                                                   )
-                                                : 'No end date set'}
+                                                : 'Không đặt ngày kết thúc'}
                                         </span>
                                     )}
                                 </div>
                                 {/* Created Date */}
                                 <div className="space-y-2">
                                     <h3 className="text-xs font-medium text-gray-500">
-                                        CREATED
+                                        NGÀY TẠO
                                     </h3>
                                     <span className="text-sm text-gray-900">
                                         {workItem?.createdAt
@@ -2148,7 +2127,7 @@ export function WorkItemDetailModal({
                                                   workItem.createdAt,
                                                   'dd/MM/yyyy HH:mm'
                                               )
-                                            : 'Unknown'}
+                                            : 'Không xác định'}
                                     </span>
                                 </div>
                                 {/* Updated Date - Only show if different from created date */}
@@ -2157,7 +2136,7 @@ export function WorkItemDetailModal({
                                         workItem?.createdAt && (
                                         <div className="space-y-2">
                                             <h3 className="text-xs font-medium text-gray-500">
-                                                UPDATED
+                                                NGÀY CẬP NHẬT
                                             </h3>
                                             <span className="text-sm text-gray-900">
                                                 {formatDate(
@@ -2170,7 +2149,7 @@ export function WorkItemDetailModal({
                                 {/* Reporter Details */}
                                 <div className="space-y-2">
                                     <h3 className="text-xs font-medium text-gray-500">
-                                        REPORTER
+                                        NGƯỜI TẠO
                                     </h3>
                                     {workItem?.reporter ? (
                                         <div className="space-y-2">
@@ -2208,7 +2187,7 @@ export function WorkItemDetailModal({
                                         <div className="flex items-center space-x-2 text-gray-500">
                                             <User className="h-5 w-5" />
                                             <span className="text-sm">
-                                                Unknown reporter
+                                                Không xác định người tạo
                                             </span>
                                         </div>
                                     )}
@@ -2242,7 +2221,7 @@ export function WorkItemDetailModal({
                                                 setShowApprovalDialog(true)
                                             }
                                         >
-                                            Approve
+                                            Phê duyệt
                                         </Button>
                                     )}
                                 {workItem.status === 'WAIT FOR REVIEW' && (
@@ -2252,7 +2231,7 @@ export function WorkItemDetailModal({
                                             setShowRejectDialog(true)
                                         }
                                     >
-                                        Reject
+                                        Từ chối
                                     </Button>
                                 )}
                             </>
@@ -2264,7 +2243,7 @@ export function WorkItemDetailModal({
                                 onClose();
                             }}
                         >
-                            Close
+                            Đóng
                         </Button>
                     </div>
                 </div>
@@ -2300,10 +2279,10 @@ export function WorkItemDetailModal({
                 isOpen={showDeleteDialog}
                 onClose={() => setShowDeleteDialog(false)}
                 onConfirm={handleDelete}
-                title="Delete Work Item"
-                description={`Are you sure you want to delete "${workItem?.key} - ${workItem?.summary}"? This action cannot be undone.`}
-                confirmText="Delete"
-                cancelText="Cancel"
+                title="Xóa công việc"
+                description={`Bạn có chắc chắn muốn xóa "${workItem?.key} - ${workItem?.summary}"? Hành động này không thể được hoàn tác.`}
+                confirmText="Xóa"
+                cancelText="Hủy"
             />
 
             {/* Click outside to close options menu */}

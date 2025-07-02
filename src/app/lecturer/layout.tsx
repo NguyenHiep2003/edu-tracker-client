@@ -50,7 +50,7 @@ function LecturerLayoutContent({ children }: { children: React.ReactNode }) {
             <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="text-center">
                     <Loader2 className="h-12 w-12 text-blue-600 animate-spin mx-auto" />
-                    <p className="mt-4 text-gray-600">Loading...</p>
+                    <p className="mt-4 text-gray-600">Đang tải...</p>
                 </div>
             </div>
         );

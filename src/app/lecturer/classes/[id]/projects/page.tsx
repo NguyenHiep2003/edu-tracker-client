@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { format, differenceInDays } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,6 +43,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { WarningModal } from '@/components/warning-modal';
+import { formatDate } from '@/helper/date-formatter';
 
 export default function ProjectsPage() {
     const params = useParams();
@@ -87,14 +88,8 @@ export default function ProjectsPage() {
 
                 acc[project.id] = {
                     daysRemaining,
-                    formattedStartDate: format(
-                        new Date(project.startDate),
-                        'MMM d, yyyy'
-                    ),
-                    formattedEndDate: format(
-                        new Date(project.endDate),
-                        'MMM d, yyyy'
-                    ),
+                    formattedStartDate: formatDate(project.startDate, 'dd/MM/yyyy HH:mm'),
+                    formattedEndDate: formatDate(project.endDate, 'dd/MM/yyyy HH:mm'),
                     isOverdue: daysRemaining <= 0,
                     isUrgent: daysRemaining > 0 && daysRemaining <= 7,
                 };
@@ -112,8 +107,8 @@ export default function ProjectsPage() {
 
             setProjects(data.data);
         } catch (error) {
-            console.error('Error fetching projects:', error);
-            toast.error('Failed to load projects');
+            console.log("🚀 ~ fetchProjects ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải dự án');
         } finally {
             setLoading(false);
         }
@@ -135,7 +130,7 @@ export default function ProjectsPage() {
 
     const handleExportToTemplate = async () => {
         if (!selectedProjectForExport || !exportTitle.trim()) {
-            toast.error('Please enter a title for the export');
+            toast.error('Vui lòng nhập tên cho template dự án');
             return;
         }
 
@@ -148,14 +143,14 @@ export default function ProjectsPage() {
                 exportTitle
             );
             toast.success(
-                `Project "${selectedProjectForExport.title}" exported to template as "${exportTitle}"`
+                `Dự án "${selectedProjectForExport.title}" đã được xuất template với tiêu đề "${exportTitle}"`
             );
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
                 toast.error(
-                    error.message || 'Failed to export project to template'
+                    error.message || 'Đã xảy ra lỗi khi xuất dự án sang template'
                 );
             }
         } finally {
@@ -176,11 +171,11 @@ export default function ProjectsPage() {
         try {
             await deleteProject(selectedProjectForDelete.id);
             toast.success(
-                `Project "${selectedProjectForDelete.title}" deleted successfully.`
+                `Dự án "${selectedProjectForDelete.title}" đã được xóa thành công.`
             );
             fetchProjects();
         } catch (error: any) {
-            toast.error(error.message || 'Failed to delete project.');
+            toast.error(error.message || 'Đã xảy ra lỗi khi xóa dự án');
         } finally {
             setSelectedProjectForDelete(null);
             setShowDeleteModal(false);
@@ -206,7 +201,7 @@ export default function ProjectsPage() {
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading projects...</p>
+                    <p className="mt-4 text-gray-600">Đang tải dự án...</p>
                 </div>
             </div>
         );
@@ -220,10 +215,10 @@ export default function ProjectsPage() {
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                             <FolderOpen className="h-6 w-6 text-blue-600" />
-                            Projects ({projects.length})
+                            Dự án ({projects.length})
                         </h1>
                         <p className="text-gray-600 mt-1">
-                            Manage class projects and assignments
+                            Quản lý dự án và công việc
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -233,14 +228,14 @@ export default function ProjectsPage() {
                             className="border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                         >
                             <FileUp className="h-4 w-4 mr-2" />
-                            Import from template
+                            Nhập từ template
                         </Button>
                         <Button
                             onClick={() => setShowAddModal(true)}
                             className="bg-blue-600 hover:bg-blue-700"
                         >
                             <Plus className="h-4 w-4 mr-2" />
-                            Create Project
+                            Tạo dự án
                         </Button>
                     </div>
                 </div>
@@ -249,21 +244,20 @@ export default function ProjectsPage() {
             {/* Projects List */}
             {projects.length === 0 ? (
                 <Card className="border-2 border-dashed border-gray-200">
-                    <CardContent className="text-center py-16">
+                    <CardContent className="text-center py-16 pt-7">
                         <FolderOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-xl font-medium text-gray-900 mb-2">
-                            No projects yet
+                            Không có dự án
                         </h3>
                         <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                            Create your first project to get started with
-                            assignments and track student progress.
+                            Tạo dự án đầu tiên và theo dõi tiến độ của sinh viên
                         </p>
                         <Button
                             onClick={() => setShowAddModal(true)}
                             className="bg-blue-600 hover:bg-blue-700"
                         >
                             <Plus className="h-4 w-4 mr-2" />
-                            Create First Project
+                            Tạo dự án đầu tiên
                         </Button>
                     </CardContent>
                 </Card>
@@ -339,7 +333,7 @@ export default function ProjectsPage() {
                                                             {
                                                                 project.numberOfStudents
                                                             }{' '}
-                                                            students
+                                                            sinh viên
                                                         </span>
                                                     </div>
 
@@ -366,7 +360,7 @@ export default function ProjectsPage() {
                                                                 }
                                                             >
                                                                 {daysRemaining}{' '}
-                                                                days left
+                                                                ngày còn lại
                                                             </span>
                                                         </div>
                                                     )}
@@ -377,10 +371,10 @@ export default function ProjectsPage() {
                                                             <span className="text-red-600 font-medium">
                                                                 {daysRemaining ===
                                                                 0
-                                                                    ? 'Due today'
-                                                                    : `${Math.abs(
+                                                                    ? 'Đến hạn hôm nay'
+                                                                    : `Đã quá hạn ${Math.abs(
                                                                           daysRemaining
-                                                                      )} days overdue`}
+                                                                      )} ngày`}
                                                             </span>
                                                         </div>
                                                     )}
@@ -399,7 +393,7 @@ export default function ProjectsPage() {
                                                     }}
                                                     className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
                                                 >
-                                                    View Details
+                                                    Xem chi tiết
                                                 </Button>
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger
@@ -430,8 +424,8 @@ export default function ProjectsPage() {
                                                         >
                                                             <Download className="h-4 w-4 mr-2" />
                                                             {isExporting
-                                                                ? 'Exporting...'
-                                                                : 'Export to template'}
+                                                                ? 'Đang xuất template...'
+                                                                : 'Xuất sang template'}
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             onClick={() =>
@@ -442,7 +436,7 @@ export default function ProjectsPage() {
                                                             className="cursor-pointer text-red-600 hover:!text-red-600 hover:!bg-red-50"
                                                         >
                                                             <Trash2 className="h-4 w-4 mr-2" />
-                                                            Delete
+                                                            Xóa
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
@@ -477,9 +471,9 @@ export default function ProjectsPage() {
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleConfirmDelete}
-                    title={`Delete Project: ${selectedProjectForDelete.title}`}
-                    description="Are you sure you want to delete this project? All associated data will be removed. This action cannot be undone."
-                    confirmText="Delete Project"
+                    title={`Xóa dự án: ${selectedProjectForDelete.title}`}
+                    description="Bạn có chắc chắn muốn xóa dự án này? Tất cả dữ liệu liên quan sẽ bị xóa. Thao tác này không thể được hoàn tác."
+                    confirmText="Xóa dự án"
                 />
             )}
 
@@ -489,20 +483,18 @@ export default function ProjectsPage() {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <Download className="h-5 w-5 text-blue-600" />
-                            Export Project to Template
+                            Xuất dự án sang template
                         </DialogTitle>
                         <DialogDescription>
-                            Enter a title for the exported template. This will
-                            be used to identify the template when you want to
-                            reuse it.
+                            Nhập tên cho template dự án. Đây sẽ là tiêu đề của template khi bạn muốn sử dụng lại.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
-                            <Label htmlFor="export-title">Template Title</Label>
+                            <Label htmlFor="export-title">Tiêu đề template</Label>
                             <Input
                                 id="export-title"
-                                placeholder="Enter template title..."
+                                placeholder="Nhập tiêu đề template..."
                                 value={exportTitle}
                                 onChange={(e) => setExportTitle(e.target.value)}
                                 onKeyDown={(e) => {
@@ -517,7 +509,7 @@ export default function ProjectsPage() {
                         </div>
                         {selectedProjectForExport && (
                             <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
-                                <strong>Project:</strong>{' '}
+                                <strong>Dự án:</strong>{' '}
                                 {selectedProjectForExport.title}
                             </div>
                         )}
@@ -527,7 +519,7 @@ export default function ProjectsPage() {
                             variant="outline"
                             onClick={() => setShowExportModal(false)}
                         >
-                            Cancel
+                            Hủy
                         </Button>
                         <Button
                             onClick={handleExportToTemplate}
@@ -537,7 +529,7 @@ export default function ProjectsPage() {
                             }
                             className="bg-blue-600 hover:bg-blue-700"
                         >
-                            {exportingProjectId ? 'Exporting...' : 'Export'}
+                            {exportingProjectId ? 'Đang xuất template...' : 'Xuất template'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

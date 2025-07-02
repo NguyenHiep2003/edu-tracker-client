@@ -2,15 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
     Calendar,
     FileText,
-    AlertCircle,
     CheckCircle,
     Target,
 } from 'lucide-react';
 import { useStudentProjectContext } from '@/context/student-project-context';
+import { formatDate } from '@/helper/date-formatter';
 
 export default function StudentProjectOverviewPage() {
     const { projectData, loading } = useStudentProjectContext();
@@ -21,7 +20,7 @@ export default function StudentProjectOverviewPage() {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">
-                        Loading project details...
+                        Đang tải chi tiết dự án...
                     </p>
                 </div>
             </div>
@@ -31,18 +30,10 @@ export default function StudentProjectOverviewPage() {
     if (!projectData) {
         return (
             <div className="text-center py-12">
-                <p className="text-gray-500">Project not found</p>
+                <p className="text-gray-500">Không tìm thấy dự án</p>
             </div>
         );
     }
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-        });
-    };
 
     const getDaysUntilDeadline = (dateString: string) => {
         const deadline = new Date(dateString);
@@ -67,104 +58,25 @@ export default function StudentProjectOverviewPage() {
                         </h1>
                         <div className="flex items-center gap-3 mt-4">
                             <Badge className="bg-white/20 text-white border-white/30 px-3 py-1">
-                                {projectData.type == 'TEAM' ? 'Team' : 'Solo'}{' '}
-                                Project
+                                Dự án {projectData.type == 'TEAM' ? 'Nhóm' : 'Cá nhân'}
                             </Badge>
                             <Badge className="bg-white/20 text-white border-white/30 px-3 py-1">
                                 {projectData.participationMode == 'mandatory'
-                                    ? 'Required all students to join'
-                                    : 'Optional participation'}
+                                    ? 'Bắt buộc tất cả sinh viên tham gia'
+                                    : 'Tùy chọn tham gia'}
                             </Badge>
                         </div>
                     </div>
                     <div className="text-right">
                         <div className="text-sm text-blue-100 opacity-80">
-                            Days Remaining
+                            Số ngày còn lại
                         </div>
                         <div className="text-4xl font-bold">
-                            {daysUntilEnd > 0 ? daysUntilEnd : 'Overdue'}
+                            {daysUntilEnd > 0 ? daysUntilEnd : 'Đã quá hạn'}
                         </div>
                     </div>
                 </div>
             </div>
-
-            {/* Project Status Alert */}
-            {!projectData.isJoined && projectData.status === 'OPEN' && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
-                    <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                            <AlertCircle className="h-6 w-6 text-amber-500" />
-                        </div>
-                        <div className="ml-4 flex-1">
-                            <h3 className="text-lg font-semibold text-amber-800">
-                                Ready to Join?
-                            </h3>
-                            <p className="text-amber-700 mt-1">
-                                Start your journey with this{' '}
-                                {projectData.type.toLowerCase()} project and
-                                unlock your potential!
-                            </p>
-                        </div>
-                        <Button
-                            size="lg"
-                            className="ml-4 bg-amber-600 hover:bg-amber-700 text-white"
-                        >
-                            Join Project
-                        </Button>
-                    </div>
-                </div>
-            )}
-
-            {/* Deadline Warning */}
-            {/* {projectData.isJoined && (isOverdue || isDueSoon) && (
-                <div
-                    className={`rounded-xl p-6 border ${
-                        isOverdue
-                            ? 'bg-red-50 border-red-200'
-                            : 'bg-yellow-50 border-yellow-200'
-                    }`}
-                >
-                    <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                            <AlertCircle
-                                className={`h-7 w-7 ${
-                                    isOverdue
-                                        ? 'text-red-500'
-                                        : 'text-yellow-500'
-                                }`}
-                            />
-                        </div>
-                        <div className="ml-4 flex-1">
-                            <h3
-                                className={`text-xl font-bold ${
-                                    isOverdue
-                                        ? 'text-red-800'
-                                        : 'text-yellow-800'
-                                }`}
-                            >
-                                {isOverdue
-                                    ? '⏰ Project Overdue!'
-                                    : '⚡ Deadline Approaching'}
-                            </h3>
-                            <p
-                                className={`text-lg mt-2 ${
-                                    isOverdue
-                                        ? 'text-red-700'
-                                        : 'text-yellow-700'
-                                }`}
-                            >
-                                {isOverdue
-                                    ? `This project was due ${Math.abs(
-                                          daysUntilEnd
-                                      )} days ago. Please submit as soon as possible!`
-                                    : `Only ${daysUntilEnd} day${
-                                          daysUntilEnd === 1 ? '' : 's'
-                                      } left! Time to finalize your work.`}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )} */}
 
             {/* Project Information Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -175,7 +87,7 @@ export default function StudentProjectOverviewPage() {
                         <CardHeader className="bg-blue-50 border-b border-blue-200">
                             <CardTitle className="flex items-center gap-3 text-xl text-blue-900">
                                 <FileText className="h-6 w-6 text-blue-600" />
-                                Project Description
+                                Mô tả dự án
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-8">
@@ -188,11 +100,10 @@ export default function StudentProjectOverviewPage() {
                                     <div className="text-center py-8 text-gray-500">
                                         <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
                                         <p className="text-lg">
-                                            No description provided for this
-                                            project.
+                                            Không có mô tả cho dự án này.
                                         </p>
                                         <p className="text-sm mt-2">
-                                            More details will be added soon!
+                                            Mô tả chi tiết sẽ được thêm trong thời gian sớm nhất!
                                         </p>
                                     </div>
                                 )}
@@ -205,7 +116,7 @@ export default function StudentProjectOverviewPage() {
                         <CardHeader className="bg-green-50 border-b border-green-200">
                             <CardTitle className="flex items-center gap-3 text-xl text-green-900">
                                 <Calendar className="h-6 w-6 text-green-600" />
-                                Project Timeline
+                                Các mốc thời gian của dự án
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 pt-5">
@@ -216,11 +127,11 @@ export default function StudentProjectOverviewPage() {
                                             <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                                             <div>
                                                 <p className="font-semibold text-gray-900 text-lg">
-                                                    Project Started
+                                                    Dự án bắt đầu
                                                 </p>
                                                 <p className="text-gray-600 text-base">
                                                     {formatDate(
-                                                        projectData.startDate
+                                                        projectData.startDate, 'dd/MM/yyyy HH:mm'
                                                     )}
                                                 </p>
                                             </div>
@@ -237,12 +148,11 @@ export default function StudentProjectOverviewPage() {
                                                     <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                                                     <div>
                                                         <p className="font-semibold text-gray-900 text-lg">
-                                                            Join Project
-                                                            Deadline
+                                                            Hạn tham gia dự án
                                                         </p>
                                                         <p className="text-gray-600 text-base">
                                                             {formatDate(
-                                                                projectData.joinProjectDeadline
+                                                                projectData.joinProjectDeadline, 'dd/MM/yyyy HH:mm'
                                                             )}
                                                         </p>
                                                     </div>
@@ -259,11 +169,11 @@ export default function StudentProjectOverviewPage() {
                                                     <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                                                     <div>
                                                         <p className="font-semibold text-gray-900 text-lg">
-                                                            Form Group Deadline
+                                                            Hạn lập nhóm
                                                         </p>
                                                         <p className="text-gray-600 text-base">
                                                             {formatDate(
-                                                                projectData.formGroupDeadline
+                                                                projectData.formGroupDeadline, 'dd/MM/yyyy HH:mm'
                                                             )}
                                                         </p>
                                                     </div>
@@ -303,10 +213,10 @@ export default function StudentProjectOverviewPage() {
                                                     }`}
                                                 >
                                                     {isOverdue
-                                                        ? 'Deadline Passed'
+                                                        ? 'Đã quá hạn'
                                                         : isDueSoon
-                                                        ? 'Due Soon'
-                                                        : 'Project Deadline'}
+                                                        ? 'Sắp hết hạn'
+                                                        : 'Hạn kết thúc'}
                                                 </p>
                                                 <p
                                                     className={`text-base ${
@@ -318,7 +228,7 @@ export default function StudentProjectOverviewPage() {
                                                     }`}
                                                 >
                                                     {formatDate(
-                                                        projectData.endDate
+                                                        projectData.endDate, 'dd/MM/yyyy HH:mm'
                                                     )}
                                                 </p>
                                             </div>
@@ -333,10 +243,10 @@ export default function StudentProjectOverviewPage() {
                                             }`}
                                         >
                                             {isOverdue
-                                                ? `${Math.abs(
+                                                ? `Đã quá hạn ${Math.abs(
                                                       daysUntilEnd
-                                                  )} days overdue`
-                                                : `${daysUntilEnd} days left`}
+                                                  )} ngày`
+                                                : `Còn ${daysUntilEnd} ngày`}
                                         </Badge>
                                     </div>
                                 </div>
@@ -352,13 +262,13 @@ export default function StudentProjectOverviewPage() {
                         <CardHeader className="bg-purple-50 border-b border-purple-200">
                             <CardTitle className="flex items-center gap-3 text-xl text-purple-900">
                                 <Target className="h-6 w-6 text-purple-600" />
-                                Project Details
+                                Cấu hình dự án
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6 p-6 pt-5">
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <span className="text-base font-medium text-gray-700">
-                                    Type
+                                    Loại dự án
                                 </span>
                                 <Badge
                                     className={`px-3 py-1 text-sm font-semibold ${
@@ -368,55 +278,56 @@ export default function StudentProjectOverviewPage() {
                                     }`}
                                 >
                                     {projectData.type == 'TEAM'
-                                        ? 'Team'
-                                        : 'Solo'}
+                                        ? 'Nhóm'
+                                        : 'Cá nhân'}
                                 </Badge>
                             </div>
 
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <span className="text-base font-medium text-gray-700">
-                                    Mode
+                                    Chế độ tham gia
                                 </span>
                                 <Badge className="px-3 py-1 text-sm font-semibold bg-yellow-100 text-yellow-800 border-yellow-300">
                                     {projectData.participationMode ==
                                     'mandatory'
-                                        ? 'Mandatory'
-                                        : 'Optional'}
+                                        ? 'Bắt buộc'
+                                        : 'Tùy chọn'}
                                 </Badge>
                             </div>
                             {projectData.type == 'TEAM' && <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <span className="text-base font-medium text-gray-700">
-                                    Allow Form Group
+                                    Cho phép sinh viên tạo nhóm
                                 </span>
                                 <Badge className="px-3 py-1 text-sm font-semibold bg-blue-100 text-blue-800 border-blue-300">
                                     {projectData.allowStudentFormTeam == true
-                                        ? 'Yes'
-                                        : 'No'}
+                                        ? 'Có'
+                                        : 'Không'}
+                                </Badge>
+                            </div>}
+
+                            {projectData.allowStudentCreateTopic && <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                <span className="text-base font-medium text-gray-700">
+                                    Cho phép sinh viên tạo chủ đề
+                                </span>
+                                <Badge className="px-3 py-1 text-sm font-semibold bg-blue-100 text-blue-800 border-blue-300">
+                                    {projectData.allowStudentCreateTopic == true
+                                        ? 'Có'
+                                        : 'Không'}
                                 </Badge>
                             </div>}
 
                             {projectData.isJoined && (
                                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                     <span className="text-base font-medium text-gray-700">
-                                        Your Status
+                                        Trạng thái của bạn
                                     </span>
                                     <Badge className="px-3 py-1 text-sm font-semibold bg-green-100 text-green-800 border-green-300">
                                         <CheckCircle className="h-3 w-3 mr-1" />
-                                        Joined
+                                        Đã tham gia
                                     </Badge>
                                 </div>
                             )}
 
-                            {projectData.groupNumber && (
-                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                    <span className="text-base font-medium text-gray-700">
-                                        Your Group
-                                    </span>
-                                    <Badge className="bg-blue-100 text-blue-800 border-blue-300">
-                                        Group {projectData.groupNumber}
-                                    </Badge>
-                                </div>
-                            )}
                         </CardContent>
                     </Card>
                 </div>

@@ -27,6 +27,7 @@ import {
     MapPin,
     ImageIcon,
     Trash2,
+    RefreshCw,
 } from 'lucide-react';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
@@ -41,6 +42,7 @@ import type {
     UpdateOrganizationSettingsRequest,
 } from '@/services/api/organization/interface';
 import { useOrganization } from '@/context/organization-context';
+import { formatDate } from '@/helper/date-formatter';
 
 export default function OrganizationSettingPage() {
     const [organizationDetail, setOrganizationDetail] =
@@ -90,12 +92,12 @@ export default function OrganizationSettingPage() {
                     data.setting.allowLecturerAddNewStudent,
             });
         } catch (error: any) {
-            console.error('Error fetching organization:', error);
+            console.log("🚀 ~ fetchOrganization ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
                 toast.error(
-                    error?.message ?? 'Failed to load organization data'
+                    error?.message ?? 'Đã xảy ra lỗi khi tải dữ liệu của tổ chức'
                 );
             }
         } finally {
@@ -114,13 +116,13 @@ export default function OrganizationSettingPage() {
         if (file) {
             // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                toast.error('Image file size must be less than 5MB.');
+                toast.error('Kích thước file ảnh phải nhỏ hơn 5MB.');
                 return;
             }
 
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                toast.error('Please select a valid image file.');
+                toast.error('Vui lòng chọn file ảnh hợp lệ.');
                 return;
             }
 
@@ -154,19 +156,19 @@ export default function OrganizationSettingPage() {
             }
 
             await updateOrganizationInfo(updateData, organization?.id);
-            toast.success('Organization information updated successfully');
+            toast.success('Cập nhật thông tin tổ chức thành công');
 
             // Refresh data
             await fetchOrganization();
             setSelectedImage(null);
         } catch (error: any) {
-            console.error('Error updating organization info:', error);
+            console.log("🚀 ~ handleUpdateInfo ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
                 toast.error(
                     error?.message ??
-                        'Failed to update organization information'
+                        'Đã xảy ra lỗi khi cập nhật thông tin tổ chức'
                 );
             }
         } finally {
@@ -177,19 +179,19 @@ export default function OrganizationSettingPage() {
     // Add whitelist domain
     const handleAddDomain = () => {
         if (!newDomain.trim()) {
-            toast.error('Please enter a domain');
+            toast.error('Vui lòng nhập tên miền');
             return;
         }
 
         // Basic domain validation
         const domainRegex = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}$/;
         if (!domainRegex.test(newDomain.trim())) {
-            toast.error('Please enter a valid domain (e.g., example.com)');
+            toast.error('Vui lòng nhập tên miền hợp lệ (ví dụ: example.com)');
             return;
         }
 
         if (orgSettings.whitelistMailDomain.includes(newDomain.trim())) {
-            toast.error('Domain already exists in whitelist');
+            toast.error('Tên miền đã tồn tại trong whitelist');
             return;
         }
 
@@ -227,31 +229,22 @@ export default function OrganizationSettingPage() {
             };
 
             await updateOrganizationSettings(organization?.id, updateData);
-            toast.success('Organization settings updated successfully');
+            toast.success('Cập nhật cài đặt của tổ chức thành công');
 
             // Refresh data
             await fetchOrganization();
         } catch (error: any) {
-            console.error('Error updating organization settings:', error);
+            console.log("🚀 ~ handleUpdateSettings ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
                 toast.error(
-                    error?.message ?? 'Failed to update organization settings'
+                    error?.message ?? 'Đã xảy ra lỗi khi cập nhật cài đặt của tổ chức'
                 );
             }
         } finally {
             setUpdatingSettings(false);
         }
-    };
-
-    // Format date
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
     };
 
     if (loading) {
@@ -261,7 +254,7 @@ export default function OrganizationSettingPage() {
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                         <p className="mt-4 text-gray-600">
-                            Loading organization settings...
+                            Đang tải cài đặt của tổ chức...
                         </p>
                     </div>
                 </div>
@@ -274,10 +267,10 @@ export default function OrganizationSettingPage() {
             <div className="space-y-6">
                 <div className="text-center py-12">
                     <p className="text-gray-500">
-                        Failed to load organization data
+                        Đã xảy ra lỗi khi tải dữ liệu của tổ chức
                     </p>
                     <Button onClick={fetchOrganization} className="mt-4">
-                        Try Again
+                        Thử lại
                     </Button>
                 </div>
             </div>
@@ -289,10 +282,10 @@ export default function OrganizationSettingPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Organization Settings
+                        Cài đặt của tổ chức
                     </h1>
                     <p className="text-gray-600">
-                        Configure your organization preferences and information
+                        Cấu hình các thông tin và cài đặt của tổ chức
                     </p>
                 </div>
                 <Button
@@ -301,12 +294,12 @@ export default function OrganizationSettingPage() {
                     variant="outline"
                     className="flex items-center gap-2"
                 >
-                    <Settings
+                    <RefreshCw
                         className={`h-4 w-4 ${
                             refreshing ? 'animate-spin' : ''
                         }`}
                     />
-                    Refresh
+                    Làm mới
                 </Button>
             </div>
 
@@ -315,18 +308,17 @@ export default function OrganizationSettingPage() {
                 <CardHeader>
                     <div className="flex items-center gap-2">
                         <Building2 className="h-5 w-5 text-blue-600" />
-                        <CardTitle>Organization Information</CardTitle>
+                        <CardTitle>Thông tin của tổ chức</CardTitle>
                     </div>
                     <CardDescription>
-                        Update your organization&apos;s basic information and
-                        branding
+                        Cập nhật các thông tin của tổ chức
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleUpdateInfo} className="space-y-6">
                         {/* Organization Image */}
                         <div className="space-y-4">
-                            <Label>Organization Logo</Label>
+                            <Label>Logo của tổ chức</Label>
                             <div className="flex items-start space-x-6">
                                 <div className="flex-shrink-0">
                                     <div className="w-24 h-24 border-2 border-gray-300 border-dashed rounded-lg flex items-center justify-center overflow-hidden">
@@ -369,15 +361,14 @@ export default function OrganizationSettingPage() {
                                         disabled={updatingInfo}
                                     >
                                         <Upload className="h-4 w-4" />
-                                        Change Logo
+                                        Thay đổi Logo
                                     </Button>
                                     <p className="text-xs text-gray-500 mt-2">
-                                        Maximum file size: 5MB. Supported
-                                        formats: JPG, PNG
+                                        Kích thước tối đa: 5MB. Định dạng hỗ trợ: JPG, PNG
                                     </p>
                                     {selectedImage && (
                                         <p className="text-xs text-green-600 mt-1">
-                                            New image selected:{' '}
+                                            Ảnh mới được chọn:{' '}
                                             {selectedImage.name}
                                         </p>
                                     )}
@@ -393,7 +384,7 @@ export default function OrganizationSettingPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Building2 className="h-4 w-4" />
-                                    Organization Name
+                                    Tên tổ chức
                                 </Label>
                                 <Input
                                     id="org-name"
@@ -404,7 +395,7 @@ export default function OrganizationSettingPage() {
                                             name: e.target.value,
                                         }))
                                     }
-                                    placeholder="Enter organization name"
+                                    placeholder="Nhập tên tổ chức"
                                     disabled={updatingInfo}
                                     required
                                 />
@@ -416,7 +407,7 @@ export default function OrganizationSettingPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Shield className="h-4 w-4" />
-                                    Acronym
+                                    Tên viết tắt
                                 </Label>
                                 <Input
                                     id="org-acronym"
@@ -428,7 +419,7 @@ export default function OrganizationSettingPage() {
                                                 e.target.value.toUpperCase(),
                                         }))
                                     }
-                                    placeholder="e.g., HUST, MIT"
+                                    placeholder="Ví dụ: HUST, MIT"
                                     disabled={updatingInfo}
                                     style={{ textTransform: 'uppercase' }}
                                     required
@@ -441,7 +432,7 @@ export default function OrganizationSettingPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Phone className="h-4 w-4" />
-                                    Phone Number
+                                    Số điện thoại
                                 </Label>
                                 <Input
                                     id="org-phone"
@@ -452,7 +443,7 @@ export default function OrganizationSettingPage() {
                                             phoneNumber: e.target.value,
                                         }))
                                     }
-                                    placeholder="Enter phone number"
+                                    placeholder="Nhập số điện thoại"
                                     disabled={updatingInfo}
                                     required
                                 />
@@ -464,7 +455,7 @@ export default function OrganizationSettingPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <MapPin className="h-4 w-4" />
-                                    Address
+                                    Địa chỉ
                                 </Label>
                                 <Input
                                     id="org-address"
@@ -475,7 +466,7 @@ export default function OrganizationSettingPage() {
                                             address: e.target.value,
                                         }))
                                     }
-                                    placeholder="Enter organization address"
+                                    placeholder="Nhập địa chỉ của tổ chức"
                                     disabled={updatingInfo}
                                     required
                                 />
@@ -486,7 +477,7 @@ export default function OrganizationSettingPage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t">
                             <div className="space-y-2">
                                 <Label className="text-gray-500">
-                                    Authentication Provider
+                                    Nhà cung cấp xác thực
                                 </Label>
                                 <div className="p-3 bg-gray-50 rounded-md">
                                     <span className="text-gray-700">
@@ -498,12 +489,12 @@ export default function OrganizationSettingPage() {
                             <div className="space-y-2">
                                 <Label className="text-gray-500 flex items-center gap-2">
                                     <Calendar className="h-4 w-4" />
-                                    Contract Until
+                                    Thời hạn hợp đồng
                                 </Label>
                                 <div className="p-3 bg-gray-50 rounded-md">
                                     <span className="text-gray-700">
                                         {formatDate(
-                                            organizationDetail.contactTo
+                                            organizationDetail.contactTo, 'dd/MM/yyyy'
                                         )}
                                     </span>
                                 </div>
@@ -512,12 +503,12 @@ export default function OrganizationSettingPage() {
                             <div className="space-y-2">
                                 <Label className="text-gray-500 flex items-center gap-2">
                                     <Users className="h-4 w-4" />
-                                    Account Supplied
+                                    Số tài khoản cung cấp
                                 </Label>
                                 <div className="p-3 bg-gray-50 rounded-md">
                                     <span className="text-gray-700">
                                         {organizationDetail.accountSupplied}{' '}
-                                        accounts
+                                        tài khoản
                                     </span>
                                 </div>
                             </div>
@@ -531,8 +522,8 @@ export default function OrganizationSettingPage() {
                             >
                                 <Save className="h-4 w-4" />
                                 {updatingInfo
-                                    ? 'Updating...'
-                                    : 'Update Information'}
+                                    ? 'Đang cập nhật...'
+                                    : 'Cập nhật thông tin'}
                             </Button>
                         </div>
                     </form>
@@ -544,11 +535,10 @@ export default function OrganizationSettingPage() {
                 <CardHeader>
                     <div className="flex items-center gap-2">
                         <Settings className="h-5 w-5 text-green-600" />
-                        <CardTitle>Organization Settings</CardTitle>
+                        <CardTitle>Cài đặt của tổ chức</CardTitle>
                     </div>
                     <CardDescription>
-                        Configure system settings and permissions for your
-                        organization
+                        Cấu hình các cài đặt và quyền hạn của tổ chức
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -558,11 +548,10 @@ export default function OrganizationSettingPage() {
                             <div>
                                 <Label className="flex items-center gap-2">
                                     <Mail className="h-4 w-4" />
-                                    Whitelist Mail Domains
+                                    Tên miền trong whitelist
                                 </Label>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Only users with email addresses from these
-                                    domains can be added to your organization
+                                    Chỉ có người dùng với email từ các tên miền này mới có thể được thêm vào tổ chức
                                 </p>
                             </div>
 
@@ -573,7 +562,7 @@ export default function OrganizationSettingPage() {
                                     onChange={(e) =>
                                         setNewDomain(e.target.value)
                                     }
-                                    placeholder="Enter domain (e.g., example.com)"
+                                    placeholder="Nhập tên miền (ví dụ: example.com)"
                                     disabled={updatingSettings}
                                     onKeyPress={(e) => {
                                         if (e.key === 'Enter') {
@@ -589,7 +578,7 @@ export default function OrganizationSettingPage() {
                                     className="flex items-center gap-2"
                                 >
                                     <Plus className="h-4 w-4" />
-                                    Add
+                                    Thêm
                                 </Button>
                             </div>
 
@@ -599,11 +588,10 @@ export default function OrganizationSettingPage() {
                                 0 ? (
                                     <div className="p-4 bg-gray-50 rounded-md text-center">
                                         <p className="text-gray-500">
-                                            No whitelist domains configured
+                                            Không có tên miền trong whitelist
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1">
-                                            Users with any email domain can join
-                                            your organization
+                                            Người dùng với bất kỳ tên miền email nào có thể tham gia tổ chức
                                         </p>
                                     </div>
                                 ) : (
@@ -642,22 +630,21 @@ export default function OrganizationSettingPage() {
                             <div>
                                 <Label className="flex items-center gap-2">
                                     <Users className="h-4 w-4" />
-                                    Lecturer Permissions
+                                    Quyền hạn của giảng viên
                                 </Label>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Configure what actions lecturers can perform
-                                    in your organization
+                                    Cấu hình các hành động mà giảng viên có thể thực hiện
+                                    trong tổ chức
                                 </p>
                             </div>
 
                             <div className="flex items-center justify-between p-4 border rounded-lg">
                                 <div>
                                     <h4 className="font-medium text-gray-900">
-                                        Allow Lecturer Add New Student
+                                        Cho phép giảng viên thêm sinh viên mới
                                     </h4>
                                     <p className="text-sm text-gray-500">
-                                        Lecturers can add new students to the
-                                        organization through import to classroom
+                                        Giảng viên có thể thêm sinh viên mới vào tổ chức thông qua việc nhập file danh sách sinh viên vào lớp học
                                     </p>
                                 </div>
                                 <label className="relative inline-flex items-center cursor-pointer">
@@ -689,8 +676,8 @@ export default function OrganizationSettingPage() {
                             >
                                 <Save className="h-4 w-4" />
                                 {updatingSettings
-                                    ? 'Updating...'
-                                    : 'Update Settings'}
+                                    ? 'Đang cập nhật...'
+                                    : 'Cập nhật cài đặt'}
                             </Button>
                         </div>
                     </form>

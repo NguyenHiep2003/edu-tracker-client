@@ -43,6 +43,7 @@ import {
 import { Topic } from '@/services/api/project/interface';
 import { useStudentProjectContext } from '@/context/student-project-context';
 import { WarningModal } from '@/components/warning-modal';
+import { formatDate } from '@/helper/date-formatter';
 
 // TopicDetailModal component for viewing topic details
 const TopicDetailModal = ({
@@ -84,13 +85,13 @@ const TopicDetailModal = ({
                         <div className="space-y-6">
                             <div>
                                 <h3 className="text-sm font-medium text-gray-900 mb-2">
-                                    Description
+                                    Mô tả
                                 </h3>
                                 <div className="bg-gray-50 rounded-lg p-4 border max-h-60 overflow-y-auto overflow-x-hidden">
                                     <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-all overflow-wrap-anywhere">
                                         {topic.description
                                             ? topic.description
-                                            : 'No description'}
+                                            : 'Không có mô tả'}
                                     </p>
                                 </div>
                             </div>
@@ -99,7 +100,7 @@ const TopicDetailModal = ({
                                 topic.attachments.length > 0 && (
                                     <div>
                                         <h3 className="text-sm font-medium text-gray-900 mb-2">
-                                            Attachments (
+                                            Tài liệu đính kèm (
                                             {topic.attachments.length})
                                         </h3>
                                         <div className="space-y-2">
@@ -242,7 +243,7 @@ export default function GroupSettings() {
             }
         } catch (error) {
             console.log('🚀 ~ loadGitAccount ~ error:', error);
-            toast.error('Failed to load GitHub account information');
+            toast.error('Lỗi khi tải thông tin tài khoản GitHub');
         } finally {
             setLoading(false);
         }
@@ -254,7 +255,7 @@ export default function GroupSettings() {
             setGroupRepositories(repos);
         } catch (error) {
             console.log('🚀 ~ loadGroupRepositories ~ error:', error);
-            toast.error('Failed to load group repositories');
+            toast.error('Lỗi khi tải thông tin repository');
         }
     };
 
@@ -265,8 +266,8 @@ export default function GroupSettings() {
             setRepositories(data);
             setShowAddRepo(true);
         } catch (error) {
-            console.error('Error loading repositories:', error);
-            toast.error('Failed to load repositories');
+            console.log('🚀 ~ loadAvailableRepositories ~ error:', error);
+            toast.error('Lỗi khi tải danh sách repository');
         } finally {
             setLoadingRepos(false);
         }
@@ -290,7 +291,9 @@ export default function GroupSettings() {
                 const messageHandler = async (event: MessageEvent) => {
                     if (event.data?.type === 'github-auth-success') {
                         authWindow.close();
-                        toast.success('GitHub account connected successfully!');
+                        toast.success(
+                            'Tài khoản GitHub đã được kết nối thành công!'
+                        );
 
                         window.removeEventListener('message', messageHandler);
 
@@ -302,7 +305,8 @@ export default function GroupSettings() {
                             await loadGitAccount();
                         }
                     } else if (event.data?.type === 'github-auth-error') {
-                        toast.error('Failed to authorize GitHub account');
+                        window.removeEventListener('message', messageHandler);
+                        toast.error('Lỗi khi xác thực tài khoản GitHub');
                     }
                 };
 
@@ -310,7 +314,7 @@ export default function GroupSettings() {
             }
         } catch (error) {
             console.log('🚀 ~ handleGitHubAuth ~ error:', error);
-            toast.error('Failed to start GitHub authorization');
+            toast.error('Lỗi khi bắt đầu xác thực tài khoản GitHub');
         }
     };
 
@@ -333,19 +337,19 @@ export default function GroupSettings() {
                     if (event.data?.type === 'github-install-success') {
                         installWindow.close();
                         window.removeEventListener('message', messageHandler);
-                        toast.success('GitHub app installed successfully!');
+                        toast.success('GitHub app đã được cài đặt thành công!');
 
                         await loadGitAccount();
                     } else if (event.data?.type === 'github-install-error') {
-                        toast.error('Failed to install GitHub app');
+                        toast.error('Lỗi khi cài đặt GitHub app');
                     }
                 };
 
                 window.addEventListener('message', messageHandler);
             }
         } catch (error) {
-            console.error('Error getting GitHub install URL:', error);
-            toast.error('Failed to start GitHub app installation');
+            console.log('🚀 ~ handleInstallApp ~ error:', error);
+            toast.error('Lỗi khi bắt đầu cài đặt GitHub app');
         }
     };
 
@@ -365,20 +369,20 @@ export default function GroupSettings() {
                 }
             }
         } catch (error) {
-            console.error('Error selecting account:', error);
-            toast.error('Failed to select GitHub account');
+            console.log('🚀 ~ handleAccountSelect ~ error:', error);
+            toast.error('Lỗi khi chọn tài khoản GitHub');
         }
     };
 
     const handleRepositorySelect = async () => {
         if (!selectedRepo || !repoAlias) {
-            toast.error('Please select a repository and provide an alias');
+            toast.error('Vui lòng chọn một repository và cung cấp một alias');
             return;
         }
 
         try {
             await setRepository(groupData.id, selectedRepo.value, repoAlias);
-            toast.success('Repository set successfully');
+            toast.success('Repository đã được thêm vào dự án thành công!');
             // Reset form and reload repositories
             setSelectedRepo(null);
             setRepoAlias('');
@@ -395,12 +399,12 @@ export default function GroupSettings() {
 
     const handleRemoveRepository = async (repoId: number | undefined) => {
         if (!repoId) {
-            toast.error('Choose a repository to remove!');
+            toast.error('Vui lòng chọn một repository để xóa!');
             return;
         }
         try {
             await removeRepository(groupData.id, repoId);
-            toast.success('Repository removed successfully');
+            toast.success('Repository đã được xóa thành công!');
             setShowRemoveRepoWarning(false);
             setSelectedRepoToRemove(null);
             await loadGroupRepositories();
@@ -408,7 +412,7 @@ export default function GroupSettings() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to remove repository');
+                toast.error(error.message || 'Lỗi khi xóa repository');
             }
         }
     };
@@ -420,8 +424,8 @@ export default function GroupSettings() {
             setAvailableTopics(topics);
             setShowTopicModal(true);
         } catch (error) {
-            console.error('Error loading topics:', error);
-            toast.error('Failed to load available topics');
+            console.log('🚀 ~ loadAvailableTopics ~ error:', error);
+            toast.error('Lỗi khi tải danh sách chủ đề');
         } finally {
             setLoadingTopics(false);
         }
@@ -430,18 +434,18 @@ export default function GroupSettings() {
     const handleTopicSelect = async (topicId: number) => {
         try {
             await updateGroupTopic(groupData.id, topicId);
-            toast.success('Topic updated successfully!');
+            toast.success('Chủ đề của nhóm đã được cập nhật thành công!');
             setShowTopicModal(false);
             await refetchGroup(); // Refresh group data to show new topic
         } catch (error: any) {
-            console.error('Error updating topic:', error);
-            toast.error(error.message || 'Failed to update topic');
+            console.log('🚀 ~ handleTopicSelect ~ error:', error);
+            toast.error(error.message || 'Lỗi khi cập nhật chủ đề');
         }
     };
 
     const handleRequestNewTopic = async () => {
         if (!newTopicTitle.trim()) {
-            toast.error('Please enter a topic title');
+            toast.error('Vui lòng nhập tiêu đề của chủ đề');
             return;
         }
 
@@ -452,14 +456,14 @@ export default function GroupSettings() {
                     ? newTopicDescription.trim()
                     : undefined,
             });
-            toast.success('Topic request submitted successfully!');
+            toast.success('Yêu cầu chủ đề mới đã được tạo thành công!');
             setShowRequestTopicModal(false);
             setNewTopicTitle('');
             setNewTopicDescription('');
             loadTopicRequests(); // Refresh the list
         } catch (error: any) {
-            console.error('Error requesting topic:', error);
-            toast.error(error.message || 'Failed to submit topic request');
+            console.log('🚀 ~ handleRequestNewTopic ~ error:', error);
+            toast.error(error.message || 'Lỗi khi tạo yêu cầu chủ đề');
         }
     };
 
@@ -472,7 +476,7 @@ export default function GroupSettings() {
             setTopicRequests(data);
         } catch (error: any) {
             console.log('🚀 ~ loadTopicRequests ~ error:', error);
-            toast.error('Failed to load topic requests');
+            toast.error('Lỗi khi tải danh sách yêu cầu chủ đề mới');
         } finally {
             setLoadingTopicRequests(false);
         }
@@ -486,7 +490,7 @@ export default function GroupSettings() {
 
     const handleSaveEdit = async () => {
         if (!editingRequest || !editTitle.trim()) {
-            toast.error('Please enter a topic title');
+            toast.error('Vui lòng nhập tiêu đề của chủ đề');
             return;
         }
 
@@ -497,14 +501,14 @@ export default function GroupSettings() {
                     ? editDescription.trim()
                     : undefined,
             });
-            toast.success('Topic request updated successfully!');
+            toast.success('Yêu cầu chủ đề đã được cập nhật thành công!');
             setEditingRequest(null);
             setEditTitle('');
             setEditDescription('');
             loadTopicRequests(); // Refresh the list
         } catch (error: any) {
             console.log('🚀 ~ handleSaveEdit ~ error:', error);
-            toast.error(error.message || 'Failed to update topic request');
+            toast.error(error.message || 'Lỗi khi cập nhật yêu cầu chủ đề');
         }
     };
 
@@ -518,11 +522,11 @@ export default function GroupSettings() {
 
         try {
             await deleteTopicRequest(requestToDelete.id);
-            toast.success('Topic request deleted successfully!');
+            toast.success('Yêu cầu chủ đề mới đã được xóa thành công!');
             loadTopicRequests(); // Refresh the list
         } catch (error: any) {
             console.log('🚀 ~ confirmDeleteRequest ~ error:', error);
-            toast.error(error.message || 'Failed to delete topic request');
+            toast.error(error.message || 'Lỗi khi xóa yêu cầu chủ đề mới');
         } finally {
             setRequestToDelete(null);
             setShowWarningModal(false);
@@ -544,7 +548,7 @@ export default function GroupSettings() {
                 <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                         <BookOpen className="h-5 w-5" />
-                        <span>Topic Selection</span>
+                        <span>Chủ đề của nhóm</span>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -553,7 +557,7 @@ export default function GroupSettings() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-sm font-medium">
-                                        Current Topic
+                                        Chủ đề hiện tại
                                     </h3>
                                     <p className="text-lg font-semibold text-gray-900">
                                         {groupData.topic.title}
@@ -565,7 +569,7 @@ export default function GroupSettings() {
                                         onClick={loadAvailableTopics}
                                         disabled={loadingTopics}
                                     >
-                                        Change Topic
+                                        Thay đổi chủ đề
                                     </Button>
                                 )}
                             </div>
@@ -573,8 +577,8 @@ export default function GroupSettings() {
                     ) : (
                         <div className="text-center space-y-4">
                             <p className="text-sm text-gray-600">
-                                No topic selected yet. Choose a topic to get
-                                started.
+                                Chưa có chủ đề nào được chọn. Vui lòng chọn một
+                                chủ đề.
                             </p>
                             {isGroupLeader && (
                                 <Button
@@ -582,7 +586,7 @@ export default function GroupSettings() {
                                     disabled={loadingTopics}
                                 >
                                     <BookOpen className="mr-2 h-4 w-4" />
-                                    Choose Your Topic
+                                    Chọn chủ đề
                                 </Button>
                             )}
                         </div>
@@ -596,7 +600,7 @@ export default function GroupSettings() {
                     <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
                             <GitPullRequest className="h-5 w-5" />
-                            <span>Topic Requests</span>
+                            <span>Yêu cầu chủ đề mới</span>
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -607,9 +611,20 @@ export default function GroupSettings() {
                         ) : topicRequests.length === 0 ? (
                             <div className="text-center py-8">
                                 <p className="text-sm text-gray-600">
-                                    No topic requests found. Each group can
-                                    request one topic
+                                    Không tìm thấy yêu cầu chủ đề mới. Mỗi nhóm
+                                    có thể yêu cầu một chủ đề.
                                 </p>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setShowTopicModal(false);
+                                        setShowRequestTopicModal(true);
+                                    }}
+                                    className="w-fit"
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Yêu cầu chủ đề mới
+                                </Button>
                             </div>
                         ) : (
                             <div className="space-y-4">
@@ -631,7 +646,7 @@ export default function GroupSettings() {
                                                             e.target.value
                                                         )
                                                     }
-                                                    placeholder="Topic title"
+                                                    placeholder="Tiêu đề của chủ đề"
                                                     className="font-semibold"
                                                 />
                                                 <Textarea
@@ -641,7 +656,7 @@ export default function GroupSettings() {
                                                             e.target.value
                                                         )
                                                     }
-                                                    placeholder="Description"
+                                                    placeholder="Mô tả"
                                                     className="min-h-[100px] bg-white"
                                                 />
                                                 <div className="flex space-x-2">
@@ -652,7 +667,7 @@ export default function GroupSettings() {
                                                             !editTitle.trim()
                                                         }
                                                     >
-                                                        Save
+                                                        Lưu
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -667,7 +682,7 @@ export default function GroupSettings() {
                                                             );
                                                         }}
                                                     >
-                                                        Cancel
+                                                        Hủy
                                                     </Button>
                                                 </div>
                                             </div>
@@ -687,13 +702,13 @@ export default function GroupSettings() {
                                                                 }`}
                                                             >
                                                                 {request.isAccept
-                                                                    ? 'Accepted'
-                                                                    : 'Pending'}
+                                                                    ? 'Đã chấp nhận'
+                                                                    : 'Đang chờ duyệt'}
                                                             </span>
                                                         </div>
                                                         <p className="text-sm text-gray-600 mt-2">
                                                             {request.description ||
-                                                                'No description provided'}
+                                                                'Không có mô tả'}
                                                         </p>
                                                     </div>
                                                     {isGroupLeader && (
@@ -708,7 +723,7 @@ export default function GroupSettings() {
                                                                         )
                                                                     }
                                                                 >
-                                                                    Update
+                                                                    Cập nhật
                                                                 </Button>
                                                             )}
                                                             <Button
@@ -720,7 +735,7 @@ export default function GroupSettings() {
                                                                     )
                                                                 }
                                                             >
-                                                                Delete
+                                                                Xóa
                                                             </Button>
                                                         </div>
                                                     )}
@@ -738,14 +753,16 @@ export default function GroupSettings() {
             {/* GitHub Integration Card */}
             <Card>
                 <CardHeader>
-                    <CardTitle>GitHub Integration</CardTitle>
+                    <CardTitle>Kết nối GitHub</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <h3 className="text-sm font-medium">Your GitHub Account</h3>
+                    <h3 className="text-sm font-medium">
+                        Tài khoản GitHub của bạn
+                    </h3>
                     {!gitAccount && availableAccounts.length > 0 ? (
                         <div className="space-y-4">
                             <h3 className="text-sm font-medium">
-                                Select GitHub Account
+                                Chọn tài khoản GitHub
                             </h3>
                             <Select
                                 options={availableAccounts.map((account) => ({
@@ -763,12 +780,12 @@ export default function GroupSettings() {
                     ) : !gitAccount ? (
                         <div className="text-center space-y-4">
                             <p className="text-sm text-gray-600">
-                                No GitHub account connected. Connect your GitHub
-                                account to continue.
+                                Không có tài khoản GitHub được kết nối. Vui lòng
+                                kết nối tài khoản GitHub để tiếp tục.
                             </p>
                             <Button onClick={handleGitHubAuth}>
                                 <Github className="mr-2 h-4 w-4" />
-                                Connect GitHub Account
+                                Kết nối tài khoản GitHub
                             </Button>
                         </div>
                     ) : (
@@ -782,10 +799,11 @@ export default function GroupSettings() {
                                                 {gitAccount.username}
                                             </p>
                                             <p className="text-sm text-gray-500">
-                                                Connected on{' '}
-                                                {new Date(
-                                                    gitAccount.connectedAt
-                                                ).toLocaleDateString()}
+                                                Đã kết nối lúc{' '}
+                                                {formatDate(
+                                                    gitAccount.connectedAt,
+                                                    'dd/MM/yyyy HH:mm'
+                                                )}
                                             </p>
                                         </div>
                                     </div>
@@ -800,14 +818,14 @@ export default function GroupSettings() {
                                             );
                                         }}
                                     >
-                                        Change Account
+                                        Thay đổi tài khoản
                                     </Button>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-sm font-medium">
-                                            Select GitHub Account
+                                            Chọn tài khoản GitHub
                                         </h3>
                                         <Button
                                             variant="outline"
@@ -816,14 +834,14 @@ export default function GroupSettings() {
                                                 setShowAccountSelection(false)
                                             }
                                         >
-                                            Cancel
+                                            Hủy
                                         </Button>
                                     </div>
 
                                     {availableAccounts.length > 0 && (
                                         <div className="space-y-2">
                                             <h4 className="text-sm text-gray-600">
-                                                Available Accounts:
+                                                Tài khoản GitHub có sẵn:
                                             </h4>
                                             <Select
                                                 options={availableAccounts
@@ -846,7 +864,7 @@ export default function GroupSettings() {
                                                         );
                                                     }
                                                 }}
-                                                placeholder="Select a different account"
+                                                placeholder="Chọn tài khoản khác"
                                                 className="basic-select"
                                                 classNamePrefix="select"
                                             />
@@ -855,7 +873,7 @@ export default function GroupSettings() {
 
                                     <div className="pt-2 border-t">
                                         <p className="text-sm text-gray-600 mb-2">
-                                            Don&apos;t see the account you want?
+                                            Không thấy tài khoản bạn muốn?
                                         </p>
                                         <Button
                                             onClick={handleGitHubAuth}
@@ -863,7 +881,7 @@ export default function GroupSettings() {
                                             size="sm"
                                         >
                                             <Github className="mr-2 h-4 w-4" />
-                                            Add New GitHub Account
+                                            Thêm tài khoản GitHub mới
                                         </Button>
                                     </div>
                                 </div>
@@ -872,12 +890,12 @@ export default function GroupSettings() {
                             {!gitAccount.installedApp && (
                                 <div className="text-center space-y-4">
                                     <p className="text-sm text-gray-600">
-                                        Please install our GitHub app to
-                                        complete the integration.
+                                        Vui lòng cài đặt GitHub app của chúng
+                                        tôi để hoàn thành việc tích hợp.
                                     </p>
                                     <Button onClick={handleInstallApp}>
                                         <Github className="mr-2 h-4 w-4" />
-                                        Install GitHub App
+                                        Cài đặt GitHub App
                                     </Button>
                                 </div>
                             )}
@@ -885,7 +903,7 @@ export default function GroupSettings() {
                             <div className="space-y-4 pt-4 border-t">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-sm font-medium">
-                                        Group Repositories
+                                        Repository của nhóm
                                     </h3>
                                     {!showAddRepo &&
                                         isGroupLeader &&
@@ -898,7 +916,7 @@ export default function GroupSettings() {
                                                 variant="outline"
                                             >
                                                 <Plus className="h-4 w-4 mr-2" />
-                                                Add Repository
+                                                Thêm Repository
                                             </Button>
                                         )}
                                 </div>
@@ -939,7 +957,7 @@ export default function GroupSettings() {
                                                         className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                                                     >
                                                         <X className="h-4 w-4 mr-1" />
-                                                        Remove
+                                                        Xóa
                                                     </Button>
                                                 )}
                                             </div>
@@ -953,7 +971,7 @@ export default function GroupSettings() {
                                             <div className="flex items-center space-x-2">
                                                 <Loader2 className="h-4 w-4 animate-spin" />
                                                 <span className="text-sm text-gray-500">
-                                                    Loading repositories...
+                                                    Đang tải repository...
                                                 </span>
                                             </div>
                                         ) : (
@@ -969,13 +987,13 @@ export default function GroupSettings() {
                                                     onChange={(option) =>
                                                         setSelectedRepo(option)
                                                     }
-                                                    placeholder="Select a repository"
+                                                    placeholder="Chọn repository"
                                                     className="basic-select"
                                                     classNamePrefix="select"
                                                 />
                                                 <input
                                                     type="text"
-                                                    placeholder="Repository alias"
+                                                    placeholder="Alias của repository"
                                                     className="w-full px-3 py-2 border rounded-md"
                                                     value={repoAlias}
                                                     onChange={(e) =>
@@ -994,7 +1012,7 @@ export default function GroupSettings() {
                                                             !repoAlias
                                                         }
                                                     >
-                                                        Add Repository
+                                                        Thêm Repository
                                                     </Button>
                                                     <Button
                                                         variant="outline"
@@ -1008,7 +1026,7 @@ export default function GroupSettings() {
                                                             setRepoAlias('');
                                                         }}
                                                     >
-                                                        Cancel
+                                                        Hủy
                                                     </Button>
                                                 </div>
                                             </>
@@ -1035,7 +1053,7 @@ export default function GroupSettings() {
                         <div className="px-6 py-4 border-b border-gray-200">
                             <div className="flex items-center justify-between">
                                 <Dialog.Title className="text-xl font-semibold text-gray-900">
-                                    Select a Topic
+                                    Chọn chủ đề
                                 </Dialog.Title>
                                 <Dialog.Close asChild>
                                     <button className="text-gray-400 hover:text-gray-500">
@@ -1077,7 +1095,7 @@ export default function GroupSettings() {
                                                         }
                                                     >
                                                         <Eye className="h-4 w-4 mr-1" />
-                                                        View Details
+                                                        Xem chi tiết
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -1087,7 +1105,7 @@ export default function GroupSettings() {
                                                             )
                                                         }
                                                     >
-                                                        Select
+                                                        Chọn
                                                     </Button>
                                                 </div>
                                             </div>
@@ -1110,7 +1128,7 @@ export default function GroupSettings() {
                                                     className="w-full"
                                                 >
                                                     <Plus className="h-4 w-4 mr-2" />
-                                                    Request New Topic
+                                                    Yêu cầu chủ đề mới
                                                 </Button>
                                             </div>
                                         )}
@@ -1118,7 +1136,7 @@ export default function GroupSettings() {
                             ) : (
                                 <div className="flex items-center justify-center py-8">
                                     <p className="text-gray-500">
-                                        No topics available.
+                                        Không có chủ đề nào có sẵn.
                                     </p>
                                 </div>
                             )}
@@ -1144,7 +1162,7 @@ export default function GroupSettings() {
                         <div className="px-6 py-4 border-b border-gray-200">
                             <div className="flex items-center justify-between">
                                 <Dialog.Title className="text-xl font-semibold text-gray-900">
-                                    Request New Topic
+                                    Yêu cầu chủ đề mới
                                 </Dialog.Title>
                                 <Dialog.Close asChild>
                                     <button className="text-gray-400 hover:text-gray-500">
@@ -1157,27 +1175,27 @@ export default function GroupSettings() {
                         <div className="p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Topic Title
+                                    Tiêu đề chủ đề
                                 </label>
                                 <Input
                                     value={newTopicTitle}
                                     onChange={(e) =>
                                         setNewTopicTitle(e.target.value)
                                     }
-                                    placeholder="Enter topic title"
+                                    placeholder="Nhập tiêu đề chủ đề"
                                     className="w-full text-gray-900"
                                 />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Description
+                                    Mô tả
                                 </label>
                                 <Textarea
                                     value={newTopicDescription}
                                     onChange={(e) =>
                                         setNewTopicDescription(e.target.value)
                                     }
-                                    placeholder="Enter topic description"
+                                    placeholder="Nhập mô tả chủ đề"
                                     className="w-full min-h-[100px] bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-gray-900"
                                 />
                             </div>
@@ -1186,7 +1204,7 @@ export default function GroupSettings() {
                                     onClick={handleRequestNewTopic}
                                     disabled={!newTopicTitle.trim()}
                                 >
-                                    Submit Request
+                                    Gửi yêu cầu
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -1196,7 +1214,7 @@ export default function GroupSettings() {
                                         setNewTopicDescription('');
                                     }}
                                 >
-                                    Cancel
+                                    Hủy
                                 </Button>
                             </div>
                         </div>
@@ -1221,10 +1239,10 @@ export default function GroupSettings() {
                     setRequestToDelete(null);
                 }}
                 onConfirm={confirmDeleteRequest}
-                title="Delete Topic Request"
-                description={`Are you sure you want to delete the topic request "${requestToDelete?.title}"? This action cannot be undone.`}
-                confirmText="Delete"
-                cancelText="Cancel"
+                title="Xóa yêu cầu chủ đề mới"
+                description={`Bạn có chắc chắn muốn xóa yêu cầu chủ đề mới "${requestToDelete?.title}"? Việc này không thể hoàn tác.`}
+                confirmText="Xóa"
+                cancelText="Hủy"
             />
             <WarningModal
                 isOpen={showRemoveRepoWarning}
@@ -1232,10 +1250,10 @@ export default function GroupSettings() {
                 onConfirm={() =>
                     handleRemoveRepository(selectedRepoToRemove?.id)
                 }
-                title="Remove Repository"
-                description={`Are you sure you want to remove repository "${selectedRepoToRemove?.name}"?`}
-                confirmText="Remove"
-                cancelText="Cancel"
+                title="Xóa repository"
+                description={`Bạn có chắc chắn muốn xóa repository "${selectedRepoToRemove?.name}" khỏi dự án?`}
+                confirmText="Xóa"
+                cancelText="Hủy"
             />
         </div>
     );

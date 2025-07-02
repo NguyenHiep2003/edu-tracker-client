@@ -19,8 +19,8 @@ export function WarningModal({
     onConfirm,
     title,
     description,
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
+    confirmText = 'Xác nhận',
+    cancelText = 'Hủy',
 }: WarningModalProps) {
     return (
         <Transition appear show={isOpen} as={Fragment}>

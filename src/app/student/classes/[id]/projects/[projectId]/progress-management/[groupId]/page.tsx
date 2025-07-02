@@ -17,7 +17,6 @@ import {
     ChevronRight,
     MoreHorizontal,
     User,
-    Settings,
     Play,
     CheckCircle,
     GripVertical,
@@ -67,10 +66,10 @@ import {
 import { getTypeIcon } from '@/helper/get-type-icon';
 import { CompleteSprintModal } from '@/components/complete-sprint-modal';
 import { WarningModal } from '@/components/warning-modal';
-import { formatDistanceToNow } from 'date-fns';
 import { formatDate } from '@/helper/date-formatter';
 import { useProfile } from '@/context/profile-context';
 import { useStudentProjectContext } from '@/context/student-project-context';
+import { generateInitials } from '@/components/avatar';
 
 // Sortable Item Component
 interface SortableItemProps {
@@ -89,7 +88,6 @@ interface SortableItemProps {
     }>;
     generateInitials: (name: string) => string;
     getAvatarColor: (name: string) => string;
-    formatRelativeDate: (date: string) => string;
     setSelectedWorkItemToDelete: (item: WorkItem) => void;
     setShowWarningDeleteWorkItemModal: (value: boolean) => void;
 }
@@ -106,7 +104,6 @@ function DraggableItem({
     StatusMenuItem,
     generateInitials,
     getAvatarColor,
-    formatRelativeDate,
     setSelectedWorkItemToDelete,
     setShowWarningDeleteWorkItemModal,
 }: SortableItemProps) {
@@ -173,10 +170,10 @@ function DraggableItem({
                         {isLecturerAssigned && (
                             <span
                                 className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200"
-                                title="This task was assigned by your lecturer and is required for completion"
+                                title="Công việc này được giao bởi giảng viên và bắt buộc phải hoàn thành"
                             >
                                 <User className="w-3 h-3 mr-1" />
-                                Lecturer
+                                Giảng viên
                             </span>
                         )}
                     </div>
@@ -189,7 +186,7 @@ function DraggableItem({
                                 onClick={(e) =>
                                     handleEpicClick(e, item.parentItem)
                                 }
-                                title={`Click to view epic: ${item.parentItem.summary}`}
+                                title={`Nhấn để xem epic: ${item.parentItem.summary}`}
                             >
                                 <div className="w-4 h-4 bg-purple-500 rounded-sm flex items-center justify-center">
                                     {getTypeIcon(
@@ -222,18 +219,22 @@ function DraggableItem({
                             )}
                             {isLecturerAssigned && (
                                 <span className="text-xs text-orange-600 font-medium">
-                                    (Required)
+                                    (Bắt buộc)
                                 </span>
                             )}
                         </div>
                         <div className="flex items-center space-x-2 mt-1 text-xs text-gray-500">
                             <span>
-                                Created {formatRelativeDate(item.createdAt)}
+                                Tạo lúc{' '}
+                                {formatDate(item.createdAt, 'dd/MM/yyyy HH:mm')}
                             </span>
                             {item.updatedAt !== item.createdAt && (
                                 <span>
-                                    • Updated{' '}
-                                    {formatRelativeDate(item.updatedAt)}
+                                    • Cập nhật lúc{' '}
+                                    {formatDate(
+                                        item.updatedAt,
+                                        'dd/MM/yyyy HH:mm'
+                                    )}
                                 </span>
                             )}
                             {item.numOfSubItems > 0 && (
@@ -297,7 +298,7 @@ function DraggableItem({
                         ) : (
                             <div
                                 className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center"
-                                title="Unassigned"
+                                title="Chưa giao"
                             >
                                 <User className="h-4 w-4 text-gray-400" />
                             </div>
@@ -326,7 +327,7 @@ function DraggableItem({
                                         setShowWarningDeleteWorkItemModal(true);
                                     }}
                                 >
-                                    Delete
+                                    Xóa
                                 </DropdownMenuItem>
                             ) : (
                                 <DropdownMenuItem
@@ -334,10 +335,7 @@ function DraggableItem({
                                     disabled
                                 >
                                     <div className="flex items-center space-x-2">
-                                        <span>Delete</span>
-                                        <span className="text-xs">
-                                            (Lecturer-assigned)
-                                        </span>
+                                        <span>Xóa</span>
                                     </div>
                                 </DropdownMenuItem>
                             )}
@@ -413,7 +411,7 @@ const StartSprintModal = ({
 
     const handleSubmit = () => {
         if (!endDate) {
-            setError('End date is required');
+            setError('Ngày kết thúc là bắt buộc');
             return;
         }
 
@@ -421,7 +419,7 @@ const StartSprintModal = ({
         const selectedStartDate = new Date(startDate);
 
         if (selectedEndDate <= selectedStartDate) {
-            setError('End date must be after start date');
+            setError('Ngày kết thúc phải sau ngày bắt đầu');
             return;
         }
 
@@ -468,27 +466,27 @@ const StartSprintModal = ({
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-gray-900"
                                 >
-                                    Start Sprint: {sprint.name}
+                                    Bắt đầu Sprint: {sprint.name}
                                 </HeadlessDialog.Title>
 
                                 <div className="mt-4 space-y-4">
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            Sprint Name (optional)
+                                            Tên Sprint (tùy chọn)
                                         </Label>
                                         <Input
                                             value={sprintName}
                                             onChange={(e) =>
                                                 setSprintName(e.target.value)
                                             }
-                                            placeholder="Enter sprint name..."
+                                            placeholder="Nhập tên Sprint..."
                                             className="w-full bg-white text-black"
                                         />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            Start Date
+                                            Ngày bắt đầu
                                         </Label>
                                         <Input
                                             value={startDate}
@@ -497,14 +495,14 @@ const StartSprintModal = ({
                                             className="w-full bg-gray-100 text-gray-600 cursor-not-allowed"
                                         />
                                         <p className="text-xs text-gray-500">
-                                            Start date is set to today and
-                                            cannot be changed
+                                            Ngày bắt đầu đã được đặt thành hôm
+                                            nay và không thể thay đổi
                                         </p>
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            End Date
+                                            Ngày kết thúc
                                         </Label>
                                         <Input
                                             value={endDate}
@@ -516,7 +514,7 @@ const StartSprintModal = ({
                                             className="w-full bg-white text-black"
                                         />
                                         <p className="text-xs text-gray-500">
-                                            Default is one week from start date
+                                            Mặc định là một tuần từ ngày bắt đầu
                                         </p>
                                     </div>
 
@@ -528,15 +526,16 @@ const StartSprintModal = ({
 
                                     <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
                                         <p className="text-sm text-blue-800">
-                                            <strong>Sprint Summary:</strong>
+                                            <strong>Tổng quan Sprint:</strong>
                                         </p>
                                         <ul className="text-sm text-blue-700 mt-1 list-disc list-inside">
                                             <li>
+                                                Bao gồm{' '}
                                                 {sprint.workItems?.length || 0}{' '}
-                                                work items will be included
+                                                công việc
                                             </li>
                                             <li>
-                                                Duration:{' '}
+                                                Thời gian:{' '}
                                                 {Math.ceil(
                                                     (new Date(
                                                         endDate
@@ -546,7 +545,7 @@ const StartSprintModal = ({
                                                         ).getTime()) /
                                                         (1000 * 60 * 60 * 24)
                                                 )}{' '}
-                                                days
+                                                ngày
                                             </li>
                                         </ul>
                                     </div>
@@ -554,10 +553,10 @@ const StartSprintModal = ({
 
                                 <div className="mt-6 flex justify-end space-x-3">
                                     <Button variant="outline" onClick={onClose}>
-                                        Cancel
+                                        Hủy
                                     </Button>
                                     <Button onClick={handleSubmit}>
-                                        Start Sprint
+                                        Bắt đầu Sprint
                                     </Button>
                                 </div>
                             </HeadlessDialog.Panel>
@@ -615,7 +614,7 @@ const EditSprintModal = ({
             const selectedStartDate = new Date(startDate);
 
             if (selectedEndDate <= selectedStartDate) {
-                setError('End date must be after start date');
+                setError('Ngày kết thúc phải sau ngày bắt đầu');
                 return;
             }
         }
@@ -663,27 +662,27 @@ const EditSprintModal = ({
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-gray-900"
                                 >
-                                    Edit Sprint: {sprint.name}
+                                    Cập nhật Sprint: {sprint.name}
                                 </HeadlessDialog.Title>
 
                                 <div className="mt-4 space-y-4">
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            Sprint Name
+                                            Tên Sprint
                                         </Label>
                                         <Input
                                             value={sprintName}
                                             onChange={(e) =>
                                                 setSprintName(e.target.value)
                                             }
-                                            placeholder="Enter sprint name..."
+                                            placeholder="Nhập tên Sprint..."
                                             className="w-full bg-white text-black"
                                         />
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            Start Date (optional)
+                                            Ngày bắt đầu (tùy chọn)
                                         </Label>
                                         <Input
                                             value={startDate}
@@ -694,14 +693,14 @@ const EditSprintModal = ({
                                             className="w-full bg-white text-black"
                                         />
                                         <p className="text-xs text-gray-500">
-                                            Leave empty if no specific start
-                                            date
+                                            Bỏ trống nếu không có ngày bắt đầu
+                                            cụ thể
                                         </p>
                                     </div>
 
                                     <div className="space-y-2">
                                         <Label className="text-gray-700">
-                                            End Date (optional)
+                                            Ngày kết thúc (tùy chọn)
                                         </Label>
                                         <Input
                                             value={endDate}
@@ -713,7 +712,8 @@ const EditSprintModal = ({
                                             className="w-full bg-white text-black"
                                         />
                                         <p className="text-xs text-gray-500">
-                                            Leave empty if no specific end date
+                                            Bỏ trống nếu không có ngày kết thúc
+                                            cụ thể
                                         </p>
                                     </div>
 
@@ -725,17 +725,18 @@ const EditSprintModal = ({
 
                                     <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
                                         <p className="text-sm text-blue-800">
-                                            <strong>Sprint Summary:</strong>
+                                            <strong>Tổng quan Sprint:</strong>
                                         </p>
                                         <ul className="text-sm text-blue-700 mt-1 list-disc list-inside">
                                             <li>
+                                                Bao gồm{' '}
                                                 {sprint.workItems?.length || 0}{' '}
-                                                work items in this sprint
+                                                công việc
                                             </li>
-                                            <li>Status: {sprint.status}</li>
+                                            <li>Trạng thái: {sprint.status}</li>
                                             {startDate && endDate && (
                                                 <li>
-                                                    Duration:{' '}
+                                                    Thời gian:{' '}
                                                     {Math.ceil(
                                                         (new Date(
                                                             endDate
@@ -748,7 +749,7 @@ const EditSprintModal = ({
                                                                 60 *
                                                                 24)
                                                     )}{' '}
-                                                    days
+                                                    ngày
                                                 </li>
                                             )}
                                         </ul>
@@ -757,10 +758,10 @@ const EditSprintModal = ({
 
                                 <div className="mt-6 flex justify-end space-x-3">
                                     <Button variant="outline" onClick={onClose}>
-                                        Cancel
+                                        Hủy
                                     </Button>
                                     <Button onClick={handleSubmit}>
-                                        Save Changes
+                                        Lưu thay đổi
                                     </Button>
                                 </div>
                             </HeadlessDialog.Panel>
@@ -888,8 +889,8 @@ export default function ProgressManagement() {
             setSprints(processedSprints);
             setBacklogItems(processedBacklog as WorkItem[]);
         } catch (error) {
-            console.error('Error loading data:', error);
-            toast.error('Failed to load backlog data');
+            console.log('🚀 ~ loadData ~ error:', error);
+            toast.error('Lỗi khi tải dữ liệu backlog');
         } finally {
             setLoading(false);
         }
@@ -901,12 +902,12 @@ export default function ProgressManagement() {
         try {
             await createWorkItems(Number(groupData.id), data);
             await loadData();
-            toast.success(`${data.type} created successfully`);
+            toast.success(`${data.type} đã được tạo thành công`);
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to create work item');
+                toast.error(error.message || 'Lỗi khi tạo công việc');
             }
         }
     };
@@ -949,7 +950,7 @@ export default function ProgressManagement() {
 
             await updateWorkItem(itemId, { status: newStatus });
             await loadData();
-            toast.success('Status updated successfully');
+            toast.success('Trạng thái công việc đã được cập nhật thành công');
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
@@ -965,7 +966,7 @@ export default function ProgressManagement() {
         try {
             await approveWorkItem(selectedItemForApproval.id, rating, comment);
             await loadData();
-            toast.success('Work item approved successfully');
+            toast.success('Công việc đã được phê duyệt thành công');
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
@@ -990,7 +991,7 @@ export default function ProgressManagement() {
                 status: 'IN PROGRESS',
             });
 
-            toast.success('Sprint started successfully');
+            toast.success('Sprint đã được bắt đầu thành công');
 
             // Reset modal state first
             setShowStartSprintModal(false);
@@ -1002,7 +1003,7 @@ export default function ProgressManagement() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to start sprint');
+                toast.error(error.message || 'Lỗi khi bắt đầu Sprint');
             }
         }
     };
@@ -1017,7 +1018,7 @@ export default function ProgressManagement() {
         try {
             await updateSprint(selectedSprintToEdit.id, data);
 
-            toast.success('Sprint updated successfully');
+            toast.success('Sprint đã được cập nhật thành công');
 
             // Reset modal state first
             setShowEditSprintModal(false);
@@ -1029,7 +1030,7 @@ export default function ProgressManagement() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to update sprint');
+                toast.error(error.message || 'Lỗi khi cập nhật Sprint');
             }
         }
     };
@@ -1039,7 +1040,6 @@ export default function ProgressManagement() {
         moveToSprintId?: number;
     }) => {
         if (!selectedSprintToComplete) return;
-        console.log('🚀 ~ ProgressManagement ~ data:', data);
 
         try {
             // Move incomplete tasks if specified
@@ -1053,7 +1053,7 @@ export default function ProgressManagement() {
             } else {
                 await completeSprint(selectedSprintToComplete.id);
             }
-            toast.success('Sprint completed successfully');
+            toast.success('Sprint đã được hoàn thành thành công');
 
             // Reset modal state first
             setShowCompleteSprintModal(false);
@@ -1065,7 +1065,7 @@ export default function ProgressManagement() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to complete sprint');
+                toast.error(error.message || 'Lỗi khi hoàn thành Sprint');
             }
         }
     };
@@ -1073,7 +1073,7 @@ export default function ProgressManagement() {
         try {
             await deleteSprint(sprintId);
             await loadData();
-            toast.success('Sprint deleted successfully');
+            toast.success('Sprint đã được xóa thành công');
             setShowWarningDeleteSprintModal(false);
             setSelectedSprintToDelete(null);
         } catch (error: any) {
@@ -1089,7 +1089,7 @@ export default function ProgressManagement() {
         try {
             await deleteWorkItem(workItemId);
             await loadData();
-            toast.success('Work item deleted successfully');
+            toast.success('Công việc đã được xóa thành công');
             setShowWarningDeleteWorkItemModal(false);
             setSelectedWorkItemToDelete(null);
         } catch (error: any) {
@@ -1123,10 +1123,6 @@ export default function ProgressManagement() {
         }
     };
 
-    const formatRelativeDate = (date: string) => {
-        if (!date) return '';
-        return formatDistanceToNow(new Date(date), { addSuffix: true });
-    };
     const getSprintStatusCounts = (sprint: Sprint) => {
         const todo = sprint.workItems.filter(
             (item) => item.status === 'TO DO'
@@ -1141,14 +1137,6 @@ export default function ProgressManagement() {
         return { todo, inProgress, done, lecturerAssigned };
     };
 
-    const generateInitials = (name: string): string => {
-        if (!name) return '?';
-        return name
-            .split(' ')
-            .map((word) => word.charAt(0).toUpperCase())
-            .slice(0, 2)
-            .join('');
-    };
 
     const getAvatarColor = (name: string): string => {
         const colors = [
@@ -1240,9 +1228,8 @@ export default function ProgressManagement() {
             });
 
             await loadData();
-            // toast.success('Work item moved successfully');
         } catch (error: any) {
-            console.error('Error moving work item:', error);
+            console.log('🚀 ~ handleDragEnd ~ error:', error);
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
@@ -1259,7 +1246,9 @@ export default function ProgressManagement() {
                 <div className="flex items-center justify-center h-64">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                        <p className="mt-2 text-gray-600">Loading backlog...</p>
+                        <p className="mt-2 text-gray-600">
+                            Đang tải dữ liệu...
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1277,11 +1266,13 @@ export default function ProgressManagement() {
                     <div className="flex items-center space-x-6 mt-2 text-sm text-gray-600">
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-gray-200 border border-gray-300 rounded"></div>
-                            <span>Self-created tasks</span>
+                            <span>Công việc tự tạo</span>
                         </div>
                         <div className="flex items-center space-x-2">
                             <div className="w-3 h-3 bg-orange-200 border border-orange-300 rounded border-l-4 border-l-orange-400"></div>
-                            <span>Lecturer-assigned tasks (Required)</span>
+                            <span>
+                                Công việc được giao bởi giảng viên (Bắt buộc)
+                            </span>
                         </div>
                         {/* <div className="flex items-center space-x-2">
                             <span className="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded text-xs border border-orange-200">
@@ -1311,7 +1302,7 @@ export default function ProgressManagement() {
                     }}
                 >
                     <Plus className="h-4 w-4 mr-1" />
-                    Create work item
+                    Tạo công việc
                 </Button>
             </div>
 
@@ -1403,20 +1394,20 @@ export default function ProgressManagement() {
                                             {sprint.status === 'INACTIVE' && (
                                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-300">
                                                     <div className="w-2 h-2 bg-gray-400 rounded-full mr-1"></div>
-                                                    Not Started
+                                                    Chưa bắt đầu
                                                 </span>
                                             )}
                                             {sprint.status ===
                                                 'IN PROGRESS' && (
                                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300">
                                                     <div className="w-2 h-2 bg-blue-500 rounded-full mr-1 animate-pulse"></div>
-                                                    In Progress
+                                                    Đang tiến hành
                                                 </span>
                                             )}
                                             {sprint.status === 'COMPLETED' && (
                                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300">
                                                     <CheckCircle className="w-3 h-3 mr-1" />
-                                                    Completed
+                                                    Hoàn thành
                                                 </span>
                                             )}
 
@@ -1425,19 +1416,19 @@ export default function ProgressManagement() {
                                                     <span className="text-sm text-gray-500">
                                                         {formatDate(
                                                             sprint.startDate,
-                                                            'MMM d, yyyy'
+                                                            'dd/MM/yyyy'
                                                         )}{' '}
                                                         –{' '}
                                                         {formatDate(
                                                             sprint.endDate,
-                                                            'MMM d, yyyy'
+                                                            'dd/MM/yyyy'
                                                         )}
                                                     </span>
                                                 )}
                                             <span className="text-sm text-gray-500">
                                                 (
                                                 {sprint?.workItems?.length || 0}{' '}
-                                                work items)
+                                                công việc)
                                             </span>
                                         </div>
                                     </div>
@@ -1482,7 +1473,7 @@ export default function ProgressManagement() {
                                                 }}
                                             >
                                                 <CheckCircle className="h-4 w-4 mr-1" />
-                                                Complete sprint
+                                                Hoàn thành Sprint
                                             </Button>
                                         )}
                                         {sprint.status === 'INACTIVE' &&
@@ -1503,7 +1494,7 @@ export default function ProgressManagement() {
                                                     }}
                                                 >
                                                     <Play className="h-4 w-4 mr-1" />
-                                                    Start sprint
+                                                    Bắt đầu Sprint
                                                 </Button>
                                             )}
 
@@ -1511,7 +1502,7 @@ export default function ProgressManagement() {
                                             <DropdownMenuTrigger asChild>
                                                 <Button
                                                     variant="ghost"
-                                                    size="sm"
+                                                    size="s"
                                                     onClick={(e) =>
                                                         e.stopPropagation()
                                                     }
@@ -1531,8 +1522,7 @@ export default function ProgressManagement() {
                                                         );
                                                     }}
                                                 >
-                                                    <Settings className="h-4 w-4 mr-2" />
-                                                    Edit sprint
+                                                    Cập nhật
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     className="text-red-600"
@@ -1546,7 +1536,7 @@ export default function ProgressManagement() {
                                                         );
                                                     }}
                                                 >
-                                                    Delete sprint
+                                                    Xóa Sprint
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -1601,9 +1591,6 @@ export default function ProgressManagement() {
                                                             getAvatarColor={
                                                                 getAvatarColor
                                                             }
-                                                            formatRelativeDate={
-                                                                formatRelativeDate
-                                                            }
                                                             setSelectedWorkItemToDelete={
                                                                 setSelectedWorkItemToDelete
                                                             }
@@ -1639,7 +1626,7 @@ export default function ProgressManagement() {
                                         Backlog
                                     </span>
                                     <span className="text-sm text-gray-500">
-                                        ({backlogItems.length} work items)
+                                        ({backlogItems.length} công việc)
                                     </span>
                                 </div>
                             </div>
@@ -1699,13 +1686,12 @@ export default function ProgressManagement() {
                                             await createSprint(groupData.id);
                                             await loadData();
                                         } catch (error) {
-                                            console.error(
-                                                'Error creating sprint:',
+                                            console.log(
+                                                '🚀 ~ onClick={ ~ error:',
                                                 error
                                             );
-                                            toast.error(
-                                                'Failed to create sprint'
-                                            );
+
+                                            toast.error('Lỗi khi tạo Sprint');
                                         } finally {
                                             setCreatingSprintLoading(false);
                                         }
@@ -1714,10 +1700,10 @@ export default function ProgressManagement() {
                                     {creatingSprintLoading ? (
                                         <>
                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                                            Creating...
+                                            Đang tạo...
                                         </>
                                     ) : (
-                                        'Create sprint'
+                                        'Tạo Sprint'
                                     )}
                                 </Button>
                             </div>
@@ -1749,9 +1735,6 @@ export default function ProgressManagement() {
                                                     generateInitials
                                                 }
                                                 getAvatarColor={getAvatarColor}
-                                                formatRelativeDate={
-                                                    formatRelativeDate
-                                                }
                                                 setSelectedWorkItemToDelete={
                                                     setSelectedWorkItemToDelete
                                                 }
@@ -1770,7 +1753,7 @@ export default function ProgressManagement() {
                                             }
                                         >
                                             <Plus className="h-4 w-4 mr-2" />
-                                            Create
+                                            Tạo
                                         </Button>
                                     </div>
                                 </DroppableContainer>
@@ -1925,11 +1908,11 @@ export default function ProgressManagement() {
                         handleDeleteSprint(selectedSprintToDelete.id);
                     }
                 }}
-                title={`Delete ${
+                title={`Xóa ${
                     selectedSprintToDelete?.name ??
                     `SPRINT ${selectedSprintToDelete?.number}`
                 }`}
-                description="Are you sure you want to delete this sprint? All task will be moved to backlog."
+                description="Bạn có chắc chắn muốn xóa Sprint này? Tất cả công việc sẽ được chuyển về Backlog."
             />
             <WarningModal
                 isOpen={showWarningDeleteWorkItemModal}
@@ -1939,8 +1922,8 @@ export default function ProgressManagement() {
                         handleDeleteWorkItem(selectedWorkItemToDelete.id);
                     }
                 }}
-                title={`Delete work item ${selectedWorkItemToDelete?.key} ${selectedWorkItemToDelete?.summary}`}
-                description="Are you sure you want to delete this work item and all its subtasks? This action cannot be undone."
+                title={`Xóa công việc ${selectedWorkItemToDelete?.key} ${selectedWorkItemToDelete?.summary}`}
+                description="Bạn có chắc chắn muốn xóa công việc này và tất cả các công việc con? Hành động này không thể được hoàn tác."
             />
         </div>
     );

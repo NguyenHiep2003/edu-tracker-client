@@ -113,8 +113,8 @@ export default function ClassInfoPage() {
                     );
                 }
             } catch (error: any) {
-                console.error('Error fetching class details:', error);
-                toast.error('Failed to load class details');
+                console.log("🚀 ~ fetchClassData ~ error:", error)
+                toast.error('Đã xảy ra lỗi khi tải thông tin lớp học');
             } finally {
                 setLoading(false);
             }
@@ -148,10 +148,10 @@ export default function ClassInfoPage() {
             }
 
             setEditMode(false);
-            toast.success('Class updated successfully!');
+            toast.success('Đã cập nhật thông tin lớp học thành công!');
         } catch (error) {
             console.log('🚀 ~ handleSave ~ error:', error);
-            toast.error('Failed to update class');
+            toast.error('Đã xảy ra lỗi khi cập nhật thông tin lớp học');
         }
     };
 
@@ -180,14 +180,14 @@ export default function ClassInfoPage() {
 
             await addLecturerToClass(classData.id, lecturerId);
 
-            toast.success('Lecturer added successfully!');
+            toast.success('Đã thêm giảng viên thành công!');
             updateClass({});
             setShowAddLecturerModal(false);
         } catch (error: any) {
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to create semester');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi thêm giảng viên');
             }
         }
     };
@@ -202,24 +202,23 @@ export default function ClassInfoPage() {
 
             await addStudentToClass(classData.id, studentId);
 
-            toast.success('Student added successfully!');
+            toast.success('Đã thêm sinh viên thành công!');
             updateClass({});
             setShowAddStudentModal(false);
         } catch (error: any) {
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to create semester');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi thêm sinh viên');
             }
         }
     };
     const handleDownloadTemplate = async () => {
         try {
             await downloadImportTemplate('student');
-            toast.success('Template downloaded successfully');
         } catch (error) {
             console.log('🚀 ~ handleDownloadTemplate ~ error:', error);
-            toast.error('Failed to download template');
+            toast.error('Đã xảy ra lỗi khi tải template');
         }
     };
 
@@ -248,9 +247,9 @@ export default function ClassInfoPage() {
         }
 
         // Validate file size (max 10MB)
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        const maxSize = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSize) {
-            toast.error('File size must be less than 10MB');
+            toast.error('File size must be less than 5MB');
             return;
         }
 
@@ -258,7 +257,7 @@ export default function ClassInfoPage() {
             setImporting(true);
             await handleImportStudents(classData.id, file);
         } catch (error) {
-            console.error('Import failed:', error);
+            console.log("🚀 ~ handleFileSelect ~ error:", error)
         } finally {
             setImporting(false);
             // Reset file input
@@ -276,9 +275,9 @@ export default function ClassInfoPage() {
                 updateClass({ numberOfStudents: updatedStudents.length });
                 setStudents(updatedStudents);
             }
-            toast.success('Students imported successfully');
+            toast.success('Đã nhập sinh viên thành công');
         } catch (error: any) {
-            console.log('🚀 ~ handleImportStudents ~ error:', error);
+            console.log("🚀 ~ handleImportStudents ~ error:", error)
 
             // Handle detailed import errors
             if (error?.message && Array.isArray(error.message)) {
@@ -289,7 +288,7 @@ export default function ClassInfoPage() {
                 setShowErrorModal(true);
             } else {
                 // Fallback for simple errors
-                toast.error(error?.message ?? 'Failed to import students');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi nhập sinh viên');
             }
         }
     };
@@ -303,7 +302,7 @@ export default function ClassInfoPage() {
                         (s) => s.studentClassroomId !== studentClassroomId
                     )
                 );
-                toast.success('Student removed from class');
+                toast.success('Đã xóa sinh viên khỏi lớp học');
                 setShowWarningDeleteStudentModal(false);
                 setSelectedStudent(null);
             }
@@ -312,7 +311,7 @@ export default function ClassInfoPage() {
                 toast.error(error.message[0]);
             } else {
                 toast.error(
-                    error?.message ?? 'Failed to remove student from class'
+                    error?.message ?? 'Đã xảy ra lỗi khi xóa sinh viên khỏi lớp học'
                 );
             }
         }
@@ -326,7 +325,7 @@ export default function ClassInfoPage() {
                     ...classData,
                     lecturers: classData.lecturers.filter((l) => l.id !== id),
                 });
-                toast.success('Lecturer removed from class');
+                toast.success('Đã xóa giảng viên khỏi lớp học');
                 setShowWarningDeleteLecturerModal(false);
                 setSelectedLecturer(null);
             }
@@ -335,7 +334,7 @@ export default function ClassInfoPage() {
                 toast.error(error.message[0]);
             } else {
                 toast.error(
-                    error?.message ?? 'Failed to remove lecturer from class'
+                    error?.message ?? 'Đã xảy ra lỗi khi xóa giảng viên khỏi lớp học'
                 );
             }
         }
@@ -357,14 +356,14 @@ export default function ClassInfoPage() {
         if (!classData) return;
         try {
             await deleteClass(classData.id);
-            toast.success(`Class "${classData.name}" deleted successfully.`);
+            toast.success(`Đã xóa lớp học "${classData.name}" thành công.`);
             setShowDeleteClassModal(false);
             router.push('/lecturer/home');
         } catch (error: any) {
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to delete class.');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi xóa lớp học');
             }
             setShowDeleteClassModal(false);
         }
@@ -376,7 +375,7 @@ export default function ClassInfoPage() {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">
-                        Loading class information...
+                        Đang tải thông tin lớp học...
                     </p>
                 </div>
             </div>
@@ -386,7 +385,7 @@ export default function ClassInfoPage() {
     if (!classData) {
         return (
             <div className="text-center py-12">
-                <p className="text-gray-500">Class not found</p>
+                <p className="text-gray-500">Không tìm thấy lớp học</p>
             </div>
         );
     }
@@ -411,7 +410,6 @@ export default function ClassInfoPage() {
                 description="The following errors occurred while importing students:"
             />
 
-            {/* Class Information Hero Section */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-4">
@@ -420,10 +418,10 @@ export default function ClassInfoPage() {
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">
-                                Class Information
+                                Thông tin lớp học
                             </h1>
                             <p className="text-gray-600">
-                                Manage your class details and settings
+                                Quản lý thông tin và các cài đặt của lớp học
                             </p>
                         </div>
                     </div>
@@ -436,7 +434,7 @@ export default function ClassInfoPage() {
                                     className="bg-green-600 hover:bg-green-700"
                                 >
                                     <Save className="h-4 w-4 mr-2" />
-                                    Save Changes
+                                    Lưu thay đổi
                                 </Button>
                                 <Button
                                     onClick={handleCancel}
@@ -444,7 +442,7 @@ export default function ClassInfoPage() {
                                     size="sm"
                                 >
                                     <X className="h-4 w-4 mr-2" />
-                                    Cancel
+                                    
                                 </Button>
                             </>
                         ) : (
@@ -456,7 +454,7 @@ export default function ClassInfoPage() {
                                     className="bg-white"
                                 >
                                     <Edit className="h-4 w-4 mr-2" />
-                                    Edit Information
+                                    Chỉnh sửa thông tin
                                 </Button>
                                 <Button
                                     onClick={() =>
@@ -466,7 +464,7 @@ export default function ClassInfoPage() {
                                     size="sm"
                                 >
                                     <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete Class
+                                    Xóa lớp học
                                 </Button>
                             </>
                         )}
@@ -478,7 +476,7 @@ export default function ClassInfoPage() {
                     {/* Class Name Card */}
                     <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                         <Label className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                            Class Name
+                            Tên lớp học
                         </Label>
                         {editMode ? (
                             <Input
@@ -489,7 +487,7 @@ export default function ClassInfoPage() {
                                         name: e.target.value,
                                     })
                                 }
-                                placeholder="Enter class name"
+                                placeholder="Nhập tên lớp học"
                                 className="text-2xl font-bold border-0 p-0 h-auto focus:ring-0"
                             />
                         ) : (
@@ -502,7 +500,7 @@ export default function ClassInfoPage() {
                     {/* Class ID Card */}
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                         <Label className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                            Class ID
+                            Mã lớp học
                         </Label>
                         {editMode ? (
                             <Input
@@ -513,7 +511,7 @@ export default function ClassInfoPage() {
                                         externalId: e.target.value,
                                     })
                                 }
-                                placeholder="Enter class ID"
+                                placeholder="Nhập mã lớp học"
                                 className="text-xl font-bold border-0 p-0 h-auto focus:ring-0"
                             />
                         ) : (
@@ -526,7 +524,7 @@ export default function ClassInfoPage() {
                     {/* Semester Card */}
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                         <Label className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2 block">
-                            Semester
+                            Học kỳ
                         </Label>
                         <p className="text-xl font-bold text-gray-900">
                             {classData.semester.name}
@@ -537,7 +535,7 @@ export default function ClassInfoPage() {
                 {/* Description */}
                 <div className="mt-6 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                     <Label className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3 block">
-                        Description
+                        Mô tả
                     </Label>
                     {editMode ? (
                         <textarea
@@ -548,12 +546,12 @@ export default function ClassInfoPage() {
                                     description: e.target.value,
                                 })
                             }
-                            placeholder="Enter class description"
+                            placeholder="Nhập mô tả lớp học"
                             className="w-full min-h-[100px] text-lg border-0 p-0 focus:ring-0 resize-none"
                         />
                     ) : (
                         <p className="text-lg text-gray-700 leading-relaxed">
-                            {classData.description || 'No description provided'}
+                            {classData.description || 'Không có mô tả'}
                         </p>
                     )}
                 </div>
@@ -569,7 +567,7 @@ export default function ClassInfoPage() {
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-green-600">
-                                    Students Enrolled
+                                    Tổng số sinh viên
                                 </p>
                                 <p className="text-2xl font-bold text-green-700">
                                     {students.length}
@@ -587,7 +585,7 @@ export default function ClassInfoPage() {
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-blue-600">
-                                    Lecturers
+                                    Tổng số giảng viên
                                 </p>
                                 <p className="text-2xl font-bold text-blue-700">
                                     {classData.lecturers.length}
@@ -605,7 +603,7 @@ export default function ClassInfoPage() {
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-purple-600">
-                                    Teaching Assistants
+                                    Tổng số trợ giảng
                                 </p>
                                 <p className="text-2xl font-bold text-purple-700">
                                     {classData.teacherAssistance
@@ -625,7 +623,7 @@ export default function ClassInfoPage() {
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-orange-600">
-                                    Created At
+                                    Ngày tạo
                                 </p>
                                 <p className="text-sm font-bold text-orange-700">
                                     {new Date(
@@ -647,15 +645,15 @@ export default function ClassInfoPage() {
                             <div>
                                 <CardTitle className="flex items-center gap-2">
                                     <UserCheck className="h-5 w-5" />
-                                    Lecturers
+                                    Giảng viên
                                 </CardTitle>
                                 <CardDescription>
-                                    Manage class lecturers
+                                    Quản lý giảng viên
                                 </CardDescription>
                             </div>
                             <Button onClick={handleAddLecturer} size="sm">
                                 <Plus className="h-4 w-4 mr-2" />
-                                Add Lecturer
+                                Thêm giảng viên
                             </Button>
                         </div>
                     </CardHeader>
@@ -725,10 +723,10 @@ export default function ClassInfoPage() {
                             <div>
                                 <CardTitle className="flex items-center gap-2">
                                     <Users className="h-5 w-5" />
-                                    Teaching Assistants
+                                    Trợ giảng
                                 </CardTitle>
                                 <CardDescription>
-                                    Manage teaching assistants
+                                    Quản lý trợ giảng
                                 </CardDescription>
                             </div>
                             <Button
@@ -737,7 +735,7 @@ export default function ClassInfoPage() {
                                 size="sm"
                             >
                                 <Plus className="h-4 w-4 mr-2" />
-                                Add TA
+                                Thêm trợ giảng
                             </Button>
                         </div>
                     </CardHeader>
@@ -798,10 +796,9 @@ export default function ClassInfoPage() {
                         ) : (
                             <div className="text-center py-8 text-gray-500">
                                 <Users className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                                <p>No teaching assistants assigned</p>
+                                <p>Không có trợ giảng</p>
                                 <p className="text-sm">
-                                    Click &quot;Add TA&quot; to assign teaching
-                                    assistants
+                                    Click &quot;Thêm trợ giảng&quot; để thêm trợ giảng
                                 </p>
                             </div>
                         )}
@@ -816,10 +813,10 @@ export default function ClassInfoPage() {
                         <div>
                             <CardTitle className="flex items-center gap-2">
                                 <Users className="h-5 w-5" />
-                                Students ({students.length})
+                                Sinh viên ({students.length})
                             </CardTitle>
                             <CardDescription>
-                                Manage class enrollment and student list
+                                Quản lý danh sách sinh viên
                             </CardDescription>
                         </div>
                         <div className="flex gap-2">
@@ -829,7 +826,7 @@ export default function ClassInfoPage() {
                                 size="sm"
                             >
                                 <Download className="h-4 w-4 mr-2" />
-                                Download Template
+                                Tải template thêm sinh viên
                             </Button>
                             <Button
                                 onClick={handleAddStudent}
@@ -837,7 +834,7 @@ export default function ClassInfoPage() {
                                 size="sm"
                             >
                                 <UserPlus className="h-4 w-4 mr-2" />
-                                Add Student
+                                Thêm sinh viên
                             </Button>
                             <Button
                                 onClick={handleImportStudentsClick}
@@ -847,12 +844,12 @@ export default function ClassInfoPage() {
                                 {importing ? (
                                     <>
                                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                        Importing...
+                                        Đang nhập sinh viên...
                                     </>
                                 ) : (
                                     <>
                                         <Upload className="h-4 w-4 mr-2" />
-                                        Import Students
+                                        Nhập sinh viên từ file
                                     </>
                                 )}
                             </Button>
@@ -864,11 +861,10 @@ export default function ClassInfoPage() {
                         <div className="text-center py-12">
                             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                             <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                No students added
+                                Không có sinh viên
                             </h3>
                             <p className="text-gray-500 mb-6">
-                                Add students manually or import them using the
-                                Excel template.
+                                Thêm sinh viên thủ công hoặc nhập sinh viên bằng file Excel.
                             </p>
                             <div className="flex gap-3 justify-center">
                                 <Button
@@ -876,7 +872,7 @@ export default function ClassInfoPage() {
                                     variant="outline"
                                 >
                                     <UserPlus className="h-4 w-4 mr-2" />
-                                    Add Student
+                                    Thêm sinh viên
                                 </Button>
                                 <Button
                                     onClick={handleImportStudentsClick}
@@ -885,12 +881,12 @@ export default function ClassInfoPage() {
                                     {importing ? (
                                         <>
                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                            Importing...
+                                            Đang nhập sinh viên...
                                         </>
                                     ) : (
                                         <>
                                             <Upload className="h-4 w-4 mr-2" />
-                                            Import Students
+                                            Nhập sinh viên
                                         </>
                                     )}
                                 </Button>
@@ -902,16 +898,16 @@ export default function ClassInfoPage() {
                                 <thead>
                                     <tr className="bg-gray-50">
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                            Student ID
+                                            Mã sinh viên
                                         </th>
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                            Name
+                                            Tên sinh viên
                                         </th>
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                             Email
                                         </th>
                                         <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                            Actions
+                                            Hành động
                                         </th>
                                     </tr>
                                 </thead>
@@ -987,10 +983,10 @@ export default function ClassInfoPage() {
                         handleRemoveStudent(selectedStudent.studentClassroomId);
                     }
                 }}
-                title={`Delete ${
+                title={`Xóa ${
                     selectedStudent?.name ?? selectedStudent?.email
-                } from class`}
-                description="Are you sure you want to delete this student?"
+                } khỏi lớp học`}
+                description="Bạn có chắc chắn muốn xóa sinh viên này?"
             />
             <WarningModal
                 isOpen={showWarningDeleteLecturerModal}
@@ -1000,18 +996,18 @@ export default function ClassInfoPage() {
                         handleRemoveLecturer(selectedLecturer.id);
                     }
                 }}
-                title={`Delete ${
+                title={`Xóa ${
                     selectedLecturer?.name ?? selectedLecturer?.email
-                } from class`}
-                description="Are you sure you want to delete this lecturer?"
+                } khỏi lớp học`}
+                description="Bạn có chắc chắn muốn xóa giảng viên này?"
             />
             <WarningModal
                 isOpen={showDeleteClassModal}
                 onClose={() => setShowDeleteClassModal(false)}
                 onConfirm={handleConfirmDeleteClass}
-                title="Delete Class"
-                description={`Are you sure you want to delete the class "${classData?.name}"? All projects and student data within this class will be permanently removed. This action cannot be undone.`}
-                confirmText="Delete Class"
+                title="Xóa lớp học"
+                description={`Bạn có chắc chắn muốn xóa lớp học "${classData?.name}"? Tất cả dự án và dữ liệu sinh viên trong lớp học sẽ bị xóa vĩnh viễn. Thao tác này không thể được hoàn tác.`}
+                confirmText="Xóa lớp học"
             />
         </div>
     );

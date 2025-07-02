@@ -45,7 +45,7 @@ export default function ProjectInformationPage() {
             <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                     <div className="text-red-500 text-lg font-semibold mb-2">
-                        Error Loading Project
+                        Đã xảy ra lỗi khi tải dự án
                     </div>
                     <div className="text-gray-600">{error}</div>
                 </div>
@@ -56,7 +56,7 @@ export default function ProjectInformationPage() {
     if (!projectData) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="text-gray-500">No project data available</div>
+                <div className="text-gray-500">Không có dữ liệu dự án</div>
             </div>
         );
     }
@@ -67,19 +67,19 @@ export default function ProjectInformationPage() {
 
         // Required fields
         if (!editedData?.title.trim()) {
-            newErrors.title = 'Project title is required';
+            newErrors.title = 'Tên dự án là bắt buộc';
         }
 
         if (!editedData?.key.trim()) {
-            newErrors.key = 'Project key is required';
+            newErrors.key = 'Mã dự án là bắt buộc';
         }
 
         if (!editedData?.startDate) {
-            newErrors.startDate = 'Start date is required';
+            newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
         }
 
         if (!editedData?.endDate) {
-            newErrors.endDate = 'End date is required';
+            newErrors.endDate = 'Ngày kết thúc là bắt buộc';
         }
 
         // Date validations
@@ -91,7 +91,7 @@ export default function ProjectInformationPage() {
             editedData.endDate &&
             endDate <= startDate
         ) {
-            newErrors.endDate = 'End date must be after start date';
+            newErrors.endDate = 'Ngày kết thúc phải sau ngày bắt đầu';
         }
 
         // Team-specific validations
@@ -101,18 +101,18 @@ export default function ProjectInformationPage() {
             !editedData.formGroupDeadline
         ) {
             newErrors.formGroupDeadline =
-                'Form group deadline must be set when allowing student team formation';
+                'Hạn lập nhóm phải được đặt khi cho phép sinh viên tự lập nhóm';
         }
 
         if (editedData.type === 'TEAM' && editedData.formGroupDeadline) {
             const formGroupDate = new Date(editedData.formGroupDeadline);
             if (formGroupDate <= startDate) {
                 newErrors.formGroupDeadline =
-                    'Form group deadline must be after start date';
+                    'Hạn lập nhóm phải sau ngày bắt đầu';
             }
             if (formGroupDate >= endDate) {
                 newErrors.formGroupDeadline =
-                    'Form group deadline must be before end date';
+                    'Hạn lập nhóm phải trước ngày kết thúc';
             }
         }
 
@@ -124,11 +124,11 @@ export default function ProjectInformationPage() {
             const joinDeadlineDate = new Date(editedData.joinProjectDeadline);
             if (joinDeadlineDate <= startDate) {
                 newErrors.joinProjectDeadline =
-                    'Join project deadline must be after start date';
+                    'Hạn tham gia dự án phải sau ngày bắt đầu';
             }
             if (joinDeadlineDate >= endDate) {
                 newErrors.joinProjectDeadline =
-                    'Join project deadline must be before end date';
+                    'Hạn tham gia dự án phải trước ngày kết thúc';
             }
         }
 
@@ -175,11 +175,16 @@ export default function ProjectInformationPage() {
                 allowStudentCreateTopic: editedData.allowStudentCreateTopic,
                 joinProjectDeadline: editedData.joinProjectDeadline,
             });
-            toast.success('Project updated successfully!');
+            toast.success('Dự án đã được cập nhật thành công!');
             setIsEditing(false);
             refetchProject();
         } catch (error: any) {
-            toast.error(error.message || 'Failed to update project');
+            console.log("🚀 ~ handleSave ~ error:", error)
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(error.message || 'Đã xảy ra lỗi khi cập nhật dự án');
+            }
         }
     };
 
@@ -212,7 +217,7 @@ export default function ProjectInformationPage() {
             {/* Header with Edit/Save Buttons */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-900">
-                    Project Details
+                    Chi tiết dự án
                 </h1>
                 <div className="flex gap-2">
                     {isEditing ? (
@@ -223,11 +228,11 @@ export default function ProjectInformationPage() {
                                 className="gap-2"
                             >
                                 <X className="h-4 w-4" />
-                                Cancel
+                                Hủy
                             </Button>
                             <Button onClick={handleSave} className="gap-2">
                                 <Save className="h-4 w-4" />
-                                Save Changes
+                                Lưu thay đổi
                             </Button>
                         </>
                     ) : (
@@ -237,7 +242,7 @@ export default function ProjectInformationPage() {
                             className="gap-2"
                         >
                             <Edit2 className="h-4 w-4" />
-                            Edit Project
+                            Chỉnh sửa dự án
                         </Button>
                     )}
                 </div>
@@ -245,13 +250,13 @@ export default function ProjectInformationPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Basic Information</CardTitle>
+                    <CardTitle>Thông tin dự án</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <Label className="text-gray-700">
-                                Project Title
+                                Tên dự án
                             </Label>
                             {isEditing ? (
                                 <div>
@@ -281,7 +286,7 @@ export default function ProjectInformationPage() {
                         </div>
 
                         <div>
-                            <Label className="text-gray-700">Project Key</Label>
+                            <Label className="text-gray-700">Mã dự án</Label>
                             {isEditing ? (
                                 <div>
                                     <Input
@@ -311,7 +316,7 @@ export default function ProjectInformationPage() {
                     </div>
 
                     <div>
-                        <Label className="text-gray-700">Description</Label>
+                        <Label className="text-gray-700">Mô tả</Label>
                         {isEditing ? (
                             <Textarea
                                 value={editedData?.description || ''}
@@ -321,14 +326,14 @@ export default function ProjectInformationPage() {
                                         e.target.value
                                     )
                                 }
-                                placeholder="Enter project description"
+                                placeholder="Nhập mô tả dự án"
                                 className="mt-1 bg-white text-gray-700"
                                 rows={3}
                             />
                         ) : (
                             <p className="text-gray-600 mt-1">
                                 {projectData.description ||
-                                    'No description provided'}
+                                    'Không có mô tả'}
                             </p>
                         )}
                     </div>
@@ -336,7 +341,7 @@ export default function ProjectInformationPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <Label className="text-gray-700">
-                                Start Date & Time
+                                Ngày giờ bắt đầu
                             </Label>
                             {isEditing ? (
                                 <div>
@@ -399,7 +404,7 @@ export default function ProjectInformationPage() {
 
                         <div>
                             <Label className="text-gray-700">
-                                End Date & Time
+                                Ngày giờ kết thúc
                             </Label>
                             {isEditing ? (
                                 <div>
@@ -465,13 +470,13 @@ export default function ProjectInformationPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Project Settings</CardTitle>
+                    <CardTitle>Cấu hình dự án</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <Label className="text-gray-700">
-                                Project Type
+                                Loại dự án
                             </Label>
                             {isEditing ? (
                                 <div className="mt-2 space-y-2">
@@ -492,7 +497,7 @@ export default function ProjectInformationPage() {
                                             className="text-blue-600"
                                         />
                                         <Users className="h-4 w-4" />
-                                        <span>Team Project</span>
+                                        <span>Dự án nhóm</span>
                                     </label>
                                     <label className="flex items-center gap-2">
                                         <input
@@ -511,7 +516,7 @@ export default function ProjectInformationPage() {
                                             className="text-blue-600"
                                         />
                                         <User className="h-4 w-4" />
-                                        <span>Solo Project</span>
+                                        <span>Dự án cá nhân</span>
                                     </label>
                                 </div>
                             ) : (
@@ -528,7 +533,7 @@ export default function ProjectInformationPage() {
                                                 : 'bg-purple-100 text-purple-800'
                                         }
                                     >
-                                        {projectData.type}
+                                        {projectData.type === 'TEAM' ? 'Dự án nhóm' : 'Dự án cá nhân'}
                                     </Badge>
                                 </div>
                             )}
@@ -536,7 +541,7 @@ export default function ProjectInformationPage() {
 
                         <div>
                             <Label className="text-gray-700">
-                                Participation Mode
+                                Chế độ tham gia
                             </Label>
                             {isEditing ? (
                                 <div className="mt-2 space-y-2">
@@ -557,7 +562,7 @@ export default function ProjectInformationPage() {
                                             }
                                             className="text-blue-600"
                                         />
-                                        <span>Mandatory</span>
+                                        <span>Bắt buộc</span>
                                     </label>
                                     <label className="flex items-center gap-2">
                                         <input
@@ -576,7 +581,7 @@ export default function ProjectInformationPage() {
                                             }
                                             className="text-blue-600"
                                         />
-                                        <span>Optional</span>
+                                        <span>Tùy chọn</span>
                                     </label>
                                 </div>
                             ) : (
@@ -589,7 +594,7 @@ export default function ProjectInformationPage() {
                                                 : 'bg-cyan-100 text-cyan-800'
                                         }
                                     >
-                                        {projectData.participationMode.toUpperCase()}
+                                        {projectData.participationMode === 'mandatory' ? 'Bắt buộc' : 'Tùy chọn'}
                                     </Badge>
                                 </div>
                             )}
@@ -602,7 +607,7 @@ export default function ProjectInformationPage() {
                                     'optional')) && (
                             <div className="col-span-full">
                                 <Label className="text-gray-700">
-                                    Join Project Deadline
+                                    Hạn tham gia dự án
                                 </Label>
                                 {isEditing ? (
                                     <div>
@@ -641,7 +646,7 @@ export default function ProjectInformationPage() {
                                                         : null
                                                 );
                                             }}
-                                            placeholder="Optional - Set deadline for students to join"
+                                            placeholder="Tùy chọn - Đặt hạn tham gia cho sinh viên"
                                             className={
                                                 errors.joinProjectDeadline
                                                     ? 'border-red-500'
@@ -654,9 +659,7 @@ export default function ProjectInformationPage() {
                                             </p>
                                         )}
                                         <p className="text-sm text-gray-500 mt-1">
-                                            Optional deadline for students to
-                                            join the project. Leave empty for no
-                                            deadline.
+                                            Hạn cho sinh viên đăng ký tham gia dự án. Để trống nếu không có hạn.
                                         </p>
                                     </div>
                                 ) : (
@@ -670,7 +673,7 @@ export default function ProjectInformationPage() {
                                             </p>
                                         ) : (
                                             <p className="text-gray-500 italic">
-                                                No deadline set
+                                                Không có hạn tham gia
                                             </p>
                                         )}
                                     </div>
@@ -686,7 +689,7 @@ export default function ProjectInformationPage() {
                 (!isEditing && projectData.type === 'TEAM')) && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>Team Formation Settings</CardTitle>
+                        <CardTitle>Cấu hình lập nhóm</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {isEditing ? (
@@ -707,8 +710,7 @@ export default function ProjectInformationPage() {
                                             className="text-blue-600"
                                         />
                                         <span>
-                                            Allow students to form their own
-                                            teams
+                                            Cho phép sinh viên tự lập nhóm
                                         </span>
                                     </label>
                                 </div>
@@ -716,7 +718,7 @@ export default function ProjectInformationPage() {
                                 {editedData?.allowStudentFormTeam && (
                                     <div>
                                         <Label className="text-gray-700">
-                                            Team Formation Deadline
+                                            Hạn lập nhóm
                                         </Label>
                                         <Input
                                             type="datetime-local"
@@ -771,7 +773,7 @@ export default function ProjectInformationPage() {
                             <>
                                 <div>
                                     <Label className="text-gray-700">
-                                        Student Team Formation
+                                        Cho phép sinh viên tự lập nhóm
                                     </Label>
                                     <div className="mt-1">
                                         <Badge
@@ -782,8 +784,8 @@ export default function ProjectInformationPage() {
                                             }
                                         >
                                             {projectData.allowStudentFormTeam
-                                                ? 'ALLOWED'
-                                                : 'NOT ALLOWED'}
+                                                ? 'CHO PHÉP'
+                                                : 'KHÔNG CHO PHÉP'}
                                         </Badge>
                                     </div>
                                 </div>
@@ -792,7 +794,7 @@ export default function ProjectInformationPage() {
                                     projectData.formGroupDeadline && (
                                         <div>
                                             <Label className="text-gray-700">
-                                                Team Formation Deadline
+                                                Hạn lập nhóm
                                             </Label>
                                             <p className="font-medium text-purple-600">
                                                 {formatDate(
@@ -811,17 +813,16 @@ export default function ProjectInformationPage() {
             {/* Topic Settings */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Topic Settings</CardTitle>
+                    <CardTitle>Cấu hình chủ đề</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                         <div>
                             <h4 className="font-medium text-gray-900">
-                                Allow Students to Create Topic Requests
+                                Cho phép sinh viên tạo yêu cầu chủ đề mới
                             </h4>
                             <p className="text-sm text-gray-500">
-                                Students can request new topics by providing
-                                title and description
+                                Sinh viên có thể tạo chủ đề mới bằng cách cung cấp tiêu đề và mô tả
                             </p>
                         </div>
                         {isEditing ? (
@@ -851,8 +852,8 @@ export default function ProjectInformationPage() {
                                     }
                                 >
                                     {projectData.allowStudentCreateTopic
-                                        ? 'ALLOWED'
-                                        : 'NOT ALLOWED'}
+                                        ? 'CHO PHÉP'
+                                        : 'KHÔNG CHO PHÉP'}
                                 </Badge>
                             </div>
                         )}

@@ -125,8 +125,8 @@ export default function TemplatePreviewModal({
             const data = await previewTemplate(templateId, startDateTime);
             setPreviewData(data);
         } catch (error) {
-            console.error('Error fetching template preview:', error);
-            toast.error('Failed to load template preview');
+            console.log("🚀 ~ fetchPreviewData ~ error:", error)
+            toast.error('Lỗi khi tải dữ liệu template');
         } finally {
             setLoading(false);
         }
@@ -150,17 +150,17 @@ export default function TemplatePreviewModal({
         const hours = Math.floor(milliseconds / (1000 * 60 * 60));
         const minutes = Math.floor(milliseconds / (1000 * 60));
         if (years > 0) {
-            return `${years} year${years > 1 ? 's' : ''}`;
+            return `${years} năm`;
         } else if (months > 0) {
-            return `${months} month${months > 1 ? 's' : ''}`;
+            return `${months} tháng`;
         } else if (days > 0) {
-            return `${days} day${days > 1 ? 's' : ''}`;
+            return `${days} ngày`;
         } else if (hours > 0) {
-            return `${hours} hour${hours > 1 ? 's' : ''}`;
+            return `${hours} giờ`;
         } else if (minutes > 0) {
-            return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            return `${minutes} phút`;
         } else {
-            return `${milliseconds} milliseconds`;
+            return `${milliseconds} mili giây`;
         }
     };
 
@@ -171,17 +171,17 @@ export default function TemplatePreviewModal({
         const hours = Math.floor(milliseconds / (1000 * 60 * 60));
         const minutes = Math.floor(milliseconds / (1000 * 60));
         if (years > 0) {
-            return `${years} year${years > 1 ? 's' : ''}`;
+            return `${years} năm`;
         } else if (months > 0) {
-            return `${months} month${months > 1 ? 's' : ''}`;
+            return `${months} tháng`;
         } else if (days > 0) {
-            return `${days} day${days > 1 ? 's' : ''}`;
+            return `${days} ngày`;
         } else if (hours > 0) {
-            return `${hours} hour${hours > 1 ? 's' : ''}`;
+            return `${hours} giờ`;
         } else if (minutes > 0) {
-            return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            return `${minutes} phút`;
         } else {
-            return `${milliseconds} milliseconds`;
+            return `${milliseconds} mili giây`;
         }
     };
 
@@ -202,19 +202,19 @@ export default function TemplatePreviewModal({
     const tabs = [
         {
             id: 'basic',
-            label: 'Basic Info',
+            label: 'Thông tin cơ bản',
             icon: FileText,
             count: null,
         },
         {
             id: 'topics',
-            label: 'Topics',
+            label: 'Chủ đề',
             icon: FileText,
             count: previewData?.numOfTopic || 0,
         },
         {
             id: 'tasks',
-            label: 'Tasks',
+            label: 'Công việc',
             icon: Clock,
             count: previewData?.numOfItem || 0,
         },
@@ -226,10 +226,10 @@ export default function TemplatePreviewModal({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Eye className="h-5 w-5 text-blue-600" />
-                        Template Preview: {templateTitle}
+                        Bản xem trước của template dự án: {templateTitle}
                     </DialogTitle>
                     <DialogDescription>
-                        Preview the template configuration and content
+                        Xem trước cấu hình và nội dung của template
                     </DialogDescription>
                 </DialogHeader>
 
@@ -242,7 +242,7 @@ export default function TemplatePreviewModal({
                                 htmlFor="project-start-datetime"
                                 className="text-sm font-medium text-gray-700"
                             >
-                                Project Start Date
+                                Ngày bắt đầu dự án
                             </Label>
                             <Input
                                 id="project-start-datetime"
@@ -328,14 +328,14 @@ export default function TemplatePreviewModal({
                                             <CardHeader>
                                                 <CardTitle className="flex items-center gap-2">
                                                     <FileText className="h-5 w-5 text-blue-600" />
-                                                    Project Configuration
+                                                    Cấu hình dự án
                                                 </CardTitle>
                                             </CardHeader>
                                             <CardContent className="space-y-4">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div>
                                                         <Label className="text-sm font-medium text-gray-700">
-                                                            Title
+                                                            Tiêu đề
                                                         </Label>
                                                         <p className="text-gray-900">
                                                             {
@@ -347,7 +347,7 @@ export default function TemplatePreviewModal({
                                                     </div>
                                                     <div>
                                                         <Label className="text-sm font-medium text-gray-700">
-                                                            Key
+                                                            Mã
                                                         </Label>
                                                         <p className="text-gray-900 font-mono">
                                                             {
@@ -359,7 +359,7 @@ export default function TemplatePreviewModal({
                                                     </div>
                                                     <div>
                                                         <Label className="text-sm font-medium text-gray-700">
-                                                            Type
+                                                            Loại dự án
                                                         </Label>
                                                         <div className="flex items-center gap-2">
                                                             {getProjectTypeIcon(
@@ -371,14 +371,16 @@ export default function TemplatePreviewModal({
                                                                 {
                                                                     previewData
                                                                         .projectConfigPreview
-                                                                        .type
+                                                                        .type === 'TEAM'
+                                                                        ? 'Nhóm'
+                                                                        : 'Cá nhân'
                                                                 }
                                                             </span>
                                                         </div>
                                                     </div>
                                                     <div>
                                                         <Label className="text-sm font-medium text-gray-700">
-                                                            Participation Mode
+                                                            Chế độ tham gia
                                                         </Label>
                                                         <div className="mt-1">
                                                             <Badge
@@ -388,7 +390,9 @@ export default function TemplatePreviewModal({
                                                                         .participationMode
                                                                 )}
                                                             >
-                                                                {previewData.projectConfigPreview.participationMode.toUpperCase()}
+                                                                {previewData.projectConfigPreview.participationMode === 'mandatory'
+                                                                    ? 'Bắt buộc'
+                                                                    : 'Tùy chọn'}
                                                             </Badge>
                                                         </div>
                                                     </div>
@@ -401,8 +405,7 @@ export default function TemplatePreviewModal({
                                                         .type === 'TEAM' && (
                                                         <div>
                                                             <Label className="text-sm font-medium text-gray-700">
-                                                                Form Group
-                                                                Deadline
+                                                                Hạn lập nhóm
                                                             </Label>
                                                             <div className="space-y-1">
                                                                 <p className="text-gray-900">
@@ -417,8 +420,7 @@ export default function TemplatePreviewModal({
                                                                         )
                                                                     ) : (
                                                                         <>
-                                                                            Not
-                                                                            set
+                                                                            Không có hạn
                                                                         </>
                                                                     )}
                                                                 </p>
@@ -432,9 +434,7 @@ export default function TemplatePreviewModal({
                                                                                 .projectConfigPreview
                                                                                 .formGroupDeadlineOffset
                                                                         )}{' '}
-                                                                        after
-                                                                        project
-                                                                        start
+                                                                        sau khi dự án bắt đầu
                                                                     </p>
                                                                 )}
                                                             </div>
@@ -447,8 +447,7 @@ export default function TemplatePreviewModal({
                                                         'optional' && (
                                                         <div>
                                                             <Label className="text-sm font-medium text-gray-700">
-                                                                Join Project
-                                                                Deadline
+                                                                Hạn đăng ký tham gia dự án
                                                             </Label>
                                                             <div className="space-y-1">
                                                                 {previewData
@@ -464,7 +463,7 @@ export default function TemplatePreviewModal({
                                                                     </p>
                                                                 ) : (
                                                                     <p className="text-gray-900">
-                                                                        Not set
+                                                                        Không có hạn
                                                                     </p>
                                                                 )}
                                                                 {previewData
@@ -477,9 +476,7 @@ export default function TemplatePreviewModal({
                                                                                 .projectConfigPreview
                                                                                 .joinProjectDeadlineOffset
                                                                         )}{' '}
-                                                                        after
-                                                                        project
-                                                                        start
+                                                                        sau khi dự án bắt đầu
                                                                     </p>
                                                                 )}
                                                             </div>
@@ -492,7 +489,7 @@ export default function TemplatePreviewModal({
                                                     .description && (
                                                     <div>
                                                         <Label className="text-sm font-medium text-gray-700">
-                                                            Description
+                                                            Mô tả
                                                         </Label>
                                                         <p className="text-gray-900">
                                                             {
@@ -507,13 +504,12 @@ export default function TemplatePreviewModal({
                                                 {/* Student Permissions */}
                                                 <div>
                                                     <Label className="text-sm font-medium text-gray-700 mb-2">
-                                                        Student Permissions
+                                                        Quyền hạn sinh viên
                                                     </Label>
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                         <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
                                                             <span className="text-sm text-gray-700">
-                                                                Allow Student
-                                                                Form Team
+                                                                Cho phép sinh viên lập nhóm
                                                             </span>
                                                             <span
                                                                 className={`px-2 py-1 text-xs font-medium rounded-md ${
@@ -527,14 +523,13 @@ export default function TemplatePreviewModal({
                                                                 {previewData
                                                                     .projectConfigPreview
                                                                     .allowStudentFormTeam
-                                                                    ? 'Yes'
-                                                                    : 'No'}
+                                                                    ? 'Có'
+                                                                    : 'Không'}
                                                             </span>
                                                         </div>
                                                         <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
                                                             <span className="text-sm text-gray-700">
-                                                                Allow Student
-                                                                Create Topic
+                                                                Cho phép sinh viên yêu cầu tạo chủ đề mới
                                                             </span>
                                                             <span
                                                                 className={`px-2 py-1 text-xs font-medium rounded-md ${
@@ -548,8 +543,8 @@ export default function TemplatePreviewModal({
                                                                 {previewData
                                                                     .projectConfigPreview
                                                                     .allowStudentCreateTopic
-                                                                    ? 'Yes'
-                                                                    : 'No'}
+                                                                    ? 'Có'
+                                                                    : 'Không'}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -561,14 +556,13 @@ export default function TemplatePreviewModal({
                                                     <Card className="bg-blue-50 border-blue-200">
                                                         <CardHeader>
                                                             <CardTitle className="text-blue-900">
-                                                                Grade
-                                                                Configuration
+                                                                Cấu hình đầu điểm
                                                             </CardTitle>
                                                         </CardHeader>
                                                         <CardContent className="space-y-2">
                                                             <div>
                                                                 <Label className="text-sm font-medium text-blue-700">
-                                                                    Grade Title
+                                                                    Tiêu đề đầu điểm
                                                                 </Label>
                                                                 <p className="text-blue-900">
                                                                     {
@@ -585,7 +579,7 @@ export default function TemplatePreviewModal({
                                                                 .description && (
                                                                 <div>
                                                                     <Label className="text-sm font-medium text-blue-700">
-                                                                        Description
+                                                                        Mô tả
                                                                     </Label>
                                                                     <p className="text-blue-900">
                                                                         {
@@ -600,8 +594,7 @@ export default function TemplatePreviewModal({
                                                             <div className="grid grid-cols-2 gap-4">
                                                                 <div>
                                                                     <Label className="text-sm font-medium text-blue-700">
-                                                                        Max
-                                                                        Score
+                                                                        Điểm tối đa
                                                                     </Label>
                                                                     <p className="text-blue-900">
                                                                         {
@@ -614,7 +607,7 @@ export default function TemplatePreviewModal({
                                                                 </div>
                                                                 <div>
                                                                     <Label className="text-sm font-medium text-blue-700">
-                                                                        Scale
+                                                                        Số chữ số sau dấu phẩy
                                                                     </Label>
                                                                     <p className="text-blue-900">
                                                                         {
@@ -641,7 +634,7 @@ export default function TemplatePreviewModal({
                                             <CardHeader>
                                                 <CardTitle className="flex items-center gap-2">
                                                     <FileText className="h-5 w-5 text-green-600" />
-                                                    Topics (
+                                                    Chủ đề (
                                                     {
                                                         previewData
                                                             .topicsPreview
@@ -654,8 +647,7 @@ export default function TemplatePreviewModal({
                                                 {previewData.topicsPreview
                                                     .length === 0 ? (
                                                     <p className="text-gray-500 text-center py-8">
-                                                        No topics in this
-                                                        template
+                                                        Không có chủ đề trong template này
                                                     </p>
                                                 ) : (
                                                     <div className="space-y-3">
@@ -687,11 +679,8 @@ export default function TemplatePreviewModal({
                                                                                     {
                                                                                         topic.numOfAttachments
                                                                                     }{' '}
-                                                                                    attachment
-                                                                                    {topic.numOfAttachments !==
-                                                                                    1
-                                                                                        ? 's'
-                                                                                        : ''}
+                                                                                    tập tin đính kèm
+                                                                                    
                                                                                 </span>
                                                                             </div>
                                                                         </div>
@@ -713,7 +702,7 @@ export default function TemplatePreviewModal({
                                             <CardHeader>
                                                 <CardTitle className="flex items-center gap-2">
                                                     <Clock className="h-5 w-5 text-orange-600" />
-                                                    Lecturer Assigned Items (
+                                                    Công việc giao cho sinh viên (
                                                     {
                                                         previewData
                                                             .lecturerItemsPreview
@@ -727,8 +716,7 @@ export default function TemplatePreviewModal({
                                                     .lecturerItemsPreview
                                                     .length === 0 ? (
                                                     <p className="text-gray-500 text-center py-8">
-                                                        No tasks in this
-                                                        template
+                                                        Không có công việc trong template này
                                                     </p>
                                                 ) : (
                                                     <div className="space-y-4">
@@ -778,8 +766,7 @@ export default function TemplatePreviewModal({
                                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        Start
-                                                                                        Date
+                                                                                        Ngày bắt đầu
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatDate(
@@ -790,8 +777,7 @@ export default function TemplatePreviewModal({
                                                                                 </div>
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        End
-                                                                                        Date
+                                                                                        Ngày kết thúc
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatDate(
@@ -802,21 +788,18 @@ export default function TemplatePreviewModal({
                                                                                 </div>
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        Time
-                                                                                        Offset
+                                                                                        Công việc xuất bản sau
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatTimeOffset(
                                                                                             item.taskTimeOffset
                                                                                         )}{' '}
-                                                                                        after
-                                                                                        project
-                                                                                        start
+                                                                                        từ khi dự án bắt đầu
                                                                                     </p>
                                                                                 </div>
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        Duration
+                                                                                        Thời gian thực hiện
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatDuration(
@@ -852,7 +835,7 @@ export default function TemplatePreviewModal({
                                                                                             </div>
                                                                                             <div className="text-right">
                                                                                                 <p className="text-green-900 font-medium">
-                                                                                                    Max:{' '}
+                                                                                                    Điểm tối đa:{' '}
                                                                                                     {
                                                                                                         item
                                                                                                             .grade
@@ -860,7 +843,7 @@ export default function TemplatePreviewModal({
                                                                                                     }
                                                                                                 </p>
                                                                                                 <p className="text-green-700 text-xs">
-                                                                                                    Scale:{' '}
+                                                                                                    Số chữ số sau dấu phẩy:{' '}
                                                                                                     {
                                                                                                         item
                                                                                                             .grade
@@ -879,11 +862,8 @@ export default function TemplatePreviewModal({
                                                                                     {
                                                                                         item.numOfAttachments
                                                                                     }{' '}
-                                                                                    attachment
-                                                                                    {item.numOfAttachments !==
-                                                                                    1
-                                                                                        ? 's'
-                                                                                        : ''}
+                                                                                    tập tin đính kèm
+                                                                                    
                                                                                 </span>
                                                                             </div>
                                                                         </div>
@@ -900,7 +880,7 @@ export default function TemplatePreviewModal({
                             </div>
                         ) : (
                             <p className="text-center text-gray-500 py-8">
-                                No preview data available
+                                Không có dữ liệu xem trước
                             </p>
                         )}
                     </div>
@@ -908,7 +888,7 @@ export default function TemplatePreviewModal({
 
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>
-                        Close
+                        Đóng
                     </Button>
                     {onConfirmImport && (
                         <Button
@@ -917,11 +897,11 @@ export default function TemplatePreviewModal({
                             className="bg-blue-600 hover:bg-blue-700"
                         >
                             {isConfirming ? (
-                                'Confirming...'
+                                'Đang xác nhận...'
                             ) : (
                                 <>
                                     <Check className="h-4 w-4 mr-2" />
-                                    Confirm
+                                    Xác nhận
                                 </>
                             )}
                         </Button>

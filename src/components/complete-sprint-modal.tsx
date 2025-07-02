@@ -101,7 +101,7 @@ export const CompleteSprintModal = ({
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-gray-900"
                                 >
-                                    Complete Sprint: {sprint.name}
+                                    Hoàn thành Sprint: {sprint.name}
                                 </HeadlessDialog.Title>
 
                                 <div className="mt-4 space-y-4">
@@ -109,20 +109,20 @@ export const CompleteSprintModal = ({
                                     <div className="bg-green-50 border border-green-200 rounded-md p-3">
                                         <p className="text-sm text-green-800">
                                             <strong>
-                                                Sprint Completion Summary:
+                                                Tổng kết Sprint:
                                             </strong>
                                         </p>
                                         <ul className="text-sm text-green-700 mt-1 list-disc list-inside">
                                             <li>
-                                                {completedTasks.length} tasks
-                                                completed (DONE)
+                                                {completedTasks.length} công việc
+                                                đã hoàn thành (DONE)
                                             </li>
                                             <li>
-                                                {incompleteTasks.length} tasks
-                                                remaining (not DONE)
+                                                {incompleteTasks.length} công việc
+                                                còn lại (not DONE)
                                             </li>
                                             <li>
-                                                Total tasks:{' '}
+                                                Tổng số công việc:{' '}
                                                 {sprint.workItems?.length || 0}
                                             </li>
                                         </ul>
@@ -134,7 +134,7 @@ export const CompleteSprintModal = ({
                                             <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
                                                 <p className="text-sm text-amber-800">
                                                     <strong>
-                                                        Incomplete Tasks:
+                                                        Công việc chưa hoàn thành:
                                                     </strong>
                                                 </p>
                                                 <div className="mt-2 max-h-32 overflow-y-auto">
@@ -155,8 +155,7 @@ export const CompleteSprintModal = ({
 
                                             <div className="space-y-3">
                                                 <Label className="text-gray-700">
-                                                    Where would you like to move
-                                                    the incomplete tasks?
+                                                    Bạn muốn chuyển các công việc chưa hoàn thành đến đâu?
                                                 </Label>
 
                                                 <div className="space-y-2">
@@ -177,7 +176,7 @@ export const CompleteSprintModal = ({
                                                             className="text-blue-600"
                                                         />
                                                         <span className="text-sm text-gray-700">
-                                                            Move to Backlog
+                                                            Chuyển đến Backlog
                                                         </span>
                                                     </label>
 
@@ -198,8 +197,7 @@ export const CompleteSprintModal = ({
                                                             className="text-blue-600"
                                                         />
                                                         <span className="text-sm text-gray-700">
-                                                            Move to another
-                                                            Sprint
+                                                            Chuyển đến Sprint khác
                                                         </span>
                                                     </label>
                                                 </div>
@@ -207,7 +205,7 @@ export const CompleteSprintModal = ({
                                                 {moveOption === 'sprint' && (
                                                     <div className="ml-6 space-y-2">
                                                         <Label className="text-gray-700">
-                                                            Select Sprint:
+                                                            Chọn Sprint:
                                                         </Label>
                                                         <select
                                                             value={
@@ -226,8 +224,7 @@ export const CompleteSprintModal = ({
                                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-black"
                                                         >
                                                             <option value="">
-                                                                Select a
-                                                                sprint...
+                                                                Chọn Sprint...
                                                             </option>
                                                             {otherSprints.map(
                                                                 (s) => (
@@ -258,10 +255,10 @@ export const CompleteSprintModal = ({
                                     {incompleteTasks.length === 0 && (
                                         <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
                                             <p className="text-sm text-blue-800">
-                                                🎉 Congratulations! All tasks in
-                                                this sprint are completed. The
-                                                sprint is ready to be marked as
-                                                complete.
+                                                🎉 Chúc mừng! Tất cả công việc trong
+                                                Sprint này đã hoàn thành. Sprint
+                                                này đã sẵn sàng để được đánh dấu
+                                                là hoàn thành.
                                             </p>
                                         </div>
                                     )}
@@ -269,7 +266,7 @@ export const CompleteSprintModal = ({
 
                                 <div className="mt-6 flex justify-end space-x-3">
                                     <Button variant="outline" onClick={onClose}>
-                                        Cancel
+                                        Hủy
                                     </Button>
                                     <Button
                                         onClick={handleSubmit}
@@ -279,7 +276,7 @@ export const CompleteSprintModal = ({
                                             !selectedSprintId
                                         }
                                     >
-                                        Complete Sprint
+                                        Hoàn thành Sprint
                                     </Button>
                                 </div>
                             </HeadlessDialog.Panel>

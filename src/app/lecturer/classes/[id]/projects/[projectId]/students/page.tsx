@@ -99,9 +99,9 @@ export default function ProjectStudentsPage() {
             const data = await getProjectStudents(projectData.id);
             setStudents(data);
         } catch (error: any) {
-            console.error('Error fetching students:', error);
-            setError(error.message || 'Failed to load students');
-            toast.error('Failed to load project students');
+            console.log("🚀 ~ fetchStudents ~ error:", error)
+            setError(error.message || 'Đã xảy ra lỗi khi tải sinh viên.');
+            toast.error('Đã xảy ra lỗi khi tải sinh viên.');
         } finally {
             setLoading(false);
         }
@@ -115,8 +115,8 @@ export default function ProjectStudentsPage() {
             const data = await getNotJoinedStudents(projectData.id);
             setNotJoinedStudents(data);
         } catch (error: any) {
-            console.error('Error fetching not joined students:', error);
-            toast.error('Failed to load available students');
+            console.log("🚀 ~ fetchNotJoinedStudents ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải sinh viên chưa tham gia.');
         } finally {
             setLoadingNotJoined(false);
         }
@@ -134,8 +134,8 @@ export default function ProjectStudentsPage() {
             );
             setProjectGroups(sortedGroups);
         } catch (error) {
-            console.error('Error fetching project groups:', error);
-            toast.error('Failed to load project groups');
+            console.log("🚀 ~ fetchProjectGroups ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải nhóm.');
         } finally {
             setLoadingGroups(false);
         }
@@ -173,17 +173,17 @@ export default function ProjectStudentsPage() {
 
     const handleAddSelectedStudents = async () => {
         if (selectedStudents.length === 0) {
-            toast.warning('Please select at least one student');
+            toast.warning('Vui lòng chọn ít nhất một sinh viên');
             return;
         }
 
         try {
             if (!projectData?.id) {
-                toast.error('Project ID is not available');
+                toast.error('ID của dự án không khả dụng');
                 return;
             }
             await addStudentsToProject(projectData.id, selectedStudents);
-            toast.success('Students added successfully');
+            toast.success('Sinh viên đã được thêm thành công');
             handleCloseModal();
             fetchStudents();
         } catch (error: any) {
@@ -191,7 +191,7 @@ export default function ProjectStudentsPage() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to add students');
+                toast.error(error.message || 'Đã xảy ra lỗi khi thêm sinh viên.');
             }
         }
     };
@@ -258,7 +258,7 @@ export default function ProjectStudentsPage() {
                 projectData.id,
                 studentToRemove.studentProjectId
             );
-            toast.success('Student removed from project');
+            toast.success('Sinh viên đã được xóa khỏi dự án');
             fetchStudents();
         } catch (error: any) {
             if (Array.isArray(error.message)) {
@@ -280,7 +280,7 @@ export default function ProjectStudentsPage() {
 
     const handleConfirmAssignGroup = async () => {
         if (!studentToAssign || !projectData?.id || !selectedGroupId) {
-            toast.warning('Please select a group');
+            toast.warning('Vui lòng chọn một nhóm');
             return;
         }
 
@@ -289,7 +289,7 @@ export default function ProjectStudentsPage() {
                 studentToAssign.studentProjectId,
                 parseInt(selectedGroupId)
             );
-            toast.success('Student assigned to group');
+            toast.success('Sinh viên đã được thêm vào nhóm');
             fetchStudents();
             setIsAssignGroupModalOpen(false);
             setStudentToAssign(null);
@@ -298,7 +298,7 @@ export default function ProjectStudentsPage() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message);
+                toast.error(error.message || 'Đã xảy ra lỗi khi thêm sinh viên vào nhóm.');
             }
         }
     };
@@ -334,11 +334,11 @@ export default function ProjectStudentsPage() {
             <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                     <div className="text-red-500 text-lg font-semibold mb-2">
-                        Error Loading Students
+                        Lỗi khi tải sinh viên
                     </div>
                     <div className="text-gray-600 mb-4">{error}</div>
                     <Button onClick={fetchStudents} variant="outline">
-                        Try Again
+                        Thử lại
                     </Button>
                 </div>
             </div>
@@ -351,15 +351,15 @@ export default function ProjectStudentsPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900">
-                        Project Students
+                        Sinh viên tham gia dự án
                     </h2>
                     <p className="text-gray-600">
-                        Manage students participating in this project
+                        Quản lý sinh viên tham gia dự án này
                     </p>
                 </div>
                 <Button onClick={handleOpenModal}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Students
+                    Thêm sinh viên
                 </Button>
             </div>
 
@@ -376,7 +376,7 @@ export default function ProjectStudentsPage() {
                                     {students.length}
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                    Total Students
+                                    Tổng số sinh viên
                                 </div>
                             </div>
                         </div>
@@ -394,7 +394,7 @@ export default function ProjectStudentsPage() {
                                     {stats.totalGroups}
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                    Active Groups
+                                    Số nhóm
                                 </div>
                             </div>
                         </div>
@@ -412,7 +412,7 @@ export default function ProjectStudentsPage() {
                                     {stats.studentsWithoutGroup}
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                    Without Group
+                                    Số sinh viên chưa có nhóm
                                 </div>
                             </div>
                         </div>
@@ -425,13 +425,13 @@ export default function ProjectStudentsPage() {
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                        placeholder="Search by name, email, or student ID..."
+                        placeholder="Tìm kiếm theo tên, email, hoặc ID sinh viên..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
                     />
                 </div>
-                <Button variant="outline">Filter</Button>
+                <Button variant="outline">Lọc</Button>
             </div>
 
             {/* Students List */}
@@ -439,15 +439,15 @@ export default function ProjectStudentsPage() {
                 <CardHeader className="pb-4">
                     <CardTitle className="flex items-center space-x-2">
                         <Users className="h-5 w-5" />
-                        <span>Students ({filteredStudents.length})</span>
+                        <span>Sinh viên ({filteredStudents.length})</span>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     {filteredStudents.length === 0 ? (
                         <div className="text-center py-12 text-gray-500">
                             {searchTerm
-                                ? 'No students found matching your search.'
-                                : 'No students in this project yet.'}
+                                ? 'Không tìm thấy sinh viên phù hợp với tìm kiếm.'
+                                : 'Không có sinh viên trong dự án này.'}
                         </div>
                     ) : (
                         <div className="divide-y divide-gray-100">
@@ -487,7 +487,7 @@ export default function ProjectStudentsPage() {
                                         >
                                             {getRoleIcon(student.role)}
                                             <span>
-                                                {student.role || 'MEMBER'}
+                                                {student.role === 'LEADER' ? 'Trưởng nhóm' : 'Thành viên'}
                                             </span>
                                         </Badge>
                                         {student.groupNumber ? (
@@ -495,14 +495,14 @@ export default function ProjectStudentsPage() {
                                                 variant="secondary"
                                                 className="bg-green-500 px-3 py-1"
                                             >
-                                                Group {student.groupNumber}
+                                                Nhóm {student.groupNumber}
                                             </Badge>
                                         ) : (
                                             <Badge
                                                 variant="secondary"
                                                 className="bg-red-500 px-3 py-1"
                                             >
-                                                No group
+                                                Chưa có nhóm
                                             </Badge>
                                         )}
                                         <div className="relative">
@@ -514,7 +514,7 @@ export default function ProjectStudentsPage() {
                                                         className="h-8 w-8 p-0 hover:bg-gray-100 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
                                                     >
                                                         <span className="sr-only">
-                                                            Open menu
+                                                            Mở menu
                                                         </span>
                                                         <MoreVertical className="h-4 w-4" />
                                                     </Button>
@@ -534,7 +534,7 @@ export default function ProjectStudentsPage() {
                                                         >
                                                             <UserPlus className="mr-2 h-4 w-4" />
                                                             <span>
-                                                                Assign to Group
+                                                                Thêm vào nhóm
                                                             </span>
                                                         </DropdownMenuItem>
                                                     )}
@@ -548,7 +548,7 @@ export default function ProjectStudentsPage() {
                                                     >
                                                         <UserMinus className="mr-2 h-4 w-4" />
                                                         <span>
-                                                            Remove from Project
+                                                            Xóa khỏi dự án
                                                         </span>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -567,11 +567,10 @@ export default function ProjectStudentsPage() {
                 <DialogContent className="sm:max-w-[600px] bg-white text-gray-900">
                     <DialogHeader>
                         <DialogTitle className="text-xl font-semibold text-gray-900">
-                            Add Students to Project
+                            Thêm sinh viên vào dự án
                         </DialogTitle>
                         <DialogDescription className="text-gray-600">
-                            Select students from the class to add to this
-                            project.
+                            Chọn sinh viên từ lớp để thêm vào dự án này
                         </DialogDescription>
                     </DialogHeader>
 
@@ -592,17 +591,17 @@ export default function ProjectStudentsPage() {
                                         htmlFor="select-all"
                                         className="text-sm font-medium text-gray-900"
                                     >
-                                        Select All
+                                        Chọn tất cả
                                     </label>
                                 </div>
                                 <span className="text-sm text-gray-600">
-                                    {selectedStudents.length} selected
+                                    {selectedStudents.length} đã chọn
                                 </span>
                             </div>
                         ) : (
                             <div className="text-center py-8">
                                 <p className="text-gray-600">
-                                    No students available to add
+                                    Không có sinh viên nào có thể thêm vào dự án
                                 </p>
                             </div>
                         )}
@@ -611,7 +610,7 @@ export default function ProjectStudentsPage() {
                             <div className="text-center py-8">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
                                 <p className="mt-2 text-gray-600">
-                                    Loading available students...
+                                    Đang tải sinh viên có thể thêm vào dự án...
                                 </p>
                             </div>
                         ) : (
@@ -666,13 +665,13 @@ export default function ProjectStudentsPage() {
 
                     <DialogFooter>
                         <Button variant="outline" onClick={handleCloseModal}>
-                            Cancel
+                            Hủy
                         </Button>
                         <Button
                             onClick={handleAddSelectedStudents}
                             disabled={selectedStudents.length === 0}
                         >
-                            Add Selected ({selectedStudents.length})
+                            Thêm ({selectedStudents.length}) sinh viên
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -686,10 +685,10 @@ export default function ProjectStudentsPage() {
                     setStudentToRemove(null);
                 }}
                 onConfirm={handleConfirmRemove}
-                title="Remove Student"
-                description={`Are you sure you want to remove ${studentToRemove?.name} from this project? This action cannot be undone.`}
-                confirmText="Remove"
-                cancelText="Cancel"
+                title="Xóa sinh viên"
+                description={`Bạn có chắc chắn muốn xóa ${studentToRemove?.name} khỏi dự án này? Thao tác này không thể hoàn tác.`}
+                confirmText="Xóa sinh viên"
+                cancelText="Hủy"
             />
 
             {/* Assign Group Modal */}
@@ -699,9 +698,9 @@ export default function ProjectStudentsPage() {
             >
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Assign to Group</DialogTitle>
+                        <DialogTitle>Thêm vào nhóm</DialogTitle>
                         <DialogDescription>
-                            Select a group to assign {studentToAssign?.name}
+                            Chọn một nhóm để thêm {studentToAssign?.name}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -710,7 +709,7 @@ export default function ProjectStudentsPage() {
                             <div className="text-center py-4">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
                                 <p className="mt-2 text-gray-600">
-                                    Loading groups...
+                                    Đang tải nhóm...
                                 </p>
                             </div>
                         ) : (
@@ -733,10 +732,10 @@ export default function ProjectStudentsPage() {
                                             className="flex-1"
                                         >
                                             <span className="font-medium">
-                                                Group {group.number}
+                                                Nhóm {group.number}
                                             </span>
                                             <span className="text-gray-500 ml-2">
-                                                ({group.numberOfMember} members)
+                                                ({group.numberOfMember} thành viên)
                                             </span>
                                         </Label>
                                     </div>
@@ -754,13 +753,13 @@ export default function ProjectStudentsPage() {
                                 setSelectedGroupId('');
                             }}
                         >
-                            Cancel
+                            Hủy
                         </Button>
                         <Button
                             onClick={handleConfirmAssignGroup}
                             disabled={!selectedGroupId || loadingGroups}
                         >
-                            Assign to Group
+                            Thêm vào nhóm
                         </Button>
                     </DialogFooter>
                 </DialogContent>

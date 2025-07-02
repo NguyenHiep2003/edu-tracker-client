@@ -103,27 +103,26 @@ export default function GroupsPage() {
         null
     );
     const router = useRouter();
+    const fetchData = async () => {
+        if (!projectData?.id) return;
+
+        try {
+            setLoading(true);
+            setError(null);
+            const [groupsData, studentsData] = await Promise.all([
+                getProjectGroups(projectData.id),
+                getProjectStudents(projectData.id),
+            ]);
+            setGroups(groupsData);
+            setStudents(studentsData);
+        } catch (error: any) {
+            console.log('🚀 ~ fetchData ~ error:', error);
+            setError(error.message || 'Đã xảy ra lỗi khi tải dữ liệu.');
+        } finally {
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchData = async () => {
-            if (!projectData?.id) return;
-
-            try {
-                setLoading(true);
-                setError(null);
-                const [groupsData, studentsData] = await Promise.all([
-                    getProjectGroups(projectData.id),
-                    getProjectStudents(projectData.id),
-                ]);
-                setGroups(groupsData);
-                setStudents(studentsData);
-            } catch (error: any) {
-                console.error('Error fetching data:', error);
-                setError(error.message || 'Failed to load data');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
     }, [projectData?.id]);
 
@@ -161,7 +160,7 @@ export default function GroupsPage() {
             setGroups(groupsData);
             setStudents(studentsData);
         } catch (error: any) {
-            console.error('Error refetching data:', error);
+            console.log('🚀 ~ handleGroupsDivided ~ error:', error);
         }
     };
 
@@ -170,7 +169,6 @@ export default function GroupsPage() {
         setShowMembersModal(true);
         try {
             setLoadingMembers(true);
-            // TODO: Replace with actual API call to get group members
             const members = await getUserInGroup(group.id);
             setGroupMembers(members);
         } catch (error: any) {
@@ -197,7 +195,7 @@ export default function GroupsPage() {
                 memberToRemove.studentProjectId,
                 selectedGroup.id
             );
-            toast.success('Member removed from group');
+            toast.success('Thành viên đã được xóa khỏi nhóm');
             // Refresh members list
             if (groupMembers.length > 1) {
                 const updatedMembers = await getUserInGroup(selectedGroup.id);
@@ -206,12 +204,13 @@ export default function GroupsPage() {
                 setShowMembersModal(false);
                 setSelectedGroup(null);
             }
-            // Refresh groups to update member count
             if (projectData?.id) {
-                const [groupsData] = await Promise.all([
-                    getProjectGroups(projectData.id),
-                ]);
+            const [groupsData, studentsData] = await Promise.all([
+                getProjectGroups(projectData.id),
+                getProjectStudents(projectData.id),
+            ]);
                 setGroups(groupsData);
+                setStudents(studentsData);
             }
         } catch (error: any) {
             if (Array.isArray(error.message)) {
@@ -256,11 +255,11 @@ export default function GroupsPage() {
         return (
             <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-red-500 text-lg font-medium mb-2">
-                    Error loading groups
+                    Đã xảy ra lỗi khi tải nhóm
                 </div>
                 <div className="text-gray-600 mb-4">{error}</div>
                 <Button onClick={() => window.location.reload()}>
-                    Try Again
+                    Thử lại
                 </Button>
             </div>
         );
@@ -272,10 +271,10 @@ export default function GroupsPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Project Groups
+                        Danh sách nhóm dự án
                     </h1>
                     <p className="text-gray-600 mt-1">
-                        Manage groups participating in this project
+                        Quản lý nhóm tham gia dự án này
                     </p>
                 </div>
                 <div className="flex space-x-3">
@@ -286,7 +285,7 @@ export default function GroupsPage() {
                             className="border-blue-600 text-blue-600 hover:bg-blue-50"
                         >
                             <Shuffle className="w-4 h-4 mr-2" />
-                            Auto Divide Groups
+                            Tự động chia nhóm
                         </Button>
                     )}
                     {/* <Button className="bg-blue-600 hover:bg-blue-700">
@@ -309,7 +308,7 @@ export default function GroupsPage() {
                                     {totalGroups}
                                 </p>
                                 <p className="text-sm text-gray-600">
-                                    Total Groups
+                                    Tổng số nhóm
                                 </p>
                             </div>
                         </div>
@@ -327,7 +326,7 @@ export default function GroupsPage() {
                                     {groupsWithTopics}
                                 </p>
                                 <p className="text-sm text-gray-600">
-                                    With Topics
+                                    Số nhóm có chủ đề
                                 </p>
                             </div>
                         </div>
@@ -358,7 +357,7 @@ export default function GroupsPage() {
                 <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
-                        placeholder="Search by group number, leader, or topic..."
+                        placeholder="Tìm kiếm theo số nhóm, trưởng nhóm, hoặc chủ đề..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
@@ -366,7 +365,7 @@ export default function GroupsPage() {
                 </div>
                 <Button variant="outline">
                     <Filter className="w-4 h-4 mr-2" />
-                    Filter
+                    Lọc
                 </Button>
             </div>
 
@@ -378,19 +377,19 @@ export default function GroupsPage() {
                             <thead className="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Group
+                                        Nhóm
                                     </th>
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Leader
+                                        Trưởng nhóm
                                     </th>
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Members
+                                        Số thành viên
                                     </th>
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Topic
+                                        Chủ đề
                                     </th>
                                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
+                                        Hành động
                                     </th>
                                 </tr>
                             </thead>
@@ -403,12 +402,12 @@ export default function GroupsPage() {
                                         >
                                             <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                                             <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                                No groups found
+                                                Không tìm thấy nhóm
                                             </h3>
                                             <p className="text-gray-600">
                                                 {searchTerm
-                                                    ? 'Try adjusting your search criteria.'
-                                                    : 'No groups have been created for this project yet.'}
+                                                    ? 'Vui lòng điều chỉnh tiêu chí tìm kiếm.'
+                                                    : 'Không có nhóm nào được tạo cho dự án này.'}
                                             </p>
                                         </td>
                                     </tr>
@@ -427,8 +426,7 @@ export default function GroupsPage() {
                                                     </div>
                                                     <div>
                                                         <div className="text-sm font-medium text-gray-900">
-                                                            Group{' '}
-                                                            {group?.number}
+                                                            Nhóm {group?.number}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -440,7 +438,7 @@ export default function GroupsPage() {
                                                         <div className="text-sm font-medium text-gray-900">
                                                             {group?.leader
                                                                 ?.name ||
-                                                                'No Name'}
+                                                                'Không có tên'}
                                                         </div>
                                                         <div className="text-sm text-gray-500">
                                                             {
@@ -456,11 +454,7 @@ export default function GroupsPage() {
                                                     <Users className="w-4 h-4 text-gray-400" />
                                                     <span className="text-sm text-gray-900">
                                                         {group.numberOfMember}{' '}
-                                                        member
-                                                        {group.numberOfMember !==
-                                                        1
-                                                            ? 's'
-                                                            : ''}
+                                                        thành viên
                                                     </span>
                                                 </div>
                                             </td>
@@ -475,7 +469,7 @@ export default function GroupsPage() {
                                                 >
                                                     {group.topic
                                                         ? group.topic.title
-                                                        : 'Not chosen yet'}
+                                                        : 'Chưa chọn'}
                                                 </Badge>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
@@ -503,7 +497,8 @@ export default function GroupsPage() {
                                                             }
                                                         >
                                                             <Workflow className="w-4 h-4 mr-2" />
-                                                            View All Works
+                                                            Xem tất cả các công
+                                                            việc
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             onClick={() =>
@@ -513,7 +508,7 @@ export default function GroupsPage() {
                                                             }
                                                         >
                                                             <BarChart3 className="w-4 h-4 mr-2" />
-                                                            View Statistics
+                                                            Xem thống kê
                                                         </DropdownMenuItem>
                                                         {projectData?.type ==
                                                             'TEAM' && (
@@ -525,7 +520,8 @@ export default function GroupsPage() {
                                                                 }
                                                             >
                                                                 <Eye className="w-4 h-4 mr-2" />
-                                                                View All Members
+                                                                Xem tất cả thành
+                                                                viên
                                                             </DropdownMenuItem>
                                                         )}
                                                     </DropdownMenuContent>
@@ -586,10 +582,10 @@ export default function GroupsPage() {
                                         as="h3"
                                         className="text-xl font-semibold leading-6 text-gray-900 mb-2"
                                     >
-                                        Group {selectedGroup?.number} Members
+                                        Thành viên nhóm {selectedGroup?.number}
                                     </Dialog.Title>
                                     <p className="text-gray-600 mb-6">
-                                        Manage members of this group
+                                        Quản lý thành viên của nhóm này
                                     </p>
 
                                     <div className="py-4">
@@ -610,7 +606,7 @@ export default function GroupsPage() {
                                                             <div className="flex items-center space-x-2">
                                                                 <span className="font-medium text-gray-900">
                                                                     {member.name ||
-                                                                        'No Name'}
+                                                                        'Không có tên'}
                                                                 </span>
                                                                 {member.roleInGroup ===
                                                                     'LEADER' && (
@@ -671,12 +667,12 @@ export default function GroupsPage() {
                     setMemberToRemove(null);
                 }}
                 onConfirm={handleConfirmRemove}
-                title="Remove Member"
-                description={`Are you sure you want to remove ${
-                    memberToRemove?.name || 'this member'
-                } from the group? This action cannot be undone.`}
-                confirmText="Remove"
-                cancelText="Cancel"
+                title="Xóa thành viên"
+                description={`Bạn có chắc chắn muốn xóa ${
+                    memberToRemove?.name || 'thành viên này'
+                } khỏi nhóm? Thao tác này không thể hoàn tác.`}
+                confirmText="Xóa"
+                cancelText="Hủy"
             />
         </div>
     );

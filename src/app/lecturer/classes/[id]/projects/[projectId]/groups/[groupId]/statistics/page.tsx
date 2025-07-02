@@ -134,7 +134,7 @@ export default function GroupStatisticsPage() {
                         .then((res) => setDevWeeklyData(res.data)),
                 ]);
             } catch (error) {
-                console.error('Error fetching group data:', error);
+                console.log("🚀 ~ fetchData ~ error:", error)
             } finally {
                 setLoading(false);
             }
@@ -151,7 +151,7 @@ export default function GroupStatisticsPage() {
             setStudents(response.data);
             setIsGradeModalOpen(true);
         } catch (error) {
-            console.error('Error fetching students:', error);
+            console.log("🚀 ~ handleGradeClick ~ error:", error)
         }
     };
 
@@ -197,7 +197,7 @@ export default function GroupStatisticsPage() {
                 commits: parseInt(d.total_commit || '0'),
                 workItems: parseInt(d.total_work_done || '0'),
                 evidences: parseInt(d.file_work_evidences || '0'),
-                fullName: d.student_name || d.student_email || 'Unknown',
+                fullName: d.student_name || d.student_email || 'Không có tên',
             }))
             .sort((a, b) => b.workItems - a.workItems);
     };
@@ -324,7 +324,7 @@ export default function GroupStatisticsPage() {
                     <div>
                         <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
                             <FileCheck className="h-5 w-5 text-blue-600" />
-                            Work Items Overview
+                            Tổng quan công việc của nhóm
                         </h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                             <StatCard
@@ -348,7 +348,7 @@ export default function GroupStatisticsPage() {
                                 icon={FileCheck}
                             />
                             <StatCard
-                                title="Total Items"
+                                title="Tổng số công việc"
                                 value={
                                     parseInt(overview?.total_epic_done || '0') +
                                     parseInt(
@@ -362,7 +362,7 @@ export default function GroupStatisticsPage() {
                                 icon={FileCheck}
                             />
                             <StatCard
-                                title="Evidence Files"
+                                title="Tổng số tài liệu minh chứng"
                                 value={overview?.file_work_evidences || '0'}
                                 icon={FileText}
                             />
@@ -373,30 +373,30 @@ export default function GroupStatisticsPage() {
                     <div>
                         <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
                             <Code className="h-5 w-5 text-blue-600" />
-                            Development Overview
+                            Tổng quan thông số phát triển của nhóm
                         </h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                             <StatCard
-                                title="Total Commits"
+                                title="Tổng số commit"
                                 value={overview?.total_commit || '0'}
                                 icon={GitCommit}
                             />
                             <StatCard
-                                title="Lines Added"
+                                title="Tổng số dòng code thêm"
                                 value={overview?.total_of_line_code_add || '0'}
                                 icon={Code}
-                                description="lines"
+                                description="dòng"
                             />
                             <StatCard
-                                title="Lines Deleted"
+                                title="Tổng số dòng code xóa"
                                 value={
                                     overview?.total_of_line_code_deleted || '0'
                                 }
                                 icon={Code}
-                                description="lines"
+                                description="dòng"
                             />
                             <StatCard
-                                title="Total Changes"
+                                title="Tổng số thay đổi"
                                 value={
                                     parseInt(
                                         overview?.total_of_line_code_add || '0'
@@ -407,7 +407,7 @@ export default function GroupStatisticsPage() {
                                     )
                                 }
                                 icon={Code}
-                                description="lines"
+                                description="dòng"
                             />
                         </div>
                     </div>
@@ -417,7 +417,7 @@ export default function GroupStatisticsPage() {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                         <Users className="h-5 w-5" />
-                        Work Distribution
+                        Phân bổ công việc giữa các thành viên
                     </h2>
 
                     <div className="space-y-8">
@@ -482,17 +482,17 @@ export default function GroupStatisticsPage() {
                                     />
                                     <Bar
                                         dataKey="workItems"
-                                        name="Work Items"
+                                        name="Công việc"
                                         fill="#0088FE"
                                     />
                                     <Bar
                                         dataKey="commits"
-                                        name="Commits"
+                                        name="Commit"
                                         fill="#00C49F"
                                     />
                                     <Bar
                                         dataKey="evidences"
-                                        name="Evidence Files"
+                                        name="Tài liệu minh chứng"
                                         fill="#FFBB28"
                                     />
                                 </BarChart>
@@ -505,28 +505,28 @@ export default function GroupStatisticsPage() {
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Member
+                                            Thành viên
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Role
+                                            Vai trò
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Work Items
+                                            Tổng số công việc
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Story Points
+                                            Tổng story points
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Lines Code Added
+                                            Tổng số dòng code thêm
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Lines Code Deleted
+                                            Tổng số dòng code xóa
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Average Rating
+                                            Đánh giá trung bình
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
+                                            Hành động
                                         </th>
                                     </tr>
                                 </thead>
@@ -570,12 +570,12 @@ export default function GroupStatisticsPage() {
                                                         <div className="ml-4">
                                                             <div className="text-sm font-medium text-gray-900">
                                                                 {member.student_name ||
-                                                                    member.student_email ||
-                                                                    'Unknown'}
+                                                                    member.student_email || 
+                                                                    'Không có tên'}
                                                             </div>
                                                             <div className="text-sm text-gray-500">
                                                                 {member.student_externalid ||
-                                                                    'No ID'}
+                                                                    'Không có ID'}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -589,8 +589,7 @@ export default function GroupStatisticsPage() {
                                                                 : 'bg-gray-100 text-gray-800'
                                                         }`}
                                                     >
-                                                        {member.group_role ||
-                                                            'MEMBER'}
+                                                        {member.group_role === 'LEADER' ? 'Trưởng nhóm' : 'Thành viên'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -646,8 +645,8 @@ export default function GroupStatisticsPage() {
                                                             </TooltipTrigger>
                                                             <TooltipContent>
                                                                 <p>
-                                                                    View all
-                                                                    works
+                                                                    Xem tất cả
+                                                                    công việc đã làm
                                                                 </p>
                                                             </TooltipContent>
                                                         </Tooltip>
@@ -665,7 +664,7 @@ export default function GroupStatisticsPage() {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                         <FileCheck className="h-5 w-5" />
-                        Weekly Progress
+                        Tiến độ phát triển hàng tuần
                     </h2>
                     <div className="h-[400px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -692,7 +691,7 @@ export default function GroupStatisticsPage() {
                                         fill: '#374151',
                                     }}
                                     label={{
-                                        value: 'Work Items Completed',
+                                        value: 'Công việc hoàn thành',
                                         angle: -90,
                                         position: 'insideLeft',
                                         style: { textAnchor: 'middle' },
@@ -734,13 +733,13 @@ export default function GroupStatisticsPage() {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                         <GitCommit className="h-5 w-5" />
-                        Weekly Development Progress
+                        Tiến độ phát triển mã nguồn hàng tuần
                     </h2>
 
                     {/* Commits Chart */}
                     <div className="mb-8">
                         <h3 className="text-lg font-medium mb-4">
-                            Commits per Member
+                            Commit mỗi thành viên
                         </h3>
                         <div className="h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
@@ -813,7 +812,7 @@ export default function GroupStatisticsPage() {
                     {/* Code Changes Chart */}
                     <div>
                         <h3 className="text-lg font-medium mb-4">
-                            Code Changes per Member (Lines Added + Deleted)
+                            Thay đổi mã nguồn của mỗi thành viên (dòng code thêm + dòng code xóa)
                         </h3>
                         <div className="h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
@@ -896,7 +895,7 @@ export default function GroupStatisticsPage() {
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p>Grade Students</p>
+                            <p>Chấm điểm thành viên</p>
                         </TooltipContent>
                     </Tooltip>
                 )}

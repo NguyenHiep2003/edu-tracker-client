@@ -47,22 +47,22 @@ function StudentProjectLayoutContent({
 
     const navigation = [
         {
-            name: 'Overview',
+            name: 'Tổng quan',
             href: `/student/classes/${classId}/projects/${projectId}/details`,
             icon: FileText,
         },
         {
-            name: 'Students',
+            name: 'Sinh viên',
             href: `/student/classes/${classId}/projects/${projectId}/details/students`,
             icon: User,
         },
         {
-            name: 'Groups',
+            name: 'Nhóm',
             href: `/student/classes/${classId}/projects/${projectId}/details/groups`,
             icon: Users,
         },
         {
-            name: 'Topics',
+            name: 'Chủ đề',
             href: `/student/classes/${classId}/projects/${projectId}/details/topics`,
             icon: Target,
         },
@@ -73,7 +73,7 @@ function StudentProjectLayoutContent({
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading project...</p>
+                    <p className="mt-4 text-gray-600">Đang tải dự án...</p>
                 </div>
             </div>
         );
@@ -92,11 +92,11 @@ function StudentProjectLayoutContent({
                                 className="flex items-center hover:text-blue-600 transition-colors"
                             >
                                 <ArrowLeft className="h-4 w-4 mr-1" />
-                                Projects
+                                Dự án
                             </Link>
                             <span className="mx-2">/</span>
                             <span className="text-gray-900 font-medium">
-                                Project Details
+                                Chi tiết dự án
                             </span>
                         </nav>
 
@@ -142,13 +142,13 @@ function StudentProjectLayoutContent({
                                                         ]
                                                     );
                                                     toast.success(
-                                                        'You have joined the project.'
+                                                        'Bạn đã tham gia dự án.'
                                                     );
                                                     refetchProject();
                                                 }
                                             }}
                                         >
-                                            Join Project
+                                            Tham gia dự án
                                         </Button>
                                     </TooltipTrigger>
                                     <TooltipContent>
@@ -157,9 +157,9 @@ function StudentProjectLayoutContent({
                                                 ? new Date(
                                                       projectData.joinProjectDeadline
                                                   ) < new Date()
-                                                    ? 'You cannot join the project because the join project deadline has passed.'
-                                                    : 'You can join the project until the join project deadline.'
-                                                : 'You can join the project.'}
+                                                    ? 'Bạn không thể tham gia dự án vì thời gian tham gia đã quá hạn.'
+                                                    : 'Bạn có thể tham gia dự án cho đến hạn tham gia.'
+                                                : 'Bạn có thể tham gia dự án.'}
                                         </p>
                                     </TooltipContent>
                                 </Tooltip>
@@ -175,7 +175,7 @@ function StudentProjectLayoutContent({
                                         );
                                     }}
                                 >
-                                    Manage Progress
+                                    Quản lý tiến độ công việc
                                 </Button>
                             )}
                         {projectData &&
@@ -197,12 +197,12 @@ function StudentProjectLayoutContent({
                                                     setIsOpen(true);
                                                 }}
                                             >
-                                                Leave Project
+                                                Rời khỏi dự án
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
                                             <p className="text-xs text-gray-600">
-                                                You can leave the project.
+                                                Bạn có thể rời khỏi dự án.
                                             </p>
                                         </TooltipContent>
                                     </Tooltip>
@@ -241,13 +241,13 @@ function StudentProjectLayoutContent({
                                 projectData.id,
                                 projectData.studentProjectId
                             );
-                            toast.success('You have left the project.');
+                            toast.success('Bạn đã rời khỏi dự án.');
                             refetchProject();
                         }
                         setIsOpen(false);
                     }}
-                    title="Leave Project"
-                    description="Are you sure you want to leave the project?"
+                    title="Rời khỏi dự án"
+                    description="Bạn có chắc chắn muốn rời khỏi dự án?"
                 />
             </div>
 

@@ -95,9 +95,9 @@ export default function TaskDetailsPage() {
             );
             setDetails(data);
         } catch (err: any) {
-            setError('Failed to load submission details.');
+            setError('Lỗi khi tải các bài nộp.');
             toast.error(
-                err.message || 'An error occurred while fetching data.'
+                err.message || 'Đã xảy ra lỗi khi tải các bài nộp.'
             );
         } finally {
             setLoading(false);
@@ -119,8 +119,8 @@ export default function TaskDetailsPage() {
             setStudents(response.data);
             setIsGradeModalOpen(true);
         } catch (error) {
-            console.error('Error fetching students:', error);
-            toast.error('Failed to load student grade data');
+            console.log("🚀 ~ handleGradeClick ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải điểm sinh viên.');
         }
     };
 
@@ -129,7 +129,7 @@ export default function TaskDetailsPage() {
             <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
                 <span className="ml-2 text-gray-600">
-                    Loading submission details...
+                    Đang tải các bài nộp...
                 </span>
             </div>
         );
@@ -140,11 +140,11 @@ export default function TaskDetailsPage() {
             <div className="text-center py-12 text-red-600">
                 <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
                 <h3 className="text-lg font-medium mb-2">
-                    Something went wrong
+                    Đã xảy ra lỗi
                 </h3>
                 <p>{error}</p>
                 <Button onClick={() => router.back()} className="mt-4">
-                    Go Back
+                    Quay lại
                 </Button>
             </div>
         );
@@ -153,7 +153,7 @@ export default function TaskDetailsPage() {
     if (!details) {
         return (
             <div className="text-center py-12 text-gray-600">
-                <p>No submission details found.</p>
+                <p>Không tìm thấy các bài nộp.</p>
             </div>
         );
     }
@@ -180,7 +180,7 @@ export default function TaskDetailsPage() {
                         {details.summary}
                     </h1>
                     <p className="text-gray-600">
-                        View and manage group submissions for this task.
+                        Xem và quản lý các bài nộp cho công việc này.
                     </p>
                 </div>
             </div>
@@ -188,12 +188,12 @@ export default function TaskDetailsPage() {
             {/* Task Overview */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Task Overview</CardTitle>
+                    <CardTitle>Tổng quan công việc</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="mb-4">
                         <p className="text-sm font-medium text-gray-800">
-                            Description
+                            Mô tả
                         </p>
                         <p className="text-sm text-gray-600">
                             {details.description || 'No description provided.'}
@@ -204,7 +204,7 @@ export default function TaskDetailsPage() {
                             <Calendar className="h-5 w-5 text-gray-500" />
                             <div>
                                 <div className="text-sm font-medium">
-                                    Start Date
+                                    Ngày bắt đầu
                                 </div>
                                 <div className="text-sm text-gray-600">
                                     {details.startDate
@@ -212,7 +212,7 @@ export default function TaskDetailsPage() {
                                               details.startDate,
                                               'dd/MM/yyyy HH:mm'
                                           )
-                                        : 'Not set'}
+                                        : 'Chưa đặt'}
                                 </div>
                             </div>
                         </div>
@@ -221,7 +221,7 @@ export default function TaskDetailsPage() {
                             <Clock className="h-5 w-5 text-gray-500" />
                             <div>
                                 <div className="text-sm font-medium">
-                                    End Date
+                                    Ngày kết thúc
                                 </div>
                                 <div className="text-sm text-gray-600">
                                     {details.endDate
@@ -229,17 +229,17 @@ export default function TaskDetailsPage() {
                                               details.endDate,
                                               'dd/MM/yyyy HH:mm'
                                           )
-                                        : 'Not set'}
+                                        : 'Chưa đặt'}
                                 </div>
                             </div>
                         </div>
 
                         <div className="space-y-2">
                             <div className="flex justify-between text-sm font-medium">
-                                <span>Submission Progress</span>
+                                <span>Tiến độ nộp</span>
                                 <span>
                                     {details.numbOfGroupSubmitted} /{' '}
-                                    {details.numbOfGroup} Groups
+                                    {details.numbOfGroup} nhóm
                                 </span>
                             </div>
                             <Progress
@@ -255,7 +255,7 @@ export default function TaskDetailsPage() {
                             <div className="flex items-center gap-2 mb-3">
                                 <Paperclip className="h-4 w-4 text-gray-500" />
                                 <p className="text-sm font-medium text-gray-800">
-                                    Attachments ({details.attachments.length})
+                                    Tập tin đính kèm ({details.attachments.length})
                                 </p>
                             </div>
                             <div className="space-y-2">
@@ -291,7 +291,7 @@ export default function TaskDetailsPage() {
                                             className="flex items-center gap-1"
                                         >
                                             <Eye className="h-3 w-3" />
-                                            View
+                                                Xem
                                         </Button>
                                     </div>
                                 ))}
@@ -304,7 +304,7 @@ export default function TaskDetailsPage() {
             {/* Submissions List */}
             <div>
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
-                    Submissions
+                    Các bài nộp
                 </h2>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {details.cloneItems.map((submission, index) => {
@@ -327,14 +327,14 @@ export default function TaskDetailsPage() {
                                                     variant="destructive"
                                                     className="border-0"
                                                 >
-                                                    Submitted Late
+                                                    Nộp muộn
                                                 </Badge>
                                             )}
                                             {getStatusBadge(submission.status)}
                                         </div>
                                     </div>
                                     <p className="text-xs text-gray-500 pt-1">
-                                        Last updated:{' '}
+                                        Cập nhật gần nhất:{' '}
                                         {formatDate(
                                             submission.updatedAt,
                                             'dd/MM/yyyy HH:mm'
@@ -345,7 +345,7 @@ export default function TaskDetailsPage() {
                                     {details.grade && (
                                         <div className="mb-4">
                                             <p className="text-sm font-medium mb-1">
-                                                Grading Progress
+                                                Tiến độ đánh giá
                                             </p>
                                             <div className="space-y-2">
                                                 <div className="flex justify-between text-sm">
@@ -357,7 +357,7 @@ export default function TaskDetailsPage() {
                                                         {
                                                             submission.numOfMembers
                                                         }{' '}
-                                                        Members Graded
+                                                        sinh viên đã đánh giá
                                                     </span>
                                                     <span>
                                                         {submission.numOfMembers >
@@ -394,7 +394,7 @@ export default function TaskDetailsPage() {
                                                     }
                                                 >
                                                     <Award className="h-4 w-4 mr-1" />
-                                                    Grade
+                                                    Đánh giá
                                                 </Button>
                                                 <Button
                                                     variant="outline"
@@ -414,7 +414,7 @@ export default function TaskDetailsPage() {
                                                     }}
                                                 >
                                                     <CheckCircle className="h-4 w-4 mr-1" />
-                                                    View Progress
+                                                    Xem tiến độ
                                                 </Button>
                                             </div>
                                         </div>
@@ -423,7 +423,7 @@ export default function TaskDetailsPage() {
                                     <div>
                                         <p className="text-sm font-medium mb-2 flex items-center gap-2">
                                             <Users className="h-4 w-4" />
-                                            Group Members
+                                            Thành viên nhóm
                                         </p>
                                         <ul className="space-y-1">
                                             {submission.students.map(

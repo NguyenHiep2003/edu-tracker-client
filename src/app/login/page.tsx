@@ -61,23 +61,23 @@ export default function LoginPage() {
     const roles = [
         {
             id: 'admin',
-            name: 'Organization Admin',
+            name: 'Quản trị viên',
             icon: Shield,
-            description: 'Manage organization resources and users',
+            description: 'Quản lý tài nguyên và người dùng',
             homePagePath: '/admin/home',
         },
         {
             id: 'lecturer',
-            name: 'Lecturer',
+            name: 'Giảng viên',
             icon: GraduationCap,
-            description: 'Create and manage classes and projects',
+            description: 'Tạo, quản lý lớp học và dự án',
             homePagePath: '/lecturer/home',
         },
         {
             id: 'student',
-            name: 'Student',
+            name: 'Sinh viên',
             icon: Users,
-            description: 'Join classes and track learning progress',
+            description: 'Tham gia lớp học và theo dõi tiến trình học tập',
             homePagePath: '/student/home',
         },
     ];
@@ -89,7 +89,7 @@ export default function LoginPage() {
                 const organizations = await getAvailableOrganization();
                 setOrganizations(organizations);
             } catch (error) {
-                console.error('Error fetching organizations:', error);
+                console.log("🚀 ~ fetchOrganizations ~ error:", error)
             } finally {
                 setFetchingOrganizations(false);
             }
@@ -158,7 +158,7 @@ export default function LoginPage() {
                         className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4"
                     >
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to Home
+                        Quay về trang chủ
                     </Link>
                     <div className="flex items-center justify-center space-x-2 mb-4">
                         <Image
@@ -172,10 +172,10 @@ export default function LoginPage() {
                         </span>
                     </div>
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        Welcome Back
+                        Chào mừng trở lại
                     </h1>
                     <p className="text-gray-600">
-                        Select your organization and role to continue
+                        Chọn tổ chức và vai trò để tiếp tục
                     </p>
                 </div>
 
@@ -198,7 +198,7 @@ export default function LoginPage() {
                             </div>
                             <div className="ml-3">
                                 <h3 className="text-sm font-medium text-red-800">
-                                    Authentication Failed
+                                    Xác thực thất bại
                                 </h3>
                                 <div className="mt-1 text-sm text-red-700">
                                     {decodeURIComponent(errorMessage)}
@@ -210,10 +210,9 @@ export default function LoginPage() {
 
                 <Card className="shadow-xl">
                     <CardHeader>
-                        <CardTitle>Sign In</CardTitle>
+                        <CardTitle>Đăng nhập</CardTitle>
                         <CardDescription>
-                            Choose your organization and role to proceed with
-                            OAuth login.
+                            Chọn tổ chức và vai trò để tiếp tục với OAuth.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -221,7 +220,7 @@ export default function LoginPage() {
                             {/* Organization Selection */}
                             <div className="space-y-2">
                                 <Label htmlFor="organization">
-                                    Select Organization
+                                    Chọn tổ chức
                                 </Label>
                                 <Select
                                     id="organization"
@@ -248,8 +247,8 @@ export default function LoginPage() {
                                     }
                                     placeholder={
                                         fetchingOrganizations
-                                            ? 'Loading organizations...'
-                                            : 'Choose your organization'
+                                            ? 'Đang tải tổ chức...'
+                                            : 'Chọn tổ chức'
                                     }
                                     className="basic-select"
                                     classNamePrefix="select"
@@ -260,7 +259,7 @@ export default function LoginPage() {
 
                             {/* Role Selection */}
                             <div className="space-y-3">
-                                <Label>Select Your Role</Label>
+                                <Label>Chọn vai trò</Label>
                                 <div className="grid gap-3">
                                     {roles.map((role) => {
                                         const Icon = role.icon;
@@ -332,7 +331,7 @@ export default function LoginPage() {
                                         !formData.role
                                     }
                                 >
-                                    Continue with OAuth
+                                    Tiếp tục với OAuth
                                 </Button>
                             </div>
                         </form>
@@ -341,12 +340,12 @@ export default function LoginPage() {
 
                 <div className="text-center mt-6">
                     <p className="text-gray-600">
-                        Don&apos;t have an organization account?{' '}
+                        Không có tài khoản tổ chức?{' '}
                         <Link
                             href="/register"
                             className="text-blue-600 hover:text-blue-700 font-medium"
                         >
-                            Register your organization
+                            Đăng ký tổ chức
                         </Link>
                     </p>
                 </div>

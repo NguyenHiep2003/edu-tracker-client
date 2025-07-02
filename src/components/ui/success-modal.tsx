@@ -17,7 +17,7 @@ export function SuccessModal({
     onClose,
     title,
     message,
-    actionLabel = 'Go to Homepage',
+    actionLabel = 'Quay về trang chủ',
     onAction,
 }: SuccessModalProps) {
     if (!isOpen) return null;
@@ -60,7 +60,7 @@ export function SuccessModal({
                             onClick={onClose}
                             className="flex-1"
                         >
-                            Stay Here
+                            Ở lại
                         </Button>
                     </div>
                 </div>

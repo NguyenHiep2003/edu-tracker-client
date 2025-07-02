@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Search, FileText, Calendar, Plus, Eye, Trash2 } from 'lucide-react';
+import { Search, FileText, Calendar, Eye, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { getTemplate, deleteTemplate } from '@/services/api/template';
 import { Template } from '@/services/api/template/interface';
@@ -59,8 +59,8 @@ export default function TemplatesPage() {
             const data = await getTemplate(debouncedKeyword);
             setTemplates(data);
         } catch (error) {
-            console.error('Error fetching templates:', error);
-            toast.error('Failed to load templates');
+            console.log("🚀 ~ fetchTemplates ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải template dự án');
         } finally {
             setLoading(false);
         }
@@ -86,12 +86,12 @@ export default function TemplatesPage() {
         try {
             await deleteTemplate(selectedTemplate.id);
             toast.success(
-                `Template "${selectedTemplate.title}" deleted successfully.`
+                `Template "${selectedTemplate.title}" đã được xóa thành công.`
             );
             fetchTemplates(); // Refresh the list
         } catch (error) {
-            console.error('Error deleting template:', error);
-            toast.error('Failed to delete template.');
+            console.log("🚀 ~ handleConfirmDelete ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi xóa template dự án');
         } finally {
             setSelectedTemplate(null);
             setShowDeleteModal(false);
@@ -103,7 +103,7 @@ export default function TemplatesPage() {
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading...</p>
+                    <p className="mt-4 text-gray-600">Đang tải...</p>
                 </div>
             </div>
         );
@@ -117,10 +117,10 @@ export default function TemplatesPage() {
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                             <FileText className="h-6 w-6 text-blue-600" />
-                            Project Templates
+                            Template dự án
                         </h1>
                         <p className="text-gray-600 mt-1">
-                            Manage and search your project templates
+                            Quản lý và tìm kiếm template dự án
                         </p>
                     </div>
                 </div>
@@ -132,7 +132,7 @@ export default function TemplatesPage() {
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
-                            placeholder="Search templates..."
+                            placeholder="Tìm kiếm template..."
                             value={searchKeyword}
                             onChange={handleSearchChange}
                             className="pl-10"
@@ -168,20 +168,14 @@ export default function TemplatesPage() {
                         <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-xl font-medium text-gray-900 mb-2">
                             {searchKeyword
-                                ? 'No templates found'
-                                : 'No templates yet'}
+                                ? 'Không tìm thấy template'
+                                : 'Chưa có template'}
                         </h3>
                         <p className="text-gray-500 mb-6 max-w-md mx-auto">
                             {searchKeyword
-                                ? `No templates match "${searchKeyword}". Try a different search term.`
-                                : 'Create your first project template to get started.'}
+                                ? `Không tìm thấy template phù hợp với từ khóa "${searchKeyword}". Vui lòng thử từ khóa khác.`
+                                : 'Tạo template dự án đầu tiên bằng cách xuất từ dự án để bắt đầu.'}
                         </p>
-                        {!searchKeyword && (
-                            <Button className="bg-blue-600 hover:bg-blue-700">
-                                <Plus className="h-4 w-4 mr-2" />
-                                Create First Template
-                            </Button>
-                        )}
                     </CardContent>
                 </Card>
             ) : (
@@ -204,7 +198,7 @@ export default function TemplatesPage() {
                                     <div className="flex items-center gap-2 text-sm text-gray-600">
                                         <Calendar className="h-4 w-4 text-gray-500" />
                                         <span>
-                                            Created{' '}
+                                            Ngày tạo{' '}
                                             {formatDate(
                                                 template.createdAt,
                                                 'dd/MM/yyyy HH:mm'
@@ -233,7 +227,7 @@ export default function TemplatesPage() {
                                                 className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
                                             >
                                                 <Eye className="h-4 w-4 mr-1" />
-                                                Preview
+                                                Xem trước
                                             </Button>
                                             <Button
                                                 variant="outline"
@@ -245,7 +239,7 @@ export default function TemplatesPage() {
                                                 className="hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                                             >
                                                 <Trash2 className="h-4 w-4 mr-1" />
-                                                Delete
+                                                Xóa
                                             </Button>
                                         </div>
                                     </div>
@@ -259,9 +253,8 @@ export default function TemplatesPage() {
             {/* Results Count */}
             {!loading && templates.length > 0 && (
                 <div className="text-center text-sm text-gray-500">
-                    {templates.length} template
-                    {templates.length !== 1 ? 's' : ''} found
-                    {searchKeyword && ` for "${searchKeyword}"`}
+                    {templates.length} template được tìm thấy
+                    {searchKeyword && ` với từ khóa "${searchKeyword}"`}
                 </div>
             )}
 
@@ -281,9 +274,9 @@ export default function TemplatesPage() {
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleConfirmDelete}
-                    title="Delete Template"
-                    description={`Are you sure you want to delete the template "${selectedTemplate.title}"? This action cannot be undone.`}
-                    confirmText="Delete"
+                    title="Xóa template"
+                    description={`Bạn có chắc chắn muốn xóa template "${selectedTemplate.title}"? Thao tác này không thể được hoàn tác.`}
+                    confirmText="Xóa"
                 />
             )}
         </div>

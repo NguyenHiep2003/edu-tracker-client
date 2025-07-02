@@ -25,11 +25,11 @@ import { StudentProjectProvider } from '@/context/student-project-context';
 
 const tabs = [
     { id: 'backlog', label: 'Backlog', icon: ListTodo },
-    { id: 'board', label: 'Board', icon: BarChart3 },
-    { id: 'list', label: 'List', icon: List },
-    { id: 'summary', label: 'Summary', icon: FileText },
-    { id: 'settings', label: 'Settings', icon: Settings },
-    { id: 'members', label: 'Members', icon: Users },
+    { id: 'board', label: 'Bảng làm việc', icon: BarChart3 },
+    { id: 'list', label: 'Danh sách công việc', icon: List },
+    { id: 'summary', label: 'Tổng quan', icon: FileText },
+    { id: 'settings', label: 'Cài đặt', icon: Settings },
+    { id: 'members', label: 'Thành viên', icon: Users },
 ];
 
 export function ProgressManagementLayoutContent({
@@ -69,7 +69,7 @@ export function ProgressManagementLayoutContent({
                                         className="flex items-center hover:text-blue-600 transition-colors"
                                     >
                                         <ArrowLeft className="h-4 w-4 mr-1" />
-                                        Projects
+                                        Danh sách dự án
                                     </Link>
                                     <span className="mx-2">/</span>
                                 </nav>

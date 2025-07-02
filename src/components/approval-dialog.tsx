@@ -41,7 +41,7 @@ export const ApprovalDialog = ({
 
     const handleSubmit = () => {
         if (rating === 0) {
-            setError('Please provide a rating');
+            setError('Vui lòng cung cấp đánh giá');
             return;
         }
         onSubmit(rating, comment);
@@ -56,7 +56,7 @@ export const ApprovalDialog = ({
             >
                 <DialogHeader>
                     <DialogTitle className="text-black">
-                        Approve {workItem?.key} {workItem?.summary}
+                        Phê duyệt {workItem?.key} {workItem?.summary}
                     </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
@@ -78,16 +78,14 @@ export const ApprovalDialog = ({
                             </div>
                             <div className="ml-3">
                                 <p className="text-sm text-amber-800">
-                                    <strong>Important:</strong> Updating task to
-                                    done will make the task unable to be updated
-                                    anymore.
+                                    <strong>Quan trọng:</strong> Công việc đã hoàn thành sẽ không thể được cập nhật nữa
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-black">Rating (required)</Label>
+                        <Label className="text-black">Đánh giá (bắt buộc)</Label>
                         <div className="flex space-x-1">
                             {[1, 2, 3, 4, 5].map((value) => (
                                 <button
@@ -114,20 +112,20 @@ export const ApprovalDialog = ({
                         )}
                     </div>
                     <div className="space-y-2">
-                        <Label className="text-black">Comment (optional)</Label>
+                        <Label className="text-black">Nhận xét (tùy chọn)</Label>
                         <Textarea
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
-                            placeholder="Add your feedback..."
+                            placeholder="Thêm nhận xét..."
                             className="min-h-[100px] bg-white text-black"
                         />
                     </div>
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>
-                        Cancel
+                        Hủy
                     </Button>
-                    <Button onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={handleSubmit}>Gửi</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

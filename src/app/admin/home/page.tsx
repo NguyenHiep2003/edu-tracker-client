@@ -67,11 +67,9 @@ export default function AdminHomePage() {
                 setSemesterStats(semesterStatsRes);
                 setError(null);
             } catch (err) {
-                console.error('Failed to fetch dashboard data:', err);
-                toast.error('Failed to load dashboard data.');
-                setError(
-                    'Could not load dashboard data. Please try again later.'
-                );
+                console.log('🚀 ~ fetchDashboardData ~ err:', err);
+                toast.error('Đã xảy ra lỗi khi tải dữ liệu');
+                setError('Đã xảy ra lỗi khi tải dữ liệu');
             } finally {
                 setLoading(false);
             }
@@ -110,7 +108,7 @@ export default function AdminHomePage() {
             <div className="flex flex-col items-center justify-center h-full bg-gray-50 rounded-lg p-8">
                 <AlertCircle className="w-16 h-16 text-red-400 mb-4" />
                 <h2 className="text-xl font-semibold text-red-600">
-                    An Error Occurred
+                    Đã xảy ra lỗi
                 </h2>
                 <p className="text-gray-600 mt-2">{error}</p>
             </div>
@@ -128,7 +126,7 @@ export default function AdminHomePage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
-                            Active Semester
+                            Kỳ học hiện tại
                         </CardTitle>
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
@@ -137,14 +135,14 @@ export default function AdminHomePage() {
                             {overviewData?.semesters?.[0]?.name || 'N/A'}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Currently active semester
+                            Kỳ học hiện tại
                         </p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
-                            User Statistics
+                            Thống kê người dùng
                         </CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
@@ -154,7 +152,8 @@ export default function AdminHomePage() {
                             {overviewData?.accountSupplied}
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">
-                            Active users vs Accounts supplied
+                            Số lượng người dùng thực tế / Số lượng tài khoản cung
+                            cấp
                         </p>
                         <Progress value={userProgress} />
                     </CardContent>
@@ -162,7 +161,7 @@ export default function AdminHomePage() {
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
-                            Total Classrooms
+                            Số lương lớp học
                         </CardTitle>
                         <BookOpen className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
@@ -171,7 +170,7 @@ export default function AdminHomePage() {
                             {overviewData?.numOfClassrooms}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Across all active semesters
+                            Lớp học qua tất cả các kỳ học
                         </p>
                     </CardContent>
                 </Card>
@@ -182,7 +181,7 @@ export default function AdminHomePage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <BarChart2 className="h-5 w-5" />
-                        Semester Statistics
+                        Thống kê qua các kỳ học
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

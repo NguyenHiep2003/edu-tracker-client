@@ -5,10 +5,10 @@ export default function StudentsLoading() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Project Students
+                        Sinh viên tham gia dự án
                     </h1>
                     <p className="text-gray-600">
-                        Manage student assignments and groups
+                        Quản lý sinh viên tham gia dự án
                     </p>
                 </div>
                 <div className="flex space-x-3">

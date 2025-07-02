@@ -54,8 +54,8 @@ export default function ImportTemplateModal({
             const data = await getTemplate(debouncedKeyword);
             setTemplates(data);
         } catch (error) {
-            console.error('Error fetching templates:', error);
-            toast.error('Failed to load templates');
+            console.log("🚀 ~ fetchTemplates ~ error:", error)
+            toast.error('Lỗi khi tải dữ liệu template');
         } finally {
             setLoading(false);
         }
@@ -77,7 +77,7 @@ export default function ImportTemplateModal({
         try {
             await importTemplate(classId, templateId, projectStartAt);
             toast.success(
-                'Template imported successfully and project created!'
+                'Template đã được nhập thành công và dự án đã được tạo!'
             );
             onTemplateImported();
             setShowPreviewModal(false);
@@ -86,7 +86,7 @@ export default function ImportTemplateModal({
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to import template');
+                toast.error(error.message || 'Lỗi khi nhập template');
             }
         }
     };
@@ -98,18 +98,17 @@ export default function ImportTemplateModal({
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <FileText className="h-6 w-6 text-blue-600" />
-                            Import Project from Template
+                            Nhập dự án từ template
                         </DialogTitle>
                         <DialogDescription>
-                            Select a template to create a new project in your
-                            class.
+                            Chọn một template để tạo mới một dự án trong lớp của bạn.
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="relative mb-4">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
-                            placeholder="Search templates..."
+                            placeholder="Tìm kiếm template..."
                             value={searchKeyword}
                             onChange={handleSearchChange}
                             className="pl-10"
@@ -129,7 +128,7 @@ export default function ImportTemplateModal({
                         ) : templates.length === 0 ? (
                             <div className="text-center py-10">
                                 <p className="text-gray-500">
-                                    No templates found.
+                                    Không tìm thấy template.
                                 </p>
                             </div>
                         ) : (
@@ -144,7 +143,7 @@ export default function ImportTemplateModal({
                                                 {template.title}
                                             </h3>
                                             <p className="text-sm text-gray-500 mt-1">
-                                                Created{' '}
+                                                Tạo lúc{' '}
                                                 {formatDate(
                                                     template.createdAt,
                                                     'dd/MM/yyyy'
@@ -160,7 +159,7 @@ export default function ImportTemplateModal({
                                             className="mt-4 w-full"
                                         >
                                             <Eye className="h-4 w-4 mr-2" />
-                                            Preview and Import
+                                            Xem trước và nhập template
                                         </Button>
                                     </Card>
                                 ))}

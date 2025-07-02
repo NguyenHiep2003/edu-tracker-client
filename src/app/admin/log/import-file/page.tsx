@@ -26,6 +26,7 @@ import { toast } from 'react-toastify';
 import { getImportLogs } from '@/services/api/import-log';
 import type { ImportLog } from '@/services/api/import-log/interface';
 import { useOrganization } from '@/context/organization-context';
+import { formatDate } from '@/helper/date-formatter';
 
 interface ParsedError {
     sheetName: string;
@@ -73,7 +74,7 @@ function DescriptionModal({
                 <div className="text-center py-8">
                     <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-500">
-                        No description available for this import log.
+                        Không có mô tả chi tiết cho log này.
                     </p>
                 </div>
             </Modal>
@@ -92,12 +93,12 @@ function DescriptionModal({
                     <div className="space-y-6">
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                             <h4 className="font-medium text-blue-900 mb-2">
-                                Import Error Details
+                                Chi tiết lỗi nhập dữ liệu
                             </h4>
                             <p className="text-sm text-blue-700">
-                                The following errors occurred during the import
-                                process. Please review and fix the issues in
-                                your file.
+                                Các lỗi sau đã xảy ra trong quá trình nhập dữ liệu từ file.
+                                Vui lòng xem lại và sửa đổi các lỗi trong file của
+                                bạn.
                             </p>
                         </div>
 
@@ -118,10 +119,10 @@ function DescriptionModal({
                                         <thead className="bg-gray-50">
                                             <tr>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Row
+                                                    Hàng
                                                 </th>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Error Description
+                                                    Mô tả lỗi
                                                 </th>
                                             </tr>
                                         </thead>
@@ -134,7 +135,7 @@ function DescriptionModal({
                                                     >
                                                         <td className="px-4 py-3 whitespace-nowrap">
                                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                                Row {detail.row}
+                                                                Hàng {detail.row}
                                                             </span>
                                                         </td>
                                                         <td className="px-4 py-3">
@@ -156,22 +157,22 @@ function DescriptionModal({
                                 <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 mr-3" />
                                 <div>
                                     <h4 className="font-medium text-yellow-900">
-                                        How to Fix These Errors
+                                        Gợi ý cách khắc phục các lỗi
                                     </h4>
                                     <ul className="mt-2 text-sm text-yellow-700 space-y-1">
                                         <li>
-                                            • Download the original file and fix
-                                            the errors mentioned above
+                                            • Mở file gốc và sửa các lỗi đã nêu
+                                            trên
                                         </li>
                                         <li>
-                                            • Ensure all email domains are
-                                            whitelisted in organization settings
+                                            • Đảm bảo tất cả các miền email đều
+                                            được cho phép trong cài đặt của tổ chức
                                         </li>
                                         <li>
-                                            • Verify that all required fields
-                                            are properly filled
+                                            • Kiểm tra xem tất cả các trường bắt
+                                            buộc đều được điền đầy đủ
                                         </li>
-                                        <li>• Re-upload the corrected file</li>
+                                        <li>• Tải lên lại file đã sửa đổi</li>
                                     </ul>
                                 </div>
                             </div>
@@ -181,7 +182,7 @@ function DescriptionModal({
                     <div className="space-y-4">
                         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                             <h4 className="font-medium text-gray-900 mb-2">
-                                Raw Description
+                                Mô tả lỗi chi tiết
                             </h4>
                             <div className="bg-white border border-gray-200 rounded p-3">
                                 <pre className="text-sm text-gray-700 whitespace-pre-wrap break-words">
@@ -295,26 +296,16 @@ export default function ImportFileLogPage() {
         }
     };
 
-    // Format date
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Import File Log
+                        Lịch sử nhập dữ liệu từ file
                     </h1>
                     <p className="text-gray-600">
-                        Monitor file import activities and status
+                        Theo dõi hoạt động nhập dữ liệu và trạng thái
                     </p>
                 </div>
 
@@ -328,17 +319,16 @@ export default function ImportFileLogPage() {
                             isRefreshing ? 'animate-spin' : ''
                         }`}
                     />
-                    Refresh
+                    Làm mới
                 </Button>
             </div>
 
             {/* Import Logs Table */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Import History</CardTitle>
+                    <CardTitle>Lịch sử nhập dữ liệu</CardTitle>
                     <CardDescription>
-                        Automatically refreshes every 30 seconds • Showing{' '}
-                        {logs.length} of {totalLogs} logs
+                        Tự động làm mới mỗi 30 giây • Hiển thị {logs.length} trên {totalLogs} lịch sử
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -350,22 +340,22 @@ export default function ImportFileLogPage() {
                                         ID
                                     </th>
                                     <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Type
+                                        Loại
                                     </th>
                                     <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
+                                        Trạng thái
                                     </th>
                                     <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Performer
+                                        Người thực hiện
                                     </th>
                                     <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Created At
+                                        Thời gian tạo
                                     </th>
                                     <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Updated At
+                                        Thời gian cập nhật
                                     </th>
                                     <th className="border border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
+                                        Hành động
                                     </th>
                                 </tr>
                             </thead>
@@ -379,7 +369,7 @@ export default function ImportFileLogPage() {
                                             <div className="flex items-center justify-center">
                                                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                                                 <span className="ml-2">
-                                                    Loading import logs...
+                                                    Đang tải lịch sử nhập dữ liệu...
                                                 </span>
                                             </div>
                                         </td>
@@ -390,7 +380,7 @@ export default function ImportFileLogPage() {
                                             colSpan={7}
                                             className="border border-gray-200 px-4 py-8 text-center text-gray-500"
                                         >
-                                            No import logs found
+                                            Không tìm thấy lịch sử nhập dữ liệu
                                         </td>
                                     </tr>
                                 ) : (
@@ -430,7 +420,8 @@ export default function ImportFileLogPage() {
                                                     <Calendar className="h-4 w-4 text-gray-400" />
                                                     <span className="text-sm text-gray-600">
                                                         {formatDate(
-                                                            log.createdAt
+                                                            log.createdAt,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </span>
                                                 </div>
@@ -440,7 +431,8 @@ export default function ImportFileLogPage() {
                                                     <Calendar className="h-4 w-4 text-gray-400" />
                                                     <span className="text-sm text-gray-600">
                                                         {formatDate(
-                                                            log.updatedAt
+                                                            log.updatedAt,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </span>
                                                 </div>
@@ -458,7 +450,7 @@ export default function ImportFileLogPage() {
                                                     disabled={!log.description}
                                                 >
                                                     <Eye className="h-3 w-3" />
-                                                    View Details
+                                                    Xem chi tiết
                                                 </Button>
                                             </td>
                                         </tr>
@@ -471,8 +463,7 @@ export default function ImportFileLogPage() {
                     {/* Pagination */}
                     <div className="flex items-center justify-between mt-6">
                         <p className="text-sm text-gray-600">
-                            Showing {startIndex + 1} to {endIndex} of{' '}
-                            {totalLogs} logs
+                            Hiển thị bản ghi từ {startIndex + 1} đến {endIndex} trên {totalLogs} lịch sử nhập dữ liệu
                         </p>
 
                         <div className="flex items-center gap-2">
@@ -487,11 +478,11 @@ export default function ImportFileLogPage() {
                                 disabled={currentPage === 1 || loading}
                             >
                                 <ChevronLeft className="h-4 w-4" />
-                                Previous
+                                Trang trước
                             </Button>
 
                             <span className="text-sm text-gray-600">
-                                Page {currentPage} of {totalPages}
+                                Trang {currentPage} trên {totalPages}
                             </span>
 
                             <Button
@@ -504,7 +495,7 @@ export default function ImportFileLogPage() {
                                 }
                                 disabled={currentPage === totalPages || loading}
                             >
-                                Next
+                                Trang tiếp
                                 <ChevronRight className="h-4 w-4" />
                             </Button>
                         </div>

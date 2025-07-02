@@ -26,8 +26,8 @@ import {
 } from '@/services/api/project';
 import { acceptTopicRequest } from '@/services/api/topic/request-topic';
 import { AddTopicModal } from '@/components/add-topic-modal';
-import { formatDate } from '@/lib/utils';
 import { Topic } from '@/services/api/project/interface';
+import { formatDate } from '@/helper/date-formatter';
 import { FileIcon } from 'react-file-icon';
 import * as Dialog from '@radix-ui/react-dialog';
 import { cn } from '@/lib/utils';
@@ -133,12 +133,18 @@ const TopicDetailModal = ({
                         ? attachmentsToDelete
                         : undefined,
             });
-            toast.success('Topic updated successfully!');
+            toast.success('Chủ đề đã được cập nhật thành công!');
             setIsEditing(false);
             onTopicUpdated();
         } catch (error: any) {
             console.error('Error updating topic:', error);
-            toast.error(error.message || 'Failed to update topic');
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(
+                    error.message || 'Đã xảy ra lỗi khi cập nhật chủ đề'
+                );
+            }
         } finally {
             setLoading(false);
         }
@@ -195,7 +201,7 @@ const TopicDetailModal = ({
                                                     )
                                                 }
                                                 className="text-xl font-semibold border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                                                placeholder="Enter title"
+                                                placeholder="Nhập tiêu đề"
                                             />
                                         </div>
                                     ) : (
@@ -215,14 +221,14 @@ const TopicDetailModal = ({
                                             onClick={() => setIsEditing(false)}
                                             disabled={loading}
                                         >
-                                            Cancel
+                                            Hủy
                                         </Button>
                                         <Button
                                             size="sm"
                                             onClick={handleSave}
                                             disabled={loading}
                                         >
-                                            {loading ? 'Saving...' : 'Save'}
+                                            {loading ? 'Đang lưu...' : 'Lưu'}
                                         </Button>
                                     </>
                                 ) : (
@@ -231,7 +237,7 @@ const TopicDetailModal = ({
                                         size="sm"
                                         onClick={() => setIsEditing(true)}
                                     >
-                                        Edit
+                                        Chỉnh sửa
                                     </Button>
                                 )}
                                 <Dialog.Close asChild>
@@ -247,7 +253,7 @@ const TopicDetailModal = ({
                         <div className="p-6 space-y-6">
                             <div>
                                 <h3 className="text-sm font-medium text-gray-900 mb-2">
-                                    Description
+                                    Mô tả
                                 </h3>
                                 {isEditing ? (
                                     <Textarea
@@ -255,7 +261,7 @@ const TopicDetailModal = ({
                                         onChange={(e) =>
                                             setEditedDescription(e.target.value)
                                         }
-                                        placeholder="Enter description"
+                                        placeholder="Nhập mô tả"
                                         className="min-h-[100px] w-full resize-y break-words whitespace-pre-wrap bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-gray-900"
                                     />
                                 ) : (
@@ -269,7 +275,7 @@ const TopicDetailModal = ({
 
                             <div>
                                 <h3 className="text-sm font-medium text-gray-900 mb-2">
-                                    Attachments
+                                    Tập tin đính kèm
                                 </h3>
                                 {isEditing && (
                                     <div
@@ -285,9 +291,9 @@ const TopicDetailModal = ({
                                     >
                                         <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                                         <p className="text-gray-600 mb-2">
-                                            Drag and drop files here, or{' '}
+                                            Kéo và thả tập tin vào đây, hoặc{' '}
                                             <label className="text-blue-600 hover:text-blue-700 cursor-pointer font-medium">
-                                                browse
+                                                duyệt file
                                                 <input
                                                     type="file"
                                                     multiple
@@ -307,7 +313,7 @@ const TopicDetailModal = ({
                                 {newAttachments.length > 0 && (
                                     <div className="space-y-2 mb-4">
                                         <h4 className="text-sm font-medium text-gray-700">
-                                            New Files:
+                                            Tập tin mới:
                                         </h4>
                                         {newAttachments.map((file, index) => (
                                             <div
@@ -466,8 +472,8 @@ function TopicsPageContent() {
             const data = await getProjectTopics(projectData.id);
             setTopics(data);
         } catch (error: any) {
-            console.error('Error fetching topics:', error);
-            setError(error.message || 'Failed to load topics');
+            console.log('🚀 ~ fetchTopics ~ error:', error);
+            setError(error.message || 'Đã xảy ra lỗi khi tải chủ đề');
         } finally {
             setLoading(false);
         }
@@ -482,7 +488,13 @@ function TopicsPageContent() {
             setTopicRequests(data);
         } catch (error: any) {
             console.error('Error fetching topic requests:', error);
-            // Don't show error toast as this might be a nice-to-have feature
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(
+                    error.message || 'Đã xảy ra lỗi khi tải yêu cầu chủ đề'
+                );
+            }
         } finally {
             setLoadingRequests(false);
         }
@@ -512,12 +524,18 @@ function TopicsPageContent() {
     const handleAcceptRequest = async (requestId: number) => {
         try {
             await acceptTopicRequest(requestId);
-            toast.success('Topic request accepted successfully!');
+            toast.success('Yêu cầu chủ đề đã được chấp nhận!');
             fetchTopicRequests(); // Refresh the list
             fetchTopics(); // Refresh topics in case a new one was created
         } catch (error: any) {
-            console.error('Error accepting topic request:', error);
-            toast.error(error.message || 'Failed to accept topic request');
+            console.log("🚀 ~ handleAcceptRequest ~ error:", error)
+            if (Array.isArray(error.message)) {
+                toast.error(error.message[0]);
+            } else {
+                toast.error(
+                    error.message || 'Đã xảy ra lỗi khi chấp nhận yêu cầu'
+                );
+            }
         }
     };
 
@@ -527,10 +545,10 @@ function TopicsPageContent() {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">
-                            Project Topics
+                            Chủ đề
                         </h1>
                         <p className="text-gray-600">
-                            Manage topics for this project
+                            Quản lý chủ đề cho dự án
                         </p>
                     </div>
                     <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
@@ -574,11 +592,11 @@ function TopicsPageContent() {
                 <div className="text-center">
                     <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        Failed to load topics
+                        Đã xảy ra lỗi khi tải chủ đề
                     </h3>
                     <p className="text-gray-600 mb-4">{error}</p>
                     <Button onClick={fetchTopics} variant="outline">
-                        Try Again
+                        Thử lại
                     </Button>
                 </div>
             </div>
@@ -591,10 +609,10 @@ function TopicsPageContent() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Project Topics
+                        Chủ đề
                     </h1>
                     <p className="text-gray-600">
-                        Manage topics for this project
+                        Quản lý chủ đề cho dự án
                     </p>
                 </div>
                 <Button
@@ -602,7 +620,7 @@ function TopicsPageContent() {
                     className="flex items-center space-x-2"
                 >
                     <Plus className="h-4 w-4" />
-                    <span>Add Topic</span>
+                    <span>Thêm chủ đề</span>
                 </Button>
             </div>
 
@@ -611,13 +629,13 @@ function TopicsPageContent() {
                 <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                        placeholder="Search topics..."
+                        placeholder="Tìm kiếm chủ đề..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
                     />
                 </div>
-                <Button variant="outline">Filter</Button>
+                <Button variant="outline">Lọc</Button>
             </div>
 
             {/* Topics Grid */}
@@ -625,12 +643,12 @@ function TopicsPageContent() {
                 <div className="flex flex-col items-center justify-center py-12">
                     <BookOpen className="h-12 w-12 text-gray-400 mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        {searchTerm ? 'No topics found' : 'No topics yet'}
+                        {searchTerm ? 'Không tìm thấy chủ đề' : 'Không có chủ đề'}
                     </h3>
                     <p className="text-gray-600 mb-4">
                         {searchTerm
-                            ? 'Try adjusting your search terms'
-                            : 'Get started by adding your first topic'}
+                            ? 'Thử điều chỉnh từ khóa tìm kiếm'
+                            : 'Bắt đầu bằng cách thêm chủ đề đầu tiên'}
                     </p>
                     {!searchTerm && (
                         <Button
@@ -638,7 +656,7 @@ function TopicsPageContent() {
                             className="flex items-center space-x-2"
                         >
                             <Plus className="h-4 w-4" />
-                            <span>Add Topic</span>
+                            <span>Thêm chủ đề</span>
                         </Button>
                     )}
                 </div>
@@ -663,7 +681,7 @@ function TopicsPageContent() {
                                     <div className="flex items-center justify-between text-sm text-gray-500">
                                         <div className="flex items-center">
                                             <Calendar className="h-4 w-4 mr-1" />
-                                            {formatDate(topic.createdAt)}
+                                            {formatDate(topic.createdAt, "dd/MM/yyyy HH:mm")}
                                         </div>
                                         {topic.attachments &&
                                             topic.attachments.length > 0 && (
@@ -687,11 +705,11 @@ function TopicsPageContent() {
                         <div className="flex items-center justify-between">
                             <CardTitle className="flex items-center space-x-2">
                                 <GitPullRequest className="h-5 w-5" />
-                                <span>Topic Requests from Students</span>
+                                <span>Yêu cầu chủ đề từ sinh viên</span>
                             </CardTitle>
                             <div className="flex items-center space-x-2">
                                 <label className="text-sm text-gray-600">
-                                    Filter by status:
+                                    Lọc theo trạng thái:
                                 </label>
                                 <select
                                     value={statusFilter}
@@ -705,9 +723,9 @@ function TopicsPageContent() {
                                     }
                                     className="px-3 py-1 border border-gray-300 rounded-md text-sm"
                                 >
-                                    <option value="all">All</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="accepted">Accepted</option>
+                                    <option value="all">Tất cả</option>
+                                    <option value="pending">Chờ phê duyệt</option>
+                                    <option value="accepted">Đã phê duyệt</option>
                                 </select>
                             </div>
                         </div>
@@ -722,13 +740,13 @@ function TopicsPageContent() {
                                 <GitPullRequest className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                                     {statusFilter === 'all'
-                                        ? 'No topic requests yet'
-                                        : `No ${statusFilter} requests found`}
+                                        ? 'Không có yêu cầu chủ đề'
+                                        : `Không tìm thấy ${statusFilter} yêu cầu`}
                                 </h3>
                                 <p className="text-gray-600">
                                     {statusFilter === 'all'
-                                        ? 'Students have not submitted any topic requests yet.'
-                                        : `There are no ${statusFilter} topic requests at the moment.`}
+                                        ? 'Sinh viên chưa gửi yêu cầu chủ đề'
+                                        : `Không có yêu cầu chủ đề ở trạng thái này`}
                                 </p>
                             </div>
                         ) : (
@@ -751,7 +769,7 @@ function TopicsPageContent() {
                                                     <div className="flex items-center space-x-1 text-sm text-gray-500">
                                                         <Users className="h-4 w-4" />
                                                         <span>
-                                                            Group{' '}
+                                                            Nhóm{' '}
                                                             {
                                                                 request.group
                                                                     .number
@@ -766,13 +784,13 @@ function TopicsPageContent() {
                                                         }`}
                                                     >
                                                         {request.isAccept
-                                                            ? 'Accepted'
-                                                            : 'Pending'}
+                                                            ? 'Đã phê duyệt'
+                                                            : 'Chờ phê duyệt'}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-600 mb-3">
                                                     {request.description ||
-                                                        'No description provided'}
+                                                        'Không có mô tả'}
                                                 </p>
                                             </div>
                                             {!request.isAccept && (
@@ -786,7 +804,7 @@ function TopicsPageContent() {
                                                     className="ml-4 flex items-center space-x-1"
                                                 >
                                                     <Check className="h-4 w-4" />
-                                                    <span>Accept</span>
+                                                    <span>Phê duyệt</span>
                                                 </Button>
                                             )}
                                         </div>

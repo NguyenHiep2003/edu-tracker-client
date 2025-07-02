@@ -76,8 +76,8 @@ export function StudentWorkItemsModal({
                 setHasMore(page < response.totalPages);
                 setCurrentPage(page);
             } catch (error: any) {
-                console.error('Error fetching work items:', error);
-                toast.error('Failed to load work items');
+                console.log("🚀 ~ error:", error)
+                toast.error('Lỗi khi tải dữ liệu công việc');
             } finally {
                 setLoading(false);
             }
@@ -121,7 +121,7 @@ export function StudentWorkItemsModal({
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-3">
                         <Eye className="h-5 w-5 text-blue-600" />
-                        Work Items -{' '}
+                        Công việc của{' '}
                         {student.student_name || student.student_email}
                     </DialogTitle>
                 </DialogHeader>
@@ -132,10 +132,10 @@ export function StudentWorkItemsModal({
                         <div className="text-center py-8">
                             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                             <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                No work items found
+                                Không tìm thấy công việc
                             </h3>
                             <p className="text-gray-500">
-                                This student has no assigned work items yet.
+                                Sinh viên này chưa có công việc được giao
                             </p>
                         </div>
                     ) : (
@@ -172,18 +172,18 @@ export function StudentWorkItemsModal({
 
                                             <div className="flex items-center gap-4 text-xs text-gray-500">
                                                 <span>
-                                                    Created:{' '}
+                                                    Tạo lúc:{' '}
                                                     {formatDate(
                                                         item.createdAt,
-                                                        'dd/MM/yyyy'
+                                                        'dd/MM/yyyy HH:mm'
                                                     )}
                                                 </span>
-                                                {item.endDate && (
+                                                {item.updatedAt && (
                                                     <span>
-                                                        Due:{' '}
+                                                        Cập nhật gần nhất:{' '}
                                                         {formatDate(
-                                                            item.endDate,
-                                                            'dd/MM/yyyy'
+                                                            item.updatedAt,
+                                                            'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </span>
                                                 )}
@@ -219,10 +219,10 @@ export function StudentWorkItemsModal({
                                 {loading ? (
                                     <>
                                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Loading...
+                                        Đang tải...
                                     </>
                                 ) : (
-                                    'Load More'
+                                    'Tải thêm'
                                 )}
                             </Button>
                         </div>

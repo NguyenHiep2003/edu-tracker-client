@@ -117,7 +117,7 @@ export default function GroupStatisticsPage() {
                         .then((res) => setDevWeeklyData(res.data)),
                 ]);
             } catch (error) {
-                console.error('Error fetching group data:', error);
+                console.log("🚀 ~ fetchData ~ error:", error)
             } finally {
                 setLoading(false);
             }
@@ -163,7 +163,7 @@ export default function GroupStatisticsPage() {
                 commits: parseInt(d.total_commit || '0'),
                 workItems: parseInt(d.total_work_done || '0'),
                 evidences: parseInt(d.file_work_evidences || '0'),
-                fullName: d.student_name || d.student_email || 'Unknown',
+                fullName: d.student_name || d.student_email || 'Không có tên',
             }))
             .sort((a, b) => b.workItems - a.workItems);
     };
@@ -289,7 +289,7 @@ export default function GroupStatisticsPage() {
                 <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
                         <FileCheck className="h-5 w-5 text-blue-600" />
-                        Work Items Overview
+                        Tổng quan công việc
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                         <StatCard
@@ -313,7 +313,7 @@ export default function GroupStatisticsPage() {
                             icon={FileCheck}
                         />
                         <StatCard
-                            title="Total Items"
+                            title="Tổng số công việc"
                             value={
                                 parseInt(overview?.total_epic_done || '0') +
                                 parseInt(overview?.total_story_done || '0') +
@@ -323,7 +323,7 @@ export default function GroupStatisticsPage() {
                             icon={FileCheck}
                         />
                         <StatCard
-                            title="Evidence Files"
+                            title="Số tài liệu minh chứng"
                             value={overview?.file_work_evidences || '0'}
                             icon={FileText}
                         />
@@ -334,28 +334,28 @@ export default function GroupStatisticsPage() {
                 <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
                         <Code className="h-5 w-5 text-blue-600" />
-                        Development Overview
+                        Tổng quan phát triển mã nguồn
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                         <StatCard
-                            title="Total Commits"
+                            title="Tổng số commit"
                             value={overview?.total_commit || '0'}
                             icon={GitCommit}
                         />
                         <StatCard
-                            title="Lines Added"
+                            title="Số dòng code thêm"
                             value={overview?.total_of_line_code_add || '0'}
                             icon={Code}
-                            description="lines"
+                            description="dòng"
                         />
                         <StatCard
-                            title="Lines Deleted"
+                            title="Số dòng code xóa"
                             value={overview?.total_of_line_code_deleted || '0'}
                             icon={Code}
-                            description="lines"
+                            description="dòng"
                         />
                         <StatCard
-                            title="Total Changes"
+                            title="Tổng số thay đổi"
                             value={
                                 parseInt(
                                     overview?.total_of_line_code_add || '0'
@@ -365,7 +365,7 @@ export default function GroupStatisticsPage() {
                                 )
                             }
                             icon={Code}
-                            description="lines"
+                            description="dòng"
                         />
                     </div>
                 </div>
@@ -375,7 +375,7 @@ export default function GroupStatisticsPage() {
             <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <Users className="h-5 w-5" />
-                    Work Distribution
+                    Phân bổ công việc (chỉ bao gồm các công việc đã hoàn thành và không chia ra các công việc con)
                 </h2>
 
                 <div className="space-y-8">
@@ -438,7 +438,7 @@ export default function GroupStatisticsPage() {
                                 />
                                 <Bar
                                     dataKey="workItems"
-                                    name="Work Items"
+                                    name="Công việc"
                                     fill="#0088FE"
                                 />
                                 <Bar
@@ -448,7 +448,7 @@ export default function GroupStatisticsPage() {
                                 />
                                 <Bar
                                     dataKey="evidences"
-                                    name="Evidence Files"
+                                    name="Tài liệu minh chứng"
                                     fill="#FFBB28"
                                 />
                             </BarChart>
@@ -461,25 +461,25 @@ export default function GroupStatisticsPage() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Member
+                                        Thành viên
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Role
+                                        Vai trò
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Work Items
+                                        Số công việc
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Story Points
+                                        Tổng Story Points
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Lines Code Added
+                                        Số dòng code thêm
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Lines Code Deleted
+                                        Số dòng code xóa
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Average Rating
+                                        Đánh giá trung bình
                                     </th>
                                 </tr>
                             </thead>
@@ -524,11 +524,11 @@ export default function GroupStatisticsPage() {
                                                         <div className="text-sm font-medium text-gray-900">
                                                             {member.student_name ||
                                                                 member.student_email ||
-                                                                'Unknown'}
+                                                                'Không có tên'}
                                                         </div>
                                                         <div className="text-sm text-gray-500">
                                                             {member.student_externalid ||
-                                                                'No ID'}
+                                                                'Không có ID'}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -542,8 +542,10 @@ export default function GroupStatisticsPage() {
                                                             : 'bg-gray-100 text-gray-800'
                                                     }`}
                                                 >
-                                                    {member.group_role ||
-                                                        'MEMBER'}
+                                                    {member.group_role ===
+                                                    'LEADER'
+                                                        ? 'Nhóm trưởng'
+                                                        : 'Thành viên'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -591,7 +593,7 @@ export default function GroupStatisticsPage() {
             <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <FileCheck className="h-5 w-5" />
-                    Weekly Progress
+                    Tiến độ hàng tuần
                 </h2>
                 <div className="h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
@@ -618,7 +620,7 @@ export default function GroupStatisticsPage() {
                                     fill: '#374151',
                                 }}
                                 label={{
-                                    value: 'Work Items Completed',
+                                    value: 'Công việc hoàn thành',
                                     angle: -90,
                                     position: 'insideLeft',
                                     style: { textAnchor: 'middle' },
@@ -658,13 +660,13 @@ export default function GroupStatisticsPage() {
             <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <GitCommit className="h-5 w-5" />
-                    Weekly Development Progress
+                    Tiến độ phát triển mã nguồn hàng tuần
                 </h2>
 
                 {/* Commits Chart */}
                 <div className="mb-8">
                     <h3 className="text-lg font-medium mb-4">
-                        Commits per Member
+                        Commit hàng tuần của mỗi thành viên
                     </h3>
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -736,7 +738,7 @@ export default function GroupStatisticsPage() {
                 {/* Code Changes Chart */}
                 <div>
                     <h3 className="text-lg font-medium mb-4">
-                        Code Changes per Member (Lines Added + Deleted)
+                        Thay đổi code hàng tuần của mỗi thành viên (Số dòng code thêm + Số dòng code xóa)
                     </h3>
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">

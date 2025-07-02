@@ -60,7 +60,7 @@ export function CreateClassModal({
         <Modal
             isOpen={isOpen}
             onClose={handleClose}
-            title="Create New Class"
+            title="Tạo lớp học mới"
             size="md"
         >
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -81,12 +81,12 @@ export function CreateClassModal({
                             </div>
                             <div className="ml-3">
                                 <h4 className="font-medium text-green-900">
-                                    Creating class for active semester
+                                    Tạo lớp học cho học kỳ hiện tại
                                 </h4>
                                 <p className="text-sm text-green-700 mt-1">
-                                    This class will be created in{' '}
+                                    Lớp học này sẽ được tạo trong kỳ{' '}
                                     <strong>{activeSemester.name}</strong>{' '}
-                                    (Active Semester)
+                                    (Học kỳ hiện tại)
                                 </p>
                             </div>
                         </div>
@@ -95,7 +95,7 @@ export function CreateClassModal({
 
                 <div className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="class-name">Class Name *</Label>
+                        <Label htmlFor="class-name">Tên lớp học *</Label>
                         <Input
                             id="class-name"
                             value={formData.name}
@@ -105,17 +105,17 @@ export function CreateClassModal({
                                     name: e.target.value,
                                 }))
                             }
-                            placeholder="e.g., Introduction to Computer Science"
+                            placeholder="Ví dụ: Lập trình hướng đối tượng"
                             disabled={loading}
                             required
                         />
                         <p className="text-xs text-gray-500">
-                            Enter a descriptive name for your class
+                            Nhập tên lớp học cho lớp học của bạn
                         </p>
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="class-id">Class ID *</Label>
+                        <Label htmlFor="class-id">Mã lớp học *</Label>
                         <Input
                             id="class-id"
                             value={formData.classId}
@@ -125,19 +125,19 @@ export function CreateClassModal({
                                     classId: e.target.value.toUpperCase(),
                                 }))
                             }
-                            placeholder="e.g., CS101, MATH201"
+                            placeholder="Ví dụ: 112233, 3232322"
                             disabled={loading}
                             style={{ textTransform: 'uppercase' }}
                             required
                         />
                         <p className="text-xs text-gray-500">
-                            Enter a unique identifier for your class
+                            Nhập mã lớp học cho lớp học của bạn
                         </p>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="class-description">
-                            Description (Optional)
+                            Mô tả (tùy chọn)
                         </Label>
                         <textarea
                             id="class-description"
@@ -148,14 +148,14 @@ export function CreateClassModal({
                                     description: e.target.value,
                                 }))
                             }
-                            placeholder="Enter a brief description of your class..."
+                            placeholder="Nhập mô tả ngắn gọn về lớp học của bạn..."
                             disabled={loading}
                             className="min-h-[80px] w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 resize-none"
                             rows={3}
                         />
                         <p className="text-xs text-gray-500">
-                            Provide additional details about the class content
-                            and objectives
+                            Cung cấp thêm chi tiết về nội dung và mục tiêu của
+                            lớp học
                         </p>
                     </div>
                 </div>
@@ -167,7 +167,7 @@ export function CreateClassModal({
                         disabled={!isFormValid || loading}
                     >
                         <Save className="h-4 w-4 mr-2" />
-                        {loading ? 'Creating...' : 'Create Class'}
+                        {loading ? 'Đang tạo...' : 'Tạo lớp học'}
                     </Button>
                     <Button
                         type="button"
@@ -176,7 +176,7 @@ export function CreateClassModal({
                         className="flex-1"
                         disabled={loading}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                 </div>
             </form>

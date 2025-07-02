@@ -47,10 +47,10 @@ import type {
 } from '@/services/api/work_items/interface';
 import { GroupMember } from '@/services/api/group/interface';
 import { generateInitials, getAvatarColor } from '@/components/avatar';
-import { formatDistanceToNow, format } from 'date-fns';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { getTypeIcon } from '@/helper/get-type-icon';
 import { useParams } from 'next/navigation';
+import { formatDate } from '@/helper/date-formatter';
 
 const getStatusIcon = (status: WorkItemStatus) => {
     switch (status) {
@@ -192,8 +192,8 @@ export default function WorkItemsListPage() {
             );
             setGroupMembers(response);
         } catch (error) {
-            console.log('Error loading group members:', error);
-            toast.error('Failed to load group members');
+            console.log("🚀 ~ loadGroupMembers ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải thành viên nhóm');
         }
     };
 
@@ -204,8 +204,8 @@ export default function WorkItemsListPage() {
             );
             setSprints(response);
         } catch (error) {
-            console.log('Error loading sprints:', error);
-            toast.error('Failed to load sprints');
+            console.log("🚀 ~ loadSprints ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải danh sách sprint');
         }
     };
 
@@ -297,9 +297,8 @@ export default function WorkItemsListPage() {
                     : workItems.length + newItems.length;
                 setHasMore(currentItemsCount < total);
             } catch (error) {
-                console.log('🚀 ~ WorkItemsListPage ~ error:', error);
-                // console.error('Error loading work items:', error);
-                toast.error('Failed to load work items');
+                console.log("🚀 ~ loadWorkItems ~ error:", error)
+                toast.error('Đã xảy ra lỗi khi tải danh sách công việc');
             } finally {
                 if (reset) {
                     setLoading(false);
@@ -357,26 +356,6 @@ export default function WorkItemsListPage() {
         }
     };
 
-    const formatDate = (dateString?: string) => {
-        if (!dateString) return 'N/A';
-        try {
-            return format(new Date(dateString), 'MMM dd, yyyy');
-        } catch {
-            return 'N/A';
-        }
-    };
-
-    const formatRelativeDate = (dateString?: string) => {
-        if (!dateString) return 'N/A';
-        try {
-            return formatDistanceToNow(new Date(dateString), {
-                addSuffix: true,
-            });
-        } catch {
-            return 'N/A';
-        }
-    };
-
     if (loading) {
         return (
             <div className="container mx-auto py-6 ml-4 px-6">
@@ -384,7 +363,7 @@ export default function WorkItemsListPage() {
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                         <p className="mt-2 text-gray-600">
-                            Loading work items...
+                            Đang tải danh sách công việc...
                         </p>
                     </div>
                 </div>
@@ -401,11 +380,11 @@ export default function WorkItemsListPage() {
                         <List className="h-4 w-4 text-white" />
                     </div>
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                        Work Items List
+                        Danh sách công việc
                     </h1>
                 </div>
                 <p className="text-gray-600 ml-11 font-medium">
-                    View group work items
+                    Xem danh sách công việc của nhóm
                 </p>
 
                 {/* Search and Filter Bar */}
@@ -419,7 +398,7 @@ export default function WorkItemsListPage() {
                             </div>
                         )}
                         <Input
-                            placeholder="Search work items..."
+                            placeholder="Tìm kiếm công việc..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-10 pr-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-gray-700"
@@ -459,7 +438,7 @@ export default function WorkItemsListPage() {
                                 className="flex items-center space-x-2 bg-white border-gray-200 hover:bg-gray-50"
                             >
                                 <User className="h-4 w-4" />
-                                <span>Assignee</span>
+                                <span>Thành viên được giao</span>
                                 {filteredAssignees.size > 0 && (
                                     <Badge
                                         variant="secondary"
@@ -476,7 +455,7 @@ export default function WorkItemsListPage() {
                         >
                             <div className="space-y-2">
                                 <div className="font-medium text-sm text-gray-700 px-2 py-1">
-                                    Filter by Assignee
+                                    Lọc theo thành viên được giao
                                 </div>
                                 <DropdownMenuSeparator />
 
@@ -501,7 +480,7 @@ export default function WorkItemsListPage() {
                                         }}
                                     />
                                     <span className="text-sm text-gray-700">
-                                        Unassigned
+                                        Chưa giao
                                     </span>
                                 </div>
 
@@ -552,7 +531,7 @@ export default function WorkItemsListPage() {
                                 className="flex items-center space-x-2 bg-white border-gray-200 hover:bg-gray-50"
                             >
                                 <Target className="h-4 w-4" />
-                                <span>Status</span>
+                                <span>Trạng thái</span>
                                 {filteredStatuses.size > 0 && (
                                     <Badge
                                         variant="secondary"
@@ -569,7 +548,7 @@ export default function WorkItemsListPage() {
                         >
                             <div className="space-y-2">
                                 <div className="font-medium text-sm text-gray-700 px-2 py-1">
-                                    Filter by Status
+                                    Lọc theo trạng thái
                                 </div>
                                 <DropdownMenuSeparator />
                                 {(
@@ -622,7 +601,7 @@ export default function WorkItemsListPage() {
                                 className="flex items-center space-x-2 bg-white border-gray-200 hover:bg-gray-50"
                             >
                                 <Filter className="h-4 w-4" />
-                                <span>Type</span>
+                                <span>Loại công việc</span>
                                 {filteredTypes.size > 0 && (
                                     <Badge
                                         variant="secondary"
@@ -639,7 +618,7 @@ export default function WorkItemsListPage() {
                         >
                             <div className="space-y-2">
                                 <div className="font-medium text-sm text-gray-700 px-2 py-1">
-                                    Filter by Type
+                                    Lọc theo loại công việc
                                 </div>
                                 <DropdownMenuSeparator />
                                 {['Epic', 'Story', 'Task', 'Subtask'].map(
@@ -706,7 +685,7 @@ export default function WorkItemsListPage() {
                         >
                             <div className="space-y-2">
                                 <div className="font-medium text-sm text-gray-700 px-2 py-1">
-                                    Filter by Sprint
+                                    Lọc theo sprint
                                 </div>
                                 <DropdownMenuSeparator />
 
@@ -731,7 +710,7 @@ export default function WorkItemsListPage() {
                                         }}
                                     />
                                     <span className="text-sm text-gray-700">
-                                        No Sprint
+                                        Không có sprint
                                     </span>
                                 </div>
 
@@ -773,7 +752,7 @@ export default function WorkItemsListPage() {
                                                         `Sprint ${sprint.number}`}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
-                                                    Status: {sprint.status}
+                                                    Trạng thái: {sprint.status}
                                                 </div>
                                             </div>
                                         </div>
@@ -783,7 +762,7 @@ export default function WorkItemsListPage() {
                                 {sprints.length === 0 && (
                                     <div className="text-center py-4 text-gray-400">
                                         <p className="text-sm">
-                                            No sprints available
+                                            Không có sprint
                                         </p>
                                     </div>
                                 )}
@@ -805,7 +784,7 @@ export default function WorkItemsListPage() {
                         }
                         className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
-                        Apply Filters
+                        Áp dụng bộ lọc
                     </Button>
 
                     {/* Clear Filters */}
@@ -822,7 +801,7 @@ export default function WorkItemsListPage() {
                             className="text-gray-600 hover:text-gray-900"
                         >
                             <X className="h-4 w-4 mr-1" />
-                            Clear All
+                            Xóa tất cả
                         </Button>
                     )}
                 </div>
@@ -834,7 +813,7 @@ export default function WorkItemsListPage() {
                     <CardHeader className="pb-3">
                         <CardTitle className="flex items-center justify-between">
                             <span className="text-lg font-semibold text-gray-900">
-                                Work Items (total {totalItems} items)
+                                Danh sách công việc (tổng {totalItems} công việc)
                             </span>
                         </CardTitle>
                     </CardHeader>
@@ -854,7 +833,7 @@ export default function WorkItemsListPage() {
                                 }
                                 endMessage={
                                     <div className="text-center py-4 text-gray-500">
-                                        <p>You&apos;ve reached the end! 🎉</p>
+                                        <p>Bạn đã đến cuối danh sách! 🎉</p>
                                     </div>
                                 }
                                 scrollableTarget="scrollableDiv"
@@ -864,40 +843,40 @@ export default function WorkItemsListPage() {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead className="w-20">
-                                                    Type
+                                                    Loại
                                                 </TableHead>
                                                 <TableHead className="w-24">
-                                                    Key
+                                                    Mã
                                                 </TableHead>
                                                 <TableHead className="min-w-48">
-                                                    Summary
+                                                    Tóm tắt
                                                 </TableHead>
                                                 <TableHead className="w-32">
-                                                    Assignee
+                                                    Thành viên được giao
                                                 </TableHead>
                                                 <TableHead className="w-32">
-                                                    Reporter
+                                                    Người báo cáo
                                                 </TableHead>
                                                 <TableHead className="w-28">
                                                     Sprint
                                                 </TableHead>
                                                 <TableHead className="w-28">
-                                                    Status
+                                                    Trạng thái
                                                 </TableHead>
                                                 <TableHead className="w-20">
-                                                    Rating
+                                                    Đánh giá
                                                 </TableHead>
                                                 <TableHead className="w-32">
-                                                    Start Date
+                                                    Ngày bắt đầu
                                                 </TableHead>
                                                 <TableHead className="w-32">
-                                                    End Date
+                                                    Ngày kết thúc
                                                 </TableHead>
                                                 <TableHead className="w-32">
-                                                    Created
+                                                    Ngày tạo
                                                 </TableHead>
                                                 <TableHead className="w-32">
-                                                    Updated
+                                                    Ngày cập nhật
                                                 </TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -975,7 +954,7 @@ export default function WorkItemsListPage() {
                                                             </div>
                                                         ) : (
                                                             <span className="text-xs text-gray-400">
-                                                                Unassigned
+                                                                Chưa giao
                                                             </span>
                                                         )}
                                                     </TableCell>
@@ -1007,7 +986,7 @@ export default function WorkItemsListPage() {
                                                             </div>
                                                         ) : (
                                                             <span className="text-xs text-gray-400">
-                                                                No reporter
+                                                                Không có người báo cáo
                                                             </span>
                                                         )}
                                                     </TableCell>
@@ -1024,7 +1003,7 @@ export default function WorkItemsListPage() {
                                                             </Badge>
                                                         ) : (
                                                             <span className="text-xs text-gray-400">
-                                                                No sprint
+                                                                Không thuộc sprint
                                                             </span>
                                                         )}
                                                     </TableCell>
@@ -1067,18 +1046,14 @@ export default function WorkItemsListPage() {
                                                                 <>
                                                                     <div>
                                                                         {formatDate(
-                                                                            item.startDate
+                                                                            item.startDate, 'dd/MM/yyyy'
                                                                         )}
                                                                     </div>
-                                                                    <div className="text-gray-400">
-                                                                        {formatRelativeDate(
-                                                                            item.startDate
-                                                                        )}
-                                                                    </div>
+                                                                   
                                                                 </>
                                                             ) : (
                                                                 <span className="text-gray-400">
-                                                                    Not set
+                                                                    Không đặt
                                                                 </span>
                                                             )}
                                                         </div>
@@ -1089,18 +1064,14 @@ export default function WorkItemsListPage() {
                                                                 <>
                                                                     <div>
                                                                         {formatDate(
-                                                                            item.endDate
+                                                                            item.endDate, 'dd/MM/yyyy'
                                                                         )}
                                                                     </div>
-                                                                    <div className="text-gray-400">
-                                                                        {formatRelativeDate(
-                                                                            item.endDate
-                                                                        )}
-                                                                    </div>
+                                                                    
                                                                 </>
                                                             ) : (
                                                                 <span className="text-gray-400">
-                                                                    Not set
+                                                                    Không đặt
                                                                 </span>
                                                             )}
                                                         </div>
@@ -1109,28 +1080,20 @@ export default function WorkItemsListPage() {
                                                         <div className="text-xs text-gray-500">
                                                             <div>
                                                                 {formatDate(
-                                                                    item.createdAt
+                                                                    item.createdAt, 'dd/MM/yyyy'
                                                                 )}
                                                             </div>
-                                                            <div className="text-gray-400">
-                                                                {formatRelativeDate(
-                                                                    item.createdAt
-                                                                )}
-                                                            </div>
+                                                            
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
                                                         <div className="text-xs text-gray-500">
                                                             <div>
                                                                 {formatDate(
-                                                                    item.updatedAt
+                                                                    item.updatedAt, 'dd/MM/yyyy'
                                                                 )}
                                                             </div>
-                                                            <div className="text-gray-400">
-                                                                {formatRelativeDate(
-                                                                    item.updatedAt
-                                                                )}
-                                                            </div>
+                                                            
                                                         </div>
                                                     </TableCell>
                                                     {/* <TableCell>
@@ -1159,15 +1122,15 @@ export default function WorkItemsListPage() {
                             <div className="text-center py-12">
                                 <List className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                    No work items found
+                                    Không tìm thấy công việc
                                 </h3>
                                 <p className="text-gray-500">
                                     {searchQuery ||
                                     filteredAssignees.size > 0 ||
                                     filteredStatuses.size > 0 ||
                                     filteredTypes.size > 0
-                                        ? 'Try adjusting your filters or search query.'
-                                        : 'No work items have been created yet.'}
+                                        ? 'Vui lòng điều chỉnh bộ lọc hoặc từ khóa tìm kiếm.'
+                                        : 'Không có công việc nào được tạo.'}
                                 </p>
                             </div>
                         )}

@@ -7,10 +7,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
     Github,
-    User,
-    Bell,
-    Shield,
-    Palette,
+    // User,
+    // Bell,
+    // Shield,
+    // Palette,
     Menu,
     X,
     Home,
@@ -23,42 +23,44 @@ const settingsNavigation = [
         name: 'GitHub',
         href: '/lecturer/settings/github',
         icon: Github,
-        description: 'Manage GitHub integrations',
+        description: 'Quản lý tích hợp GitHub',
+        disabled: false,
     },
     {
-        name: 'Project Templates',
+        name: 'Template dự án',
         href: '/lecturer/settings/templates',
         icon: FileText,
-        description: 'Manage project templates',
+        description: 'Quản lý các template dự án',
+        disabled: false,
     },
-    {
-        name: 'Profile',
-        href: '/lecturer/settings/profile',
-        icon: User,
-        description: 'Personal information',
-        disabled: true,
-    },
-    {
-        name: 'Notifications',
-        href: '/lecturer/settings/notifications',
-        icon: Bell,
-        description: 'Email and push notifications',
-        disabled: true,
-    },
-    {
-        name: 'Security',
-        href: '/lecturer/settings/security',
-        icon: Shield,
-        description: 'Password and authentication',
-        disabled: true,
-    },
-    {
-        name: 'Appearance',
-        href: '/lecturer/settings/appearance',
-        icon: Palette,
-        description: 'Theme and display preferences',
-        disabled: true,
-    },
+    // {
+    //     name: 'Profile',
+    //     href: '/lecturer/settings/profile',
+    //     icon: User,
+    //     description: 'Personal information',
+    //     disabled: true,
+    // },
+    // {
+    //     name: 'Notifications',
+    //     href: '/lecturer/settings/notifications',
+    //     icon: Bell,
+    //     description: 'Email and push notifications',
+    //     disabled: true,
+    // },
+    // {
+    //     name: 'Security',
+    //     href: '/lecturer/settings/security',
+    //     icon: Shield,
+    //     description: 'Password and authentication',
+    //     disabled: true,
+    // },
+    // {
+    //     name: 'Appearance',
+    //     href: '/lecturer/settings/appearance',
+    //     icon: Palette,
+    //     description: 'Theme and display preferences',
+    //     disabled: true,
+    // },
 ];
 
 export default function SettingsLayout({
@@ -92,7 +94,7 @@ export default function SettingsLayout({
                             {/* Mobile Header */}
                             <div className="px-4 mb-4">
                                 <h1 className="text-lg font-semibold text-gray-900 mb-3">
-                                    Settings
+                                    Cài đặt
                                 </h1>
                                 <Link href="/lecturer/home">
                                     <Button
@@ -101,7 +103,7 @@ export default function SettingsLayout({
                                         onClick={() => setSidebarOpen(false)}
                                     >
                                         <Home className="h-4 w-4 mr-2" />
-                                        Back to Home
+                                        Quay về trang chủ
                                     </Button>
                                 </Link>
                             </div>
@@ -133,7 +135,7 @@ export default function SettingsLayout({
                                             {item.name}
                                             {item.disabled && (
                                                 <span className="ml-auto text-xs text-gray-400">
-                                                    Soon
+                                                    Sắp ra mắt
                                                 </span>
                                             )}
                                         </Link>
@@ -152,7 +154,7 @@ export default function SettingsLayout({
                         {/* Desktop Header */}
                         <div className="px-4 mb-6 mt-20">
                             <h1 className="text-lg font-semibold text-gray-900 mb-4">
-                                Settings
+                                Cài đặt
                             </h1>
                             <Link href="/lecturer/home">
                                 <Button
@@ -160,7 +162,7 @@ export default function SettingsLayout({
                                     className="w-full justify-start"
                                 >
                                     <Home className="h-4 w-4 mr-2" />
-                                    Back to Home
+                                    Quay về trang chủ
                                 </Button>
                             </Link>
                         </div>
@@ -195,7 +197,7 @@ export default function SettingsLayout({
                                         </div>
                                         {item.disabled && (
                                             <span className="ml-auto text-xs text-gray-400">
-                                                Soon
+                                                Sắp ra mắt
                                             </span>
                                         )}
                                     </Link>

@@ -33,7 +33,7 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
     // Validation
     const newErrors: { title?: string } = {}
     if (!title.trim()) {
-      newErrors.title = "Title is required"
+      newErrors.title = "Tên chủ đề là bắt buộc"
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -49,12 +49,12 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
         attachments: attachments.length > 0 ? attachments : undefined,
       })
 
-      toast.success("Topic created successfully!")
+      toast.success("Chủ đề đã được tạo thành công!")
       onTopicAdded()
       handleClose()
     } catch (error: any) {
-      console.error("Error creating topic:", error)
-      toast.error(error.message || "Failed to create topic")
+      console.log("🚀 ~ handleSubmit ~ error:", error)
+      toast.error(error.message || "Lỗi khi tạo chủ đề")
     } finally {
       setLoading(false)
     }
@@ -109,12 +109,12 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Add New Topic">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Thêm chủ đề mới">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div className="space-y-2">
           <Label htmlFor="title" className="text-sm font-medium text-gray-800">
-            Title *
+            Tên chủ đề *
           </Label>
           <Input
             id="title"
@@ -127,7 +127,7 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
                   title: undefined,
                 }))
             }}
-            placeholder="Enter topic title"
+            placeholder="Nhập tên chủ đề"
             className={`w-full ${errors.title ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-blue-500 text-gray-700"}`}
           />
           {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
@@ -136,13 +136,13 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
         {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="description" className="text-sm font-medium text-gray-700">
-            Description
+            Mô tả
           </Label>
           <Textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter topic description (optional)"
+            placeholder="Nhập mô tả chủ đề (tùy chọn)"
             rows={4}
             className="w-full bg-white text-gray-900 border-gray-300 focus:border-blue-500 focus:ring-blue-500 placeholder:text-gray-500"
           />
@@ -150,7 +150,7 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
 
         {/* File Upload */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">Attachments</Label>
+          <Label className="text-sm font-medium text-gray-700">Tập tin đính kèm</Label>
           <div
             className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
               dragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
@@ -162,19 +162,19 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
           >
             <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
             <p className="text-gray-600 mb-2">
-              Drag and drop files here, or{" "}
+              Kéo và thả tập tin vào đây, hoặc{" "}
               <label className="text-blue-600 hover:text-blue-700 cursor-pointer font-medium">
-                browse
+                tìm kiếm
                 <input type="file" multiple className="hidden" onChange={(e) => handleFileSelect(e.target.files)} />
               </label>
             </p>
-            <p className="text-sm text-gray-500">Support for multiple files</p>
+            <p className="text-sm text-gray-500">Hỗ trợ nhiều tập tin</p>
           </div>
 
           {/* Selected Files */}
           {attachments.length > 0 && (
             <div className="mt-4 space-y-2">
-              <p className="text-sm font-medium text-gray-700">Selected Files:</p>
+              <p className="text-sm font-medium text-gray-700">Tập tin đã chọn:</p>
               {attachments.map((file, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
                   <div className="flex items-center space-x-2">
@@ -200,10 +200,10 @@ export function AddTopicModal({ isOpen, onClose, onTopicAdded, projectId }: AddT
         {/* Actions */}
         <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
           <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>
-            Cancel
+            Hủy
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Creating..." : "Create Topic"}
+            {loading ? "Đang tạo..." : "Tạo chủ đề"}
           </Button>
         </div>
       </form>

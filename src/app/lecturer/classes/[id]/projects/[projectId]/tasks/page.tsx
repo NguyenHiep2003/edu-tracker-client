@@ -123,11 +123,10 @@ export default function TasksPage() {
             newTask.summary &&
             newTask.gradeComponent
         ) {
-            const defaultGradeTitle = `${newTask.summary} Grade`;
+            const defaultGradeTitle = `Điểm ${newTask.summary}`;
             // Only update if it's still the default or empty
             if (
-                !newTask.gradeComponent.title ||
-                newTask.gradeComponent.title.endsWith(' Grade')
+                !newTask.gradeComponent.title
             ) {
                 setNewTask((prev) => ({
                     ...prev,
@@ -149,7 +148,7 @@ export default function TasksPage() {
             setTasks(response);
         } catch (error: any) {
             console.log('🚀 ~ fetchTasks ~ error:', error);
-            toast.error('Failed to load tasks');
+            toast.error('Đã xảy ra lỗi khi tải công việc');
         } finally {
             setLoading(false);
         }
@@ -160,27 +159,27 @@ export default function TasksPage() {
             case 'PENDING':
                 return (
                     <Badge className="bg-yellow-100 text-yellow-800">
-                        Pending
+                        Chờ xuất bản
                     </Badge>
                 );
             case 'PROCESSING':
                 return (
                     <Badge className="bg-blue-100 text-blue-800">
-                        Processing
+                        Đang xử lý
                     </Badge>
                 );
             case 'DONE':
                 return (
                     <Badge className="bg-green-100 text-green-800">
-                        Published
+                        Đã xuất bản
                     </Badge>
                 );
             case 'FAIL':
                 return (
-                    <Badge className="bg-red-100 text-red-800">Failed</Badge>
+                    <Badge className="bg-red-100 text-red-800">Lỗi</Badge>
                 );
             default:
-                return <Badge variant="outline">Unknown</Badge>;
+                return <Badge variant="outline">Không xác định</Badge>;
         }
     };
 
@@ -205,30 +204,26 @@ export default function TasksPage() {
         const newErrors: Record<string, string> = {};
 
         if (!newTask.summary.trim()) {
-            newErrors.summary = 'Task summary is required';
-        }
-
-        if (newTask.description && !newTask.description.trim()) {
-            newErrors.description = 'Description cannot be empty if provided';
+            newErrors.summary = 'Tóm tắt công việc là bắt buộc';
         }
 
         // Grade component validation
         if (newTask.createGradeComponent && newTask.gradeComponent) {
             if (!newTask.gradeComponent.title.trim()) {
-                newErrors.gradeTitle = 'Grade component title is required';
+                newErrors.gradeTitle = 'Tiêu đề đầu điểm là bắt buộc';
             }
 
             if (
                 !newTask.gradeComponent.maxScore ||
-                newTask.gradeComponent.maxScore <= 0
+                newTask.gradeComponent.maxScore <= 0 || newTask.gradeComponent.maxScore > 10000
             ) {
-                newErrors.gradeMaxScore = 'Max score must be greater than 0';
+                newErrors.gradeMaxScore = 'Điểm tối đa phải lớn hơn 0 và nhỏ hơn 10000';
             }
             if (
                 !newTask.gradeComponent.scale ||
-                newTask.gradeComponent.scale <= 0
+                newTask.gradeComponent.scale <= 0 || newTask.gradeComponent.scale > 4
             ) {
-                newErrors.gradeScale = 'Scale must be greater than 0';
+                newErrors.gradeScale = 'Số chữ số sau dấu phẩy phải lớn hơn 0 và nhỏ hơn 4';
             }
         }
 
@@ -240,14 +235,14 @@ export default function TasksPage() {
             const endDate = new Date(newTask.endDate);
             const now = new Date();
             if (endDate <= now) {
-                newErrors.endDate = 'End date must be in the future';
+                newErrors.endDate = 'Ngày kết thúc phải không được trước ngày hiện tại';
             }
 
             // Validate end date is after start date
             if (newTask.startDate) {
                 const startDate = new Date(newTask.startDate);
                 if (endDate <= startDate) {
-                    newErrors.endDate = 'End date must be after start date';
+                    newErrors.endDate = 'Ngày kết thúc phải sau ngày bắt đầu';
                 }
             }
         }
@@ -281,12 +276,12 @@ export default function TasksPage() {
             });
             setIsCreateDialogOpen(false);
             setErrors({});
-            toast.success('Task created successfully!');
+            toast.success('Công việc đã được tạo thành công!');
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to create task');
+                toast.error(error.message || 'Đã xảy ra lỗi khi tạo công việc');
             }
         } finally {
             setIsCreatingTask(false);
@@ -305,12 +300,12 @@ export default function TasksPage() {
             setIsDeletingTask(true);
             await deleteLecturerAssignedItem(taskToDelete.lecturer_item_id);
             await fetchTasks(); // Refresh the task list
-            toast.success('Task deleted successfully!');
+            toast.success('Công việc đã được xóa thành công!');
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to delete task');
+                toast.error(error.message || 'Đã xảy ra lỗi khi xóa công việc');
             }
         } finally {
             setIsDeletingTask(false);
@@ -349,7 +344,7 @@ export default function TasksPage() {
         return (
             <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                <span className="ml-2 text-gray-600">Loading tasks...</span>
+                <span className="ml-2 text-gray-600">Đang tải công việc...</span>
             </div>
         );
     }
@@ -359,9 +354,9 @@ export default function TasksPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Tasks</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Công việc</h1>
                     <p className="text-gray-600">
-                        Manage tasks and assignments for project groups
+                        Quản lý công việc và giao việc cho các nhóm
                     </p>
                 </div>
 
@@ -373,12 +368,12 @@ export default function TasksPage() {
                     {isCreatingTask ? (
                         <>
                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Creating Task...
+                            Đang tạo công việc...
                         </>
                     ) : (
                         <>
                             <Plus className="h-4 w-4 mr-2" />
-                            Create Task
+                            Tạo công việc
                         </>
                     )}
                 </Button>
@@ -417,7 +412,7 @@ export default function TasksPage() {
                                             as="h3"
                                             className="p-6 text-lg font-medium leading-6 text-gray-900 flex-shrink-0 border-b"
                                         >
-                                            Create New Task
+                                            Tạo công việc mới
                                         </Dialog.Title>
 
                                         {/* Scrollable Content */}
@@ -428,7 +423,7 @@ export default function TasksPage() {
                                                         htmlFor="type"
                                                         className="text-gray-900"
                                                     >
-                                                        Type
+                                                        Loại
                                                     </Label>
                                                     <select
                                                         id="type"
@@ -464,7 +459,7 @@ export default function TasksPage() {
                                                         htmlFor="assignType"
                                                         className="text-gray-900"
                                                     >
-                                                        Assign To
+                                                        Giao cho
                                                     </Label>
                                                     <select
                                                         id="assignType"
@@ -487,7 +482,7 @@ export default function TasksPage() {
                                                                 AssignType.ALL
                                                             }
                                                         >
-                                                            All Groups
+                                                            Tất cả nhóm
                                                         </option>
                                                     </select>
                                                 </div>
@@ -498,7 +493,7 @@ export default function TasksPage() {
                                                     htmlFor="summary"
                                                     className="text-gray-900"
                                                 >
-                                                    Summary
+                                                    Tóm tắt
                                                 </Label>
                                                 <Input
                                                     id="summary"
@@ -510,7 +505,7 @@ export default function TasksPage() {
                                                                 e.target.value,
                                                         })
                                                     }
-                                                    placeholder="Enter task summary (e.g. Vẽ biểu đồ ca sử dụng)"
+                                                    placeholder="Nhập tóm tắt công việc (ví dụ: Vẽ biểu đồ ca sử dụng)"
                                                     className="text-gray-700"
                                                 />
                                                 {errors.summary && (
@@ -525,7 +520,7 @@ export default function TasksPage() {
                                                     htmlFor="description"
                                                     className="text-gray-900"
                                                 >
-                                                    Description (Optional)
+                                                    Mô tả (Tùy chọn)
                                                 </Label>
                                                 <Textarea
                                                     id="description"
@@ -537,7 +532,7 @@ export default function TasksPage() {
                                                                 e.target.value,
                                                         })
                                                     }
-                                                    placeholder="Describe what groups need to do"
+                                                    placeholder="Mô tả những gì nhóm cần làm"
                                                     rows={4}
                                                     className="bg-white border-gray-300 text-gray-900 placeholder:text-gray-500"
                                                 />
@@ -555,8 +550,8 @@ export default function TasksPage() {
                                                             htmlFor="startDate"
                                                             className="text-gray-900"
                                                         >
-                                                            Start Date
-                                                            (Optional)
+                                                            Ngày bắt đầu
+                                                            (Tùy chọn)
                                                         </Label>
                                                         <TooltipProvider>
                                                             <Tooltip>
@@ -586,13 +581,13 @@ export default function TasksPage() {
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>
                                                                     <p>
-                                                                        Students
-                                                                        will
-                                                                        receive
-                                                                        the task
-                                                                        after
-                                                                        this
-                                                                        date
+                                                                        Sinh viên
+                                                                        sẽ
+                                                                        nhận
+                                                                        công việc
+                                                                        sau
+                                                                        thời gian
+                                                                        này hoặc ngay lập tức nếu bỏ trống
                                                                     </p>
                                                                 </TooltipContent>
                                                             </Tooltip>
@@ -654,7 +649,7 @@ export default function TasksPage() {
                                                         htmlFor="endDate"
                                                         className="text-gray-900"
                                                     >
-                                                        End Date (Optional)
+                                                        Ngày kết thúc (Tùy chọn)
                                                     </Label>
                                                     <input
                                                         id="endDate"
@@ -713,7 +708,7 @@ export default function TasksPage() {
                                                     htmlFor="attachments"
                                                     className="text-gray-900"
                                                 >
-                                                    Attachments (Optional)
+                                                    Tập tin đính kèm (Tùy chọn)
                                                 </Label>
                                                 <div className="space-y-3">
                                                     <div className="relative">
@@ -749,11 +744,10 @@ export default function TasksPage() {
                                                         >
                                                             <div className="flex items-center space-x-2">
                                                                 <div className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors">
-                                                                    Choose Files
+                                                                    Chọn tập tin
                                                                 </div>
                                                                 <span className="text-gray-500">
-                                                                    or drag and
-                                                                    drop
+                                                                    hoặc kéo và thả
                                                                 </span>
                                                             </div>
                                                         </label>
@@ -768,8 +762,7 @@ export default function TasksPage() {
                                                                         .attachments
                                                                         .length
                                                                 }{' '}
-                                                                file(s)
-                                                                selected:
+                                                                tập tin đã chọn:
                                                             </p>
                                                             <div className="space-y-2 max-h-32 overflow-y-auto">
                                                                 {newTask.attachments.map(
@@ -848,8 +841,8 @@ export default function TasksPage() {
                                                                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                                                 >
                                                                     <Trash2 className="h-4 w-4 mr-2" />
-                                                                    Clear All
-                                                                    Files
+                                                                    Xóa tất cả
+                                                                    tập tin
                                                                 </Button>
                                                             )}
                                                         </div>
@@ -861,7 +854,7 @@ export default function TasksPage() {
                                             <div className="space-y-4">
                                                 <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                                                     <BarChart3 className="h-5 w-5" />
-                                                    Grade Component
+                                                    Đầu điểm
                                                 </h3>
 
                                                 <div>
@@ -882,16 +875,14 @@ export default function TasksPage() {
                                                             className="text-blue-600"
                                                         />
                                                         <span className="text-gray-900">
-                                                            Create grade
-                                                            component for this
-                                                            task
+                                                            Tạo đầu điểm cho
+                                                            công việc này
                                                         </span>
                                                     </label>
                                                     <p className="text-sm text-gray-600 mt-1">
-                                                        Automatically create a
-                                                        grading component to
-                                                        track student
-                                                        performance
+                                                        Tạo đầu điểm
+                                                        để đánh giá quá trình làm
+                                                        của sinh viên
                                                     </p>
                                                 </div>
 
@@ -902,8 +893,7 @@ export default function TasksPage() {
                                                                 htmlFor="gradeTitle"
                                                                 className="text-gray-900 font-medium"
                                                             >
-                                                                Grade Component
-                                                                Title *
+                                                                Tiêu đề đầu điểm *
                                                             </Label>
                                                             <Input
                                                                 id="gradeTitle"
@@ -920,7 +910,7 @@ export default function TasksPage() {
                                                                             .value
                                                                     )
                                                                 }
-                                                                placeholder="Enter grade component title"
+                                                                placeholder="Nhập tiêu đề đầu điểm"
                                                                 className={`text-gray-900 placeholder-gray-500 ${
                                                                     errors.gradeTitle
                                                                         ? 'border-red-500'
@@ -942,8 +932,7 @@ export default function TasksPage() {
                                                                 htmlFor="gradeDescription"
                                                                 className="text-gray-900 font-medium"
                                                             >
-                                                                Grade Component
-                                                                Description
+                                                                Mô tả đầu điểm
                                                             </Label>
                                                             <textarea
                                                                 id="gradeDescription"
@@ -960,7 +949,7 @@ export default function TasksPage() {
                                                                             .value
                                                                     )
                                                                 }
-                                                                placeholder="Enter grade component description (optional)"
+                                                                placeholder="Nhập mô tả đầu điểm (tùy chọn)"
                                                                 className="w-full min-h-[60px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
                                                             />
                                                         </div>
@@ -970,13 +959,14 @@ export default function TasksPage() {
                                                                 htmlFor="gradeMaxScore"
                                                                 className="text-gray-900 font-medium"
                                                             >
-                                                                Max Score *
+                                                                Điểm tối đa *
                                                             </Label>
                                                             <Input
                                                                 id="gradeMaxScore"
                                                                 type="number"
-                                                                min="1"
+                                                                min="0"
                                                                 step="0.1"
+                                                                max="10000"
                                                                 value={
                                                                     newTask
                                                                         .gradeComponent
@@ -993,7 +983,7 @@ export default function TasksPage() {
                                                                         ) || 0
                                                                     )
                                                                 }
-                                                                placeholder="Enter maximum score"
+                                                                placeholder="Nhập điểm tối đa"
                                                                 className={`text-gray-900 placeholder-gray-500 ${
                                                                     errors.gradeMaxScore
                                                                         ? 'border-red-500'
@@ -1014,13 +1004,14 @@ export default function TasksPage() {
                                                                 htmlFor="gradeScale"
                                                                 className="text-gray-900 font-medium"
                                                             >
-                                                                Scale *
+                                                                Số chữ số sau dấu phẩy *
                                                             </Label>
                                                             <Input
                                                                 id="gradeScale"
                                                                 type="number"
                                                                 min="0"
                                                                 step="1"
+                                                                max="4"
                                                                 value={
                                                                     newTask
                                                                         .gradeComponent
@@ -1037,7 +1028,7 @@ export default function TasksPage() {
                                                                         ) || 0
                                                                     )
                                                                 }
-                                                                placeholder="Enter scale"
+                                                                placeholder="Nhập số chữ số sau dấu phẩy"
                                                                 className={`text-gray-900 placeholder-gray-500 ${
                                                                     errors.gradeScale
                                                                         ? 'border-red-500'
@@ -1088,7 +1079,7 @@ export default function TasksPage() {
                                                 }}
                                                 disabled={isCreatingTask}
                                             >
-                                                Cancel
+                                                Hủy
                                             </Button>
                                             <Button
                                                 onClick={handleCreateTask}
@@ -1097,10 +1088,10 @@ export default function TasksPage() {
                                                 {isCreatingTask ? (
                                                     <>
                                                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                                        Creating Task...
+                                                        Đang tạo công việc...
                                                     </>
                                                 ) : (
-                                                    'Create Task'
+                                                    'Tạo công việc'
                                                 )}
                                             </Button>
                                         </div>
@@ -1150,7 +1141,7 @@ export default function TasksPage() {
                                     <Calendar className="h-4 w-4 text-gray-500" />
                                     <div>
                                         <div className="text-sm font-medium">
-                                            Start Date
+                                            Ngày bắt đầu
                                         </div>
                                         <div className="text-sm text-gray-600">
                                             {task.lecturer_item_start_date
@@ -1158,7 +1149,7 @@ export default function TasksPage() {
                                                       task.lecturer_item_start_date,
                                                       'dd/MM/yyyy HH:mm'
                                                   )
-                                                : 'Not set'}
+                                                : 'Chưa đặt'}
                                         </div>
                                     </div>
                                 </div>
@@ -1168,7 +1159,7 @@ export default function TasksPage() {
                                     <Clock className="h-4 w-4 text-gray-500" />
                                     <div>
                                         <div className="text-sm font-medium">
-                                            End Date
+                                            Ngày kết thúc
                                         </div>
                                         <div className="text-sm text-gray-600">
                                             {task.lecturer_item_end_date
@@ -1176,7 +1167,7 @@ export default function TasksPage() {
                                                       task.lecturer_item_end_date,
                                                       'dd/MM/yyyy HH:mm'
                                                   )
-                                                : 'Not set'}
+                                                : 'Chưa đặt'}
                                         </div>
                                     </div>
                                 </div>
@@ -1186,17 +1177,16 @@ export default function TasksPage() {
                                     <Users className="h-4 w-4 text-gray-500" />
                                     <div>
                                         <div className="text-sm font-medium">
-                                            Progress
+                                            Tiến độ
                                         </div>
                                         {task.job_status === 'DONE' ? (
                                             <div className="text-sm text-gray-600">
-                                                {task.num_group_done} of{' '}
-                                                {task.num_group} groups
-                                                submitted
+                                                {task.num_group_done} trong{' '}
+                                                {task.num_group} nhóm đã nộp
                                             </div>
                                         ) : (
                                             <div className="text-sm text-gray-600">
-                                                Not started
+                                                Chưa bắt đầu
                                             </div>
                                         )}
                                     </div>
@@ -1207,7 +1197,7 @@ export default function TasksPage() {
                                     {getJobStatusIcon(task.job_status)}
                                     <div>
                                         <div className="text-sm font-medium">
-                                            Publish Status
+                                            Trạng thái xuất bản
                                         </div>
                                         <div className="text-sm text-gray-600">
                                             {formatDate(
@@ -1241,7 +1231,7 @@ export default function TasksPage() {
                                     >
                                         <Button variant="outline" size="sm">
                                             <Eye className="h-4 w-4 mr-2" />
-                                            View Submissions
+                                            Xem các bài nộp
                                         </Button>
                                     </Link>
                                     <Button
@@ -1255,7 +1245,7 @@ export default function TasksPage() {
                                         }}
                                     >
                                         <Edit2 className="h-4 w-4 mr-2" />
-                                        Edit
+                                        Sửa
                                     </Button>
                                 </div>
 
@@ -1268,12 +1258,12 @@ export default function TasksPage() {
                                     {isDeletingTask ? (
                                         <>
                                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                            Deleting...
+                                            Đang xóa...
                                         </>
                                     ) : (
                                         <>
                                             <Trash2 className="h-4 w-4 mr-2" />
-                                            Delete
+                                            Xóa
                                         </>
                                     )}
                                 </Button>
@@ -1287,10 +1277,10 @@ export default function TasksPage() {
                 <div className="text-center py-12">
                     <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        No tasks yet
+                        Chưa có công việc
                     </h3>
                     <p className="text-gray-600 mb-4">
-                        Create your first task to assign work to project groups.
+                        Tạo công việc đầu tiên để giao việc cho các nhóm
                     </p>
                     <Button
                         onClick={() => setIsCreateDialogOpen(true)}
@@ -1299,12 +1289,12 @@ export default function TasksPage() {
                         {isCreatingTask ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Creating Task...
+                                Đang tạo công việc...
                             </>
                         ) : (
                             <>
                                 <Plus className="h-4 w-4 mr-2" />
-                                Create First Task
+                                Tạo công việc đầu tiên
                             </>
                         )}
                     </Button>
@@ -1331,10 +1321,10 @@ export default function TasksPage() {
                 isOpen={isDeleteWarningOpen}
                 onClose={handleDeleteCancel}
                 onConfirm={handleDeleteConfirm}
-                title="Delete Task"
-                description={`Are you sure you want to delete the task "${taskToDelete?.lecturer_item_summary}"? This action cannot be undone and will remove all associated data.`}
-                confirmText="Delete Task"
-                cancelText="Cancel"
+                title="Xóa công việc"
+                description={`Bạn có chắc chắn muốn xóa công việc "${taskToDelete?.lecturer_item_summary}"? Thao tác này không thể hoàn tác và sẽ xóa tất cả dữ liệu liên quan.`}
+                confirmText="Xóa công việc"
+                cancelText="Hủy"
             />
         </div>
     );

@@ -65,13 +65,13 @@ export default function RegisterPage() {
                 const providers = await getAuthProvider();
                 setAuthProviders(providers);
             } catch (error: any) {
-                console.error('Error fetching auth providers:', error);
+                console.log("🚀 ~ fetchAuthProviders ~ error:", error)
                 if (Array.isArray(error?.message)) {
                     toast.error(error.message[0]);
                 } else {
                     toast.error(
                         error?.message ??
-                            'Failed to load authentication providers'
+                            'Đã xảy ra lỗi khi tải các nhà cung cấp xác thực'
                     );
                 }
             } finally {
@@ -104,11 +104,11 @@ export default function RegisterPage() {
             // Show success modal
             setShowSuccessModal(true);
         } catch (error: any) {
-            console.error('Error submitting form:', error);
+            console.log("🚀 ~ onSubmit ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Server error');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi đăng ký tổ chức');
             }
         }
     };
@@ -118,13 +118,13 @@ export default function RegisterPage() {
         if (file) {
             // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                toast.error('Image file size must be less than 5MB.');
+                toast.error('Kích thước file ảnh phải nhỏ hơn 5MB.');
                 return;
             }
 
             // Validate file type
             if (!file.type.startsWith('image/')) {
-                toast.error('Please select a valid image file.');
+                toast.error('Vui lòng chọn file ảnh hợp lệ.');
                 return;
             }
 
@@ -168,7 +168,7 @@ export default function RegisterPage() {
                             className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4"
                         >
                             <ArrowLeft className="h-4 w-4 mr-2" />
-                            Back to Home
+                            Quay về trang chủ
                         </Link>
                         <div className="flex items-center justify-center space-x-2 mb-4">
                             <Image
@@ -182,20 +182,18 @@ export default function RegisterPage() {
                             </span>
                         </div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                            Register Your Organization
+                            Đăng ký tổ chức
                         </h1>
                         <p className="text-gray-600">
-                            Create your organization account and start managing
-                            your educational resources
+                            Tạo tài khoản tổ chức và bắt đầu quản lý các tài nguyên giáo dục của bạn
                         </p>
                     </div>
 
                     <Card className="shadow-xl">
                         <CardHeader>
-                            <CardTitle>Organization Registration</CardTitle>
+                            <CardTitle>Đăng ký tổ chức</CardTitle>
                             <CardDescription>
-                                Fill in the details below to register your
-                                organization.
+                                Điền các thông tin bên dưới để đăng ký tổ chức của bạn.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -208,12 +206,12 @@ export default function RegisterPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="name">
-                                                Organization Name *
+                                                Tên tổ chức *
                                             </Label>
                                             <Input
                                                 id="name"
                                                 {...register('name')}
-                                                placeholder="Enter organization name"
+                                                placeholder="Nhập tên tổ chức"
                                                 disabled={isSubmitting}
                                                 className={
                                                     errors.name
@@ -230,12 +228,12 @@ export default function RegisterPage() {
 
                                         <div className="space-y-2">
                                             <Label htmlFor="acronym">
-                                                Acronym *
+                                                Tên viết tắt *
                                             </Label>
                                             <Input
                                                 id="acronym"
                                                 {...register('acronym')}
-                                                placeholder="e.g., HUST, MIT"
+                                                placeholder="Ví dụ: HUST, MIT"
                                                 disabled={isSubmitting}
                                                 className={
                                                     errors.acronym
@@ -263,7 +261,7 @@ export default function RegisterPage() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="email">
-                                            Email Address *
+                                            Email liên hệ *
                                         </Label>
                                         <Input
                                             id="email"
@@ -287,7 +285,7 @@ export default function RegisterPage() {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="phoneNumber">
-                                                Phone Number *
+                                                Số điện thoại *
                                             </Label>
                                             <Input
                                                 id="phoneNumber"
@@ -310,7 +308,7 @@ export default function RegisterPage() {
 
                                         <div className="space-y-2">
                                             <Label htmlFor="authProviderId">
-                                                Authentication Provider *
+                                                Nhà cung cấp xác thực *
                                             </Label>
                                             <Select
                                                 id="authProviderId"
@@ -321,8 +319,8 @@ export default function RegisterPage() {
                                                 options={authProviderOptions}
                                                 placeholder={
                                                     fetchingProviders
-                                                        ? 'Loading...'
-                                                        : 'Select provider'
+                                                        ? 'Đang tải...'
+                                                        : 'Chọn nhà cung cấp'
                                                 }
                                                 isDisabled={
                                                     isSubmitting ||
@@ -406,12 +404,12 @@ export default function RegisterPage() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="address">
-                                            Address *
+                                            Địa chỉ *
                                         </Label>
                                         <Input
                                             id="address"
                                             {...register('address')}
-                                            placeholder="Enter organization address"
+                                            placeholder="Nhập địa chỉ tổ chức"
                                             disabled={isSubmitting}
                                             className={
                                                 errors.address
@@ -428,7 +426,7 @@ export default function RegisterPage() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="image">
-                                            Organization Logo
+                                            Logo tổ chức
                                         </Label>
                                         <div className="flex items-center space-x-4">
                                             <Input
@@ -451,7 +449,7 @@ export default function RegisterPage() {
                                                 disabled={isSubmitting}
                                             >
                                                 <Upload className="h-4 w-4" />
-                                                <span>Choose Image</span>
+                                                <span>Chọn ảnh</span>
                                             </Button>
                                             {imageFile && (
                                                 <span className="text-sm text-gray-600">
@@ -460,8 +458,7 @@ export default function RegisterPage() {
                                             )}
                                         </div>
                                         <p className="text-xs text-gray-500">
-                                            Maximum file size: 5MB. Supported
-                                            formats: JPG, PNG, GIF
+                                            Kích thước tối đa: 5MB. Định dạng hỗ trợ: JPG, PNG
                                         </p>
                                     </div>
                                 </div>
@@ -475,8 +472,8 @@ export default function RegisterPage() {
                                         }
                                     >
                                         {isSubmitting
-                                            ? 'Registering...'
-                                            : 'Register Organization'}
+                                            ? 'Đang đăng ký...'
+                                            : 'Đăng ký tổ chức'}
                                     </Button>
                                     <Button
                                         type="button"
@@ -486,7 +483,7 @@ export default function RegisterPage() {
                                         disabled={isSubmitting}
                                     >
                                         <Link href="/login">
-                                            Already have an account? Login
+                                            Đã có tài khoản? Đăng nhập
                                         </Link>
                                     </Button>
                                 </div>
@@ -500,9 +497,9 @@ export default function RegisterPage() {
             <SuccessModal
                 isOpen={showSuccessModal}
                 onClose={handleCloseSuccessModal}
-                title="Registration Received!"
-                message="Thank you for registering your organization. We have received your application and will contact you soon to complete the setup process."
-                actionLabel="Go to Homepage"
+                title="Đăng ký thành công!"
+                message="Cảm ơn bạn đã đăng ký tổ chức. Chúng tôi đã nhận được đơn đăng ký của bạn và sẽ liên hệ với bạn sớm nhất có thể để hoàn thành quá trình cài đặt."
+                actionLabel="Quay về trang chủ"
                 onAction={handleGoHome}
             />
         </>

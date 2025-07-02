@@ -95,23 +95,23 @@ export function CreateGradeModal({
         const newErrors: typeof errors = {};
 
         if (!formData.title.trim()) {
-            newErrors.title = 'Title is required';
+            newErrors.title = 'Tên điểm là bắt buộc';
         }
 
         if (formData.maxScore <= 0) {
-            newErrors.maxScore = 'Max score must be greater than 0';
+            newErrors.maxScore = 'Điểm tối đa phải lớn hơn 0';
         }
 
-        if (formData.maxScore >= 1000) {
-            newErrors.maxScore = 'Max score must be less than 1000';
+        if (formData.maxScore >= 10000) {
+            newErrors.maxScore = 'Điểm tối đa phải nhỏ hơn 10000';
         }
 
         if (formData.scale && formData.scale <= 0) {
-            newErrors.scale = 'Scale must be greater than 0';
+            newErrors.scale = 'Số chữ số sau dấu phẩy phải lớn hơn 0';
         }
 
         if (formData.scale && formData.scale > 4) {
-            newErrors.scale = 'Scale must be less than 4';
+            newErrors.scale = 'Số chữ số sau dấu phẩy phải nhỏ hơn hoặc bằng 4';
         }
 
         if (
@@ -119,11 +119,11 @@ export function CreateGradeModal({
             formData.childGrades.length === 0
         ) {
             newErrors.childGrades =
-                'Please select at least one grade to aggregate';
+                'Vui lòng chọn ít nhất một điểm để tổng hợp';
         }
 
         if (formData.type === GradeType.IMPORT_FILE && !formData.file) {
-            newErrors.file = 'Please select a file to import';
+            newErrors.file = 'Vui lòng chọn một tập tin để nhập';
         }
 
         setErrors(newErrors);
@@ -153,7 +153,7 @@ export function CreateGradeModal({
                             },
                         }
                     );
-                    toast.success('Grade component created successfully');
+                    toast.success('Điểm đã được tạo thành công');
                     onClose();
                 } catch (error: any) {
                     if (error?.message && Array.isArray(error.message) && typeof error.message[0] !== 'string') {
@@ -192,7 +192,7 @@ export function CreateGradeModal({
                         type: formData.type,
                     }
                 );
-                toast.success('Grade component created successfully');
+                toast.success('Điểm đã được tạo thành công');
                 onClose();
             }
         } catch (error: any) {
@@ -211,7 +211,7 @@ export function CreateGradeModal({
             if (!file.name.match(/\.(xlsx|xls)$/)) {
                 setErrors((prev) => ({
                     ...prev,
-                    file: 'Please select an Excel file (.xlsx or .xls)',
+                    file: 'Vui lòng chọn một tập tin Excel (.xlsx hoặc .xls)',
                 }));
                 return;
             }
@@ -221,15 +221,15 @@ export function CreateGradeModal({
     };
 
     const visibilityOptions = [
-        { value: GradeVisibility.PRIVATE, label: 'Private' },
-        { value: GradeVisibility.PUBLIC, label: 'Public' },
-        { value: GradeVisibility.RESTRICTED, label: 'Restricted' },
+        { value: GradeVisibility.PRIVATE, label: 'Riêng tư' },
+        { value: GradeVisibility.PUBLIC, label: 'Công khai' },
+        { value: GradeVisibility.RESTRICTED, label: 'Hạn chế' },
     ];
 
     const typeOptions = [
-        { value: 'EMPTY', label: 'Empty' },
-        { value: 'AGGREGATION', label: 'Aggregation' },
-        { value: 'IMPORT FILE', label: 'Import File' },
+        { value: 'EMPTY', label: 'Trống' },
+        { value: 'AGGREGATION', label: 'Tổng hợp' },
+        { value: 'IMPORT FILE', label: 'Nhập từ file' },
     ];
 
     return (
@@ -260,7 +260,7 @@ export function CreateGradeModal({
                             {/* Content */}
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold leading-6 text-gray-900">
-                                    Create Grade Component
+                                    Tạo điểm thành phần
                                 </h3>
                                 <div className="space-y-4">
                                     <div>
@@ -268,7 +268,7 @@ export function CreateGradeModal({
                                             htmlFor="title"
                                             className="text-sm font-medium text-gray-700"
                                         >
-                                            Title *
+                                            Tên điểm *
                                         </Label>
                                         <Input
                                             id="title"
@@ -285,7 +285,7 @@ export function CreateGradeModal({
                                                     }));
                                                 }
                                             }}
-                                            placeholder="Enter grade title"
+                                            placeholder="Nhập tên điểm"
                                             className="mt-1 text-gray-900"
                                         />
                                         {errors.title && (
@@ -299,7 +299,7 @@ export function CreateGradeModal({
                                             htmlFor="description"
                                             className="text-sm font-medium text-gray-700"
                                         >
-                                            Description
+                                            Mô tả
                                         </Label>
                                         <Input
                                             id="description"
@@ -310,7 +310,7 @@ export function CreateGradeModal({
                                                     description: e.target.value,
                                                 }))
                                             }
-                                            placeholder="Enter grade description"
+                                            placeholder="Nhập mô tả điểm"
                                             className="mt-1 text-gray-900"
                                         />
                                     </div>
@@ -319,7 +319,7 @@ export function CreateGradeModal({
                                             htmlFor="maxScore"
                                             className="text-sm font-medium text-gray-700"
                                         >
-                                            Max Score *
+                                            Điểm tối đa *
                                         </Label>
                                         <Input
                                             id="maxScore"
@@ -348,7 +348,7 @@ export function CreateGradeModal({
                                             htmlFor="scale"
                                             className="text-sm font-medium text-gray-700"
                                         >
-                                            Scale *
+                                            Số chữ số sau dấu phẩy *
                                         </Label>
                                         <Input
                                             id="scale"
@@ -378,7 +378,7 @@ export function CreateGradeModal({
                                             htmlFor="visibility"
                                             className="text-sm font-medium text-gray-700"
                                         >
-                                            Visibility *
+                                            Chế độ hiển thị *
                                         </Label>
                                         <Listbox
                                             value={formData.visibility}
@@ -469,31 +469,13 @@ export function CreateGradeModal({
                                             </div>
                                         </Listbox>
                                     </div>
-                                    {/* <div className="flex items-center space-x-2">
-                                        <Checkbox
-                                            className="text-gray-900"
-                                            id="isFinal"
-                                            checked={formData.isFinal}
-                                            onCheckedChange={(checked) =>
-                                                setFormData((prev) => ({
-                                                    ...prev,
-                                                    isFinal: checked as boolean,
-                                                }))
-                                            }
-                                        />
-                                        <Label
-                                            htmlFor="isFinal"
-                                            className="text-sm font-medium text-gray-700"
-                                        >
-                                            Mark as final grade
-                                        </Label>
-                                    </div> */}
+                                   
                                     <div>
                                         <Label
                                             htmlFor="type"
                                             className="text-sm font-medium text-gray-700"
                                         >
-                                            Type *
+                                            Loại *
                                         </Label>
                                         <Listbox
                                             value={formData.type}
@@ -589,7 +571,7 @@ export function CreateGradeModal({
                                         GradeType.AGGREGATION && (
                                         <div className="space-y-2">
                                             <Label className="text-sm font-medium text-gray-700">
-                                                Select Grades to Aggregate
+                                                Chọn điểm để tổng hợp
                                             </Label>
                                             {errors.childGrades && (
                                                 <p className="text-sm text-red-600">
@@ -686,7 +668,7 @@ export function CreateGradeModal({
                                                             {isSelected && (
                                                                 <div className="flex items-center gap-2">
                                                                     <span className="text-xs text-gray-600 min-w-[40px]">
-                                                                        Weight:
+                                                                        Trọng số:
                                                                     </span>
                                                                     <div className="flex items-center border rounded">
                                                                         <button
@@ -838,31 +820,27 @@ export function CreateGradeModal({
                                                     <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5" />
                                                     <div className="text-sm text-gray-600">
                                                         <p className="font-medium text-gray-900">
-                                                            File Requirements:
+                                                            Yêu cầu về tập tin:
                                                         </p>
                                                         <ul className="mt-1 list-disc list-inside space-y-1">
                                                             <li>
-                                                                Excel file
-                                                                (.xlsx or .xls)
+                                                                Tập tin Excel
+                                                                (.xlsx hoặc .xls)
                                                             </li>
                                                             <li>
-                                                                Must have a
-                                                                sheet named
+                                                                Phải có một sheet tên
                                                                 &quot;grades&quot;
                                                             </li>
                                                             <li>
-                                                                Required
-                                                                columns:
+                                                                Các cột bắt buộc:
                                                                 <ul className="ml-4 list-disc">
                                                                     <li>
                                                                         EMAIL:
-                                                                        student&apos;s
-                                                                        email
+                                                                        email của sinh viên
                                                                     </li>
                                                                     <li>
                                                                         GRADE:
-                                                                        student&apos;s
-                                                                        grade
+                                                                        điểm của sinh viên
                                                                     </li>
                                                                 </ul>
                                                             </li>
@@ -876,7 +854,7 @@ export function CreateGradeModal({
                                                     htmlFor="file"
                                                     className="text-sm font-medium text-gray-700"
                                                 >
-                                                    Upload File *
+                                                    Tải lên tập tin *
                                                 </Label>
                                                 <div
                                                     className={cn(
@@ -910,22 +888,21 @@ export function CreateGradeModal({
                                                                 }
                                                             </p>
                                                             <p className="text-xs text-gray-500">
-                                                                Click to change
-                                                                file
+                                                                Click để thay đổi
+                                                                tập tin
                                                             </p>
                                                         </div>
                                                     ) : (
                                                         <div>
                                                             <p className="text-gray-600 mb-1">
-                                                                Drag and drop
-                                                                your file here,
-                                                                or{' '}
+                                                                Kéo và thả tập tin vào đây,
+                                                                hoặc{' '}
                                                                 <span className="text-blue-600 hover:text-blue-700 font-medium">
-                                                                    browse
+                                                                    tìm kiếm
                                                                 </span>
                                                             </p>
                                                             <p className="text-sm text-gray-500">
-                                                                Excel files only
+                                                                Chỉ tập tin Excel
                                                                 (.xlsx, .xls)
                                                             </p>
                                                         </div>
@@ -949,14 +926,14 @@ export function CreateGradeModal({
                                     className="rounded-md px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                     onClick={onClose}
                                 >
-                                    Cancel
+                                    Hủy
                                 </button>
                                 <button
                                     type="button"
                                     className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                                     onClick={handleSubmit}
                                 >
-                                    Create
+                                    Tạo
                                 </button>
                             </div>
                         </div>
@@ -968,8 +945,8 @@ export function CreateGradeModal({
                 isOpen={showErrorModal}
                 onClose={handleCloseErrorModal}
                 error={importError}
-                title="Student Grades Import Errors"
-                description="The following errors occurred while importing student grades:"
+                title="Lỗi nhập điểm sinh viên"
+                description="Các lỗi sau đã xảy ra khi nhập điểm sinh viên:"
             />
         </>
     );

@@ -34,8 +34,8 @@ export function ImportErrorModal({
     isOpen,
     onClose,
     error,
-    title = 'Import Errors',
-    description = 'The following errors occurred during import:',
+    title = 'Lỗi nhập dữ liệu từ file',
+    description = 'Các lỗi sau đã xảy ra trong quá trình nhập dữ liệu:',
 }: ImportErrorModalProps) {
     if (!error) return null;
 
@@ -85,11 +85,11 @@ export function ImportErrorModal({
                                                 {title}
                                             </Dialog.Title>
                                             <p className="text-sm text-gray-500">
-                                                {totalErrors} error
+                                                {totalErrors} lỗi
                                                 {totalErrors !== 1
                                                     ? 's'
                                                     : ''}{' '}
-                                                found
+                                                đã xảy ra
                                             </p>
                                         </div>
                                     </div>
@@ -127,18 +127,14 @@ export function ImportErrorModal({
                                                             Sheet:{' '}
                                                             {sheet.sheetName}
                                                             <span className="text-sm font-normal text-gray-500">
-                                                                (
+                                                                
                                                                 {
                                                                     sheet
                                                                         .details
                                                                         .length
                                                                 }{' '}
-                                                                error
-                                                                {sheet.details
-                                                                    .length !==
-                                                                1
-                                                                    ? 's'
-                                                                    : ''}
+                                                                lỗi
+                                                                
                                                             </span>
                                                         </CardTitle>
                                                     </CardHeader>
@@ -159,7 +155,7 @@ export function ImportErrorModal({
                                                                         <div className="flex-1 min-w-0">
                                                                             <div className="flex items-center space-x-2 mb-1">
                                                                                 <span className="text-sm font-medium text-red-800">
-                                                                                    Row{' '}
+                                                                                    Dòng{' '}
                                                                                     {
                                                                                         detail.row
                                                                                     }
@@ -187,7 +183,7 @@ export function ImportErrorModal({
                                                     <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                                                     <div className="flex-1">
                                                         <h3 className="text-sm font-medium text-red-800 mb-1">
-                                                            Import Error
+                                                            Lỗi nhập dữ liệu
                                                         </h3>
                                                         <p className="text-sm text-red-700">
                                                             {
@@ -203,26 +199,21 @@ export function ImportErrorModal({
                                     {/* Error Summary */}
                                     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                                         <h3 className="text-sm font-medium text-gray-900 mb-2">
-                                            What to do next:
+                                            Các bước khắc phục:
                                         </h3>
                                         <ul className="text-sm text-gray-600 space-y-1">
                                             <li>
-                                                • Review the errors above and
-                                                fix the issues in your file
+                                                • Xem và sửa các lỗi trên trong file của bạn
                                             </li>
                                             <li>
-                                                • Download a fresh template if
-                                                needed
+                                                • Tải xuống template mới nếu cần
                                             </li>
                                             <li>
-                                                • Try importing the corrected
-                                                file again
+                                                • Thử nhập lại file đã sửa
                                             </li>
                                             {isDetailedError && (
                                                 <li>
-                                                    • Make sure all required
-                                                    fields are filled and in the
-                                                    correct format
+                                                    • Kiểm tra tất cả các trường bắt buộc đã được điền và đúng định dạng hay chưa
                                                 </li>
                                             )}
                                         </ul>
@@ -238,7 +229,7 @@ export function ImportErrorModal({
                                             onClose();
                                         }}
                                     >
-                                        Close
+                                        Đóng
                                     </Button>
                                 </div>
                             </Dialog.Panel>

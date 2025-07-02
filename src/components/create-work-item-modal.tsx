@@ -181,8 +181,8 @@ export function CreateWorkItemModal({
 
             setDataLoaded(true);
         } catch (error) {
-            console.error('Error loading modal data:', error);
-            toast.error('Failed to load data');
+            console.log("🚀 ~ loadModalData ~ error:", error)
+            toast.error('Lỗi khi tải dữ liệu');
         } finally {
             setLoading(false);
         }
@@ -219,12 +219,12 @@ export function CreateWorkItemModal({
         e.preventDefault();
 
         if (!formData.summary.trim()) {
-            toast.error('Summary is required');
+            toast.error('Tóm tắt công việc là bắt buộc');
             return;
         }
 
         if (!formData.reporterId) {
-            toast.error('Reporter is required');
+            toast.error('Người báo cáo là bắt buộc');
             return;
         }
 
@@ -237,7 +237,7 @@ export function CreateWorkItemModal({
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Failed to create work item');
+                toast.error(error.message || 'Lỗi khi tạo công việc');
             }
         } finally {
             setLoading(false);
@@ -287,7 +287,7 @@ export function CreateWorkItemModal({
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
                     <div className="flex items-center space-x-2">
                         <h3 className="text-xl font-semibold text-gray-900">
-                            Create Work Item
+                            Tạo công việc
                         </h3>
                         {formData.type && (
                             <Badge
@@ -324,7 +324,7 @@ export function CreateWorkItemModal({
                                         htmlFor="summary"
                                         className="text-sm font-semibold text-gray-900"
                                     >
-                                        Summary *
+                                        Tóm tắt công việc *
                                     </Label>
                                     <Input
                                         id="summary"
@@ -335,7 +335,7 @@ export function CreateWorkItemModal({
                                                 summary: e.target.value,
                                             }))
                                         }
-                                        placeholder="Enter a brief summary of the work item"
+                                        placeholder="Nhập tóm tắt công việc"
                                         className="w-full text-gray-900 placeholder:text-gray-500"
                                         required
                                     />
@@ -347,7 +347,7 @@ export function CreateWorkItemModal({
                                         htmlFor="description"
                                         className="text-sm font-semibold text-gray-900"
                                     >
-                                        Description
+                                        Mô tả
                                     </Label>
                                     <Textarea
                                         id="description"
@@ -358,7 +358,7 @@ export function CreateWorkItemModal({
                                                 description: e.target.value,
                                             }))
                                         }
-                                        placeholder="Provide a detailed description of the work item"
+                                        placeholder="Nhập mô tả chi tiết về công việc"
                                         className="min-h-[150px] text-gray-900 placeholder:text-gray-500 bg-white"
                                         rows={6}
                                     />
@@ -370,7 +370,7 @@ export function CreateWorkItemModal({
                                         htmlFor="attachments"
                                         className="text-sm font-medium text-gray-900"
                                     >
-                                        Attachments
+                                        Tập tin đính kèm
                                     </Label>
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-gray-400 transition-colors">
                                         <div className="text-center">
@@ -381,11 +381,11 @@ export function CreateWorkItemModal({
                                                     className="cursor-pointer"
                                                 >
                                                     <span className="text-blue-600 hover:text-blue-500 font-medium">
-                                                        Choose files
+                                                        Chọn tập tin
                                                     </span>
                                                     <span className="text-gray-500">
                                                         {' '}
-                                                        or drag and drop
+                                                        hoặc kéo và thả
                                                     </span>
                                                 </label>
                                                 <input
@@ -398,8 +398,8 @@ export function CreateWorkItemModal({
                                                 />
                                             </div>
                                             <p className="text-xs text-gray-500 mt-2">
-                                                PDF, DOC, TXT, Images, ZIP up to
-                                                10MB each
+                                                PDF, DOC, TXT, Ảnh, ZIP với dung lượng tối đa
+                                                5MB mỗi tập tin
                                             </p>
                                         </div>
                                     </div>
@@ -409,7 +409,7 @@ export function CreateWorkItemModal({
                                         formData.attachments.length > 0 && (
                                             <div className="space-y-3">
                                                 <p className="text-sm font-medium text-gray-700">
-                                                    Selected Files (
+                                                    Tập tin đã chọn (
                                                     {
                                                         formData.attachments
                                                             .length
@@ -466,7 +466,7 @@ export function CreateWorkItemModal({
                                         htmlFor="type"
                                         className="text-sm font-semibold text-gray-900"
                                     >
-                                        Work Item Type *
+                                        Loại công việc *
                                     </Label>
                                     <Select
                                         value={formData.type}
@@ -539,7 +539,7 @@ export function CreateWorkItemModal({
                                         htmlFor="status"
                                         className="text-sm font-semibold text-gray-900"
                                     >
-                                        Status
+                                        Trạng thái
                                     </Label>
                                     <Select
                                         value={formData.status}
@@ -594,7 +594,7 @@ export function CreateWorkItemModal({
                                         htmlFor="assignee"
                                         className="text-sm font-semibold text-gray-900"
                                     >
-                                        Assignee
+                                        Thành viên được giao
                                     </Label>
                                     <Select
                                         value={
@@ -613,13 +613,13 @@ export function CreateWorkItemModal({
                                         name="assignee-select"
                                     >
                                         <SelectTrigger className="w-full text-gray-900">
-                                            <SelectValue placeholder="Select assignee" />
+                                            <SelectValue placeholder="Chọn thành viên được giao" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="0">
                                                 <div className="flex items-center space-x-2">
                                                     <span className="text-gray-700">
-                                                        Unassigned
+                                                        Chưa giao
                                                     </span>
                                                 </div>
                                             </SelectItem>
@@ -660,7 +660,7 @@ export function CreateWorkItemModal({
                                             htmlFor="parentItem"
                                             className="text-sm font-semibold text-gray-900"
                                         >
-                                            Parent Epic
+                                            Epic cha
                                         </Label>
                                         <Select
                                             value={
@@ -681,12 +681,12 @@ export function CreateWorkItemModal({
                                             name="parent-select"
                                         >
                                             <SelectTrigger className="w-full text-gray-900">
-                                                <SelectValue placeholder="Select parent epic" />
+                                                <SelectValue placeholder="Chọn epic cha" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {epics?.length === 0 ? (
                                                     <div className="relative px-2 py-1.5 text-sm text-gray-500 cursor-not-allowed bg-gray-50">
-                                                        No epics available
+                                                        Không có epic nào
                                                     </div>
                                                 ) : (
                                                     <>
@@ -696,7 +696,7 @@ export function CreateWorkItemModal({
                                                         >
                                                             <div className="flex items-center space-x-2">
                                                                 <span className="text-gray-700">
-                                                                    No epic
+                                                                    Không epic
                                                                 </span>
                                                             </div>
                                                         </SelectItem>
@@ -735,19 +735,7 @@ export function CreateWorkItemModal({
                                             >
                                                 Sprint
                                             </Label>
-                                            {/* <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={handleCreateSprint}
-                                                disabled={creatingNewSprint}
-                                                className="h-7 px-2"
-                                            >
-                                                <Plus className="h-4 w-4 mr-1" />
-                                                {creatingNewSprint
-                                                    ? 'Creating...'
-                                                    : 'New Sprint'}
-                                            </Button> */}
+                                          
                                         </div>
                                         <Select
                                             value={
@@ -768,22 +756,22 @@ export function CreateWorkItemModal({
                                             name="sprint-select"
                                         >
                                             <SelectTrigger className="w-full text-gray-900">
-                                                <SelectValue placeholder="Select sprint" />
+                                                <SelectValue placeholder="Chọn sprint" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {sprints.length === 0 ? (
                                                     <div className="relative px-2 py-1.5 text-sm text-gray-500 cursor-not-allowed bg-gray-50">
-                                                        No sprints available
+                                                        Không có sprint nào có sẵn
                                                     </div>
                                                 ) : (
                                                     <>
                                                         <SelectItem
                                                             value="0"
-                                                            showAfterPick="Select sprint"
+                                                            showAfterPick="Chọn sprint"
                                                         >
                                                             <div className="flex items-center space-x-2">
                                                                 <span className="text-gray-700">
-                                                                    No sprint
+                                                                    Không sprint
                                                                 </span>
                                                             </div>
                                                         </SelectItem>
@@ -854,10 +842,10 @@ export function CreateWorkItemModal({
                                                     storyPoints: value,
                                                 }));
                                             }}
-                                            placeholder="Enter story points"
+                                            placeholder="Nhập story points"
                                         />
                                         <p className="text-xs text-gray-500">
-                                            Optional: Estimate the complexity
+                                            Tùy chọn: Ước tính độ phức tạp của công việc
                                             (0-100)
                                         </p>
                                     </div>
@@ -870,7 +858,7 @@ export function CreateWorkItemModal({
                                             htmlFor="startDate"
                                             className="text-sm font-semibold text-gray-900"
                                         >
-                                            Start Date
+                                            Ngày bắt đầu
                                         </Label>
                                         <input
                                             type="datetime-local"
@@ -924,7 +912,7 @@ export function CreateWorkItemModal({
                                             htmlFor="endDate"
                                             className="text-sm font-semibold text-gray-900"
                                         >
-                                            End Date
+                                            Ngày kết thúc
                                         </Label>
                                         <input
                                             type="datetime-local"
@@ -1020,14 +1008,14 @@ export function CreateWorkItemModal({
                                 disabled={loading}
                                 className="min-w-[100px]"
                             >
-                                Cancel
+                                Hủy
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={loading}
                                 className="min-w-[100px]"
                             >
-                                {loading ? 'Creating...' : 'Create Item'}
+                                {loading ? 'Đang tạo...' : 'Tạo công việc'}
                             </Button>
                         </div>
                     </form>

@@ -24,6 +24,7 @@ import {
     // removeAccount,
     getInstallAppUrl,
 } from '@/services/api/github/';
+import { formatDate } from '@/helper/date-formatter';
 
 interface GitHubAuthResponse {
     type: 'github-auth-success';
@@ -77,27 +78,27 @@ export default function GitHubSettingsPage() {
                     } else {
                         // Refresh accounts list
                         fetchGitHubAccounts();
-                        toast.success('GitHub account connected successfully!');
+                        toast.success('Tài khoản GitHub đã được kết nối thành công!');
                     }
                     setAddingAccount(false);
                     break;
 
                 case 'github-auth-error':
                     toast.error(
-                        'GitHub authentication failed. Please try again.'
+                        'Đã xảy ra lỗi khi xác thực tài khoản GitHub. Vui lòng thử lại.'
                     );
                     setAddingAccount(false);
                     break;
 
                 case 'github-install-success':
-                    toast.success('GitHub app installed successfully!');
-                    setTimeout(() => fetchGitHubAccounts(), 3000); // Refresh to get updated installedApp status
+                    toast.success('GitHub app đã được cài đặt thành công!');
+                    fetchGitHubAccounts(); // Refresh to get updated installedApp status
                     setActionLoading(null);
                     break;
 
                 case 'github-install-error':
                     toast.error(
-                        'Failed to install GitHub app. Please try again.'
+                        'Đã xảy ra lỗi khi cài đặt GitHub app. Vui lòng thử lại.'
                     );
                     setActionLoading(null);
                     break;
@@ -117,8 +118,8 @@ export default function GitHubSettingsPage() {
             const data = await getGitHubAccounts();
             setAccounts(data);
         } catch (error) {
-            console.error('Error fetching GitHub accounts:', error);
-            toast.error('Failed to load GitHub accounts');
+            console.log("🚀 ~ fetchGitHubAccounts ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi tải tài khoản GitHub');
         } finally {
             setLoading(false);
         }
@@ -139,7 +140,7 @@ export default function GitHubSettingsPage() {
             // Check if popup was blocked
             if (!popup) {
                 toast.error(
-                    'Popup blocked. Please allow popups for this site.'
+                    'Popup bị chặn. Vui lòng cho phép popups cho trang này.'
                 );
                 setAddingAccount(false);
                 return;
@@ -156,8 +157,8 @@ export default function GitHubSettingsPage() {
                 }
             }, 1000);
         } catch (error) {
-            console.error('Error initiating GitHub auth:', error);
-            toast.error('Failed to start GitHub authentication');
+            console.log("🚀 ~ handleAddGitHubAccount ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi bắt đầu xác thực tài khoản GitHub');
             setAddingAccount(false);
         }
     };
@@ -175,17 +176,17 @@ export default function GitHubSettingsPage() {
                 }))
             );
 
-            toast.success('Default GitHub account updated');
+            toast.success('Tài khoản GitHub mặc định đã được cập nhật');
         } catch (error) {
-            console.error('Error setting default account:', error);
-            toast.error('Failed to set default account');
+            console.log("🚀 ~ handleSetDefault ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi cập nhật tài khoản GitHub mặc định');
         } finally {
             setActionLoading(null);
         }
     };
 
     const handleRemoveAccount = async (accountId: number) => {
-        if (!confirm('Are you sure you want to remove this GitHub account?')) {
+        if (!confirm('Bạn có chắc chắn muốn xóa tài khoản GitHub này?')) {
             return;
         }
 
@@ -194,10 +195,10 @@ export default function GitHubSettingsPage() {
             // await removeAccount(accountId);
 
             setAccounts(accounts.filter((account) => account.id !== accountId));
-            toast.success('GitHub account removed');
+            toast.success('Tài khoản GitHub đã được xóa');
         } catch (error) {
-            console.error('Error removing account:', error);
-            toast.error('Failed to remove account');
+            console.log("🚀 ~ handleRemoveAccount ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi xóa tài khoản GitHub');
         } finally {
             setActionLoading(null);
         }
@@ -217,7 +218,7 @@ export default function GitHubSettingsPage() {
 
             if (!popup) {
                 toast.error(
-                    'Popup blocked. Please allow popups for this site.'
+                    'Popup bị chặn. Vui lòng cho phép popups cho trang này.'
                 );
                 setActionLoading(null);
                 return;
@@ -232,31 +233,31 @@ export default function GitHubSettingsPage() {
                         setActionLoading(null);
                         // Show a neutral message since we don't know if it succeeded or failed
                         toast.info(
-                            'Please check if the app was installed successfully'
+                            'Vui lòng kiểm tra xem app đã được cài đặt thành công chưa'
                         );
                         fetchGitHubAccounts(); // Refresh to get updated status
                     }
                 }
             }, 1000);
         } catch (error) {
-            console.error('Error getting install URL:', error);
-            toast.error('Failed to get app install URL');
+            console.log("🚀 ~ handleInstallApp ~ error:", error)
+            toast.error('Đã xảy ra lỗi khi lấy URL cài đặt app');
             setActionLoading(null);
         }
     };
 
-    const handleAppInstallComplete = () => {
-        fetchGitHubAccounts(); // Refresh accounts
-        setShowAppInstallModal(false);
-        setPendingAuthData(null);
-    };
+    // const handleAppInstallComplete = () => {
+    //     fetchGitHubAccounts(); // Refresh accounts
+    //     setShowAppInstallModal(false);
+    //     setPendingAuthData(null);
+    // };
 
     const handleAppInstallLater = () => {
         fetchGitHubAccounts(); // Refresh accounts
         setShowAppInstallModal(false);
         setPendingAuthData(null);
         toast.info(
-            'GitHub account connected. You can install the app later from your account settings.'
+            'Tài khoản GitHub đã được kết nối. Bạn có thể cài đặt app sau từ cài đặt tài khoản.'
         );
     };
 
@@ -268,13 +269,13 @@ export default function GitHubSettingsPage() {
         if (account.installedApp) {
             return {
                 icon: <Check className="h-4 w-4 text-green-600" />,
-                text: 'App Installed',
+                text: 'GitHub app đã được cài đặt',
                 color: 'text-green-600',
             };
         } else {
             return {
                 icon: <AlertCircle className="h-4 w-4 text-yellow-600" />,
-                text: 'App Not Installed',
+                text: 'GitHub app chưa được cài đặt',
                 color: 'text-yellow-600',
             };
         }
@@ -286,7 +287,7 @@ export default function GitHubSettingsPage() {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">
-                        Loading GitHub accounts...
+                        Đang tải tài khoản GitHub...
                     </p>
                 </div>
             </div>
@@ -300,10 +301,10 @@ export default function GitHubSettingsPage() {
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                         <Github className="h-6 w-6" />
-                        GitHub Accounts
+                        Danh sách tài khoản GitHub
                     </h1>
                     <p className="text-gray-600 mt-1">
-                        Manage your GitHub integrations for project repositories
+                        Quản lý tích hợp GitHub cho các kho lưu trữ dự án
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -313,7 +314,7 @@ export default function GitHubSettingsPage() {
                         disabled={loading}
                     >
                         <RefreshCw className="h-4 w-4 mr-2" />
-                        Refresh
+                        Làm mới
                     </Button>
                     <Button
                         onClick={handleAddGitHubAccount}
@@ -322,12 +323,12 @@ export default function GitHubSettingsPage() {
                         {addingAccount ? (
                             <>
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                Connecting...
+                                Đang kết nối...
                             </>
                         ) : (
                             <>
                                 <Plus className="h-4 w-4 mr-2" />
-                                Add Account
+                                Thêm tài khoản
                             </>
                         )}
                     </Button>
@@ -337,14 +338,14 @@ export default function GitHubSettingsPage() {
             {/* Accounts List */}
             {accounts.length === 0 ? (
                 <Card>
-                    <CardContent className="text-center py-12">
+                    <CardContent className="text-center py-12 pt-7">
                         <Github className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">
-                            No GitHub accounts connected
+                            Không có tài khoản GitHub được kết nối
                         </h3>
                         <p className="text-gray-500 mb-6">
-                            Connect your GitHub account to enable repository
-                            integration for your classes.
+                            Kết nối tài khoản GitHub để kích hoạt tích hợp kho lưu trữ dự án
+                            cho các lớp học của bạn.
                         </p>
                         <Button
                             onClick={handleAddGitHubAccount}
@@ -353,12 +354,12 @@ export default function GitHubSettingsPage() {
                             {addingAccount ? (
                                 <>
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                    Connecting...
+                                    Đang kết nối...
                                 </>
                             ) : (
                                 <>
                                     <Plus className="h-4 w-4 mr-2" />
-                                    Connect GitHub Account
+                                    Kết nối tài khoản GitHub
                                 </>
                             )}
                         </Button>
@@ -400,7 +401,7 @@ export default function GitHubSettingsPage() {
                                                     {account.isDefault && (
                                                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                                             <Star className="h-3 w-3 mr-1" />
-                                                            Default
+                                                            Mặc định
                                                         </span>
                                                     )}
                                                     <div className="flex items-center gap-1">
@@ -417,10 +418,11 @@ export default function GitHubSettingsPage() {
                         </p> */}
                                                 <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
                                                     <span>
-                                                        Connected:{' '}
-                                                        {new Date(
-                                                            account.connectedAt
-                                                        ).toLocaleDateString()}
+                                                        Đã kết nối:{' '}
+                                                        {formatDate(
+                                                            account.connectedAt,
+                                                            'dd/MM/yyyy HH:mm'
+                                                        )}
                                                     </span>
                                                 </div>
                                             </div>
@@ -461,7 +463,7 @@ export default function GitHubSettingsPage() {
                                                     ) : (
                                                         <>
                                                             <Download className="h-4 w-4 mr-1" />
-                                                            Install App
+                                                            Cài đặt GitHub app
                                                         </>
                                                     )}
                                                 </Button>
@@ -487,7 +489,7 @@ export default function GitHubSettingsPage() {
                                                     ) : (
                                                         <>
                                                             <Star className="h-4 w-4 mr-1" />
-                                                            Set Default
+                                                            Cài làm tài khoản mặc định
                                                         </>
                                                     )}
                                                 </Button>
@@ -528,8 +530,12 @@ export default function GitHubSettingsPage() {
                 onClose={() => setShowAppInstallModal(false)}
                 onInstallNow={() => {
                     if (pendingAuthData?.installAppLink) {
-                        window.open(pendingAuthData.installAppLink, '_blank');
-                        handleAppInstallComplete();
+                        window.open(
+                            pendingAuthData.installAppLink,
+                            'github-app-install',
+                            'width=800,height=700,scrollbars=yes,resizable=yes'
+                        );
+                        // handleAppInstallComplete();
                     }
                 }}
                 onInstallLater={handleAppInstallLater}

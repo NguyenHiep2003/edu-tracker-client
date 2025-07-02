@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import instance from '@/services/api/common/axios';
-import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -44,6 +43,7 @@ import {
     exportGradeToExcel,
 } from '@/services/api/grades';
 import { GradeType, GradeVisibility } from '@/services/api/grades/type';
+import { formatDate } from '@/helper/date-formatter';
 
 interface Student {
     id: number;
@@ -137,7 +137,7 @@ export default function GradeDetailPage() {
                     visibility: response.data.visibility,
                 });
             } catch (error) {
-                console.error('Error fetching grade details:', error);
+                console.log("🚀 ~ fetchGradeDetail ~ error:", error)
             } finally {
                 setLoading(false);
             }
@@ -208,11 +208,11 @@ export default function GradeDetailPage() {
             return true;
         }
         if (value < 0) {
-            setError('Grade cannot be negative');
+            setError('Điểm không được là số âm');
             return false;
         }
         if (gradeDetail?.maxScore && value > gradeDetail.maxScore) {
-            setError(`Grade cannot exceed ${gradeDetail.maxScore}`);
+            setError(`Điểm không được vượt quá ${gradeDetail.maxScore}`);
             return false;
         }
         setError('');
@@ -228,7 +228,7 @@ export default function GradeDetailPage() {
 
         const numValue = parseFloat(value);
         if (isNaN(numValue)) {
-            setError('Please enter a valid number');
+            setError('Vui lòng nhập số hợp lệ');
             return;
         }
         validateGrade(numValue);
@@ -248,7 +248,7 @@ export default function GradeDetailPage() {
                     },
                 ],
             });
-            toast.success('Grade saved successfully');
+            toast.success('Đã lưu điểm thành công');
             setEditingStudent(null);
             setEditedGrade(null);
             setError('');
@@ -287,7 +287,7 @@ export default function GradeDetailPage() {
 
         try {
             await updateGrade(gradeDetail.id, editedGradeInfo);
-            toast.success('Grade information updated successfully');
+            toast.success('Đã cập nhật thông tin điểm thành công');
             setIsEditingGrade(false);
 
             // Refresh grade details
@@ -299,7 +299,7 @@ export default function GradeDetailPage() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message);
+                toast.error(error.message ?? 'Đã xảy ra lỗi khi cập nhật thông tin điểm');
             }
         }
     };
@@ -309,13 +309,13 @@ export default function GradeDetailPage() {
 
         try {
             await deleteGrade(gradeDetail.id);
-            toast.success('Grade deleted successfully');
+            toast.success('Đã xóa điểm thành công');
             router.push(`/lecturer/classes/${params.id}/grading`);
         } catch (error: any) {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message);
+                toast.error(error.message ?? 'Đã xảy ra lỗi khi xóa điểm');
             }
         }
     };
@@ -326,10 +326,10 @@ export default function GradeDetailPage() {
         setIsExporting(true);
         try {
             await exportGradeToExcel(gradeDetail.id, gradeDetail.title);
-            toast.success('Grade report exported successfully.');
+            toast.success('Đã xuất báo cáo điểm thành công.');
         } catch (error) {
             console.log('🚀 ~ handleExport ~ error:', error);
-            toast.error('Failed to export grade report.');
+            toast.error('Đã xảy ra lỗi khi xuất báo cáo điểm.');
         } finally {
             setIsExporting(false);
         }
@@ -353,11 +353,10 @@ export default function GradeDetailPage() {
                 <div className="text-center py-12">
                     <GraduationCap className="mx-auto h-12 w-12 text-gray-400" />
                     <h3 className="mt-2 text-sm font-semibold text-gray-900">
-                        Grade not found
+                        Không tìm thấy điểm
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
-                        The grade you&apos;re looking for doesn&apos;t exist or
-                        you don&apos;t have permission to view it.
+                        Điểm bạn đang tìm không tồn tại hoặc bạn không có quyền xem nó.
                     </p>
                 </div>
             </div>
@@ -365,9 +364,9 @@ export default function GradeDetailPage() {
     }
 
     const visibilityOptions = [
-        { value: GradeVisibility.PRIVATE, label: 'Private' },
-        { value: GradeVisibility.PUBLIC, label: 'Public' },
-        { value: GradeVisibility.RESTRICTED, label: 'Restricted' },
+        { value: GradeVisibility.PRIVATE, label: 'Riêng tư' },
+        { value: GradeVisibility.PUBLIC, label: 'Công khai' },
+        { value: GradeVisibility.RESTRICTED, label: 'Hạn chế' },
     ];
 
     return (
@@ -378,7 +377,7 @@ export default function GradeDetailPage() {
                         <div className="flex items-center gap-2">
                             {isEditingGrade ? (
                                 <h1 className="text-2xl font-semibold text-gray-900">
-                                    Edit Grade Information
+                                    Chỉnh sửa thông tin điểm
                                 </h1>
                             ) : (
                                 <>
@@ -452,7 +451,7 @@ export default function GradeDetailPage() {
                                     htmlFor="title"
                                     className="text-sm font-medium text-gray-700"
                                 >
-                                    Title
+                                    Tiêu đề
                                 </Label>
                                 <Input
                                     id="title"
@@ -471,7 +470,7 @@ export default function GradeDetailPage() {
                                     htmlFor="description"
                                     className="text-sm font-medium text-gray-700"
                                 >
-                                    Description
+                                    Mô tả
                                 </Label>
                                 <Textarea
                                     id="description"
@@ -492,7 +491,7 @@ export default function GradeDetailPage() {
                                         htmlFor="maxScore"
                                         className="text-sm font-medium text-gray-700"
                                     >
-                                        Max Score
+                                        Điểm tối đa
                                     </Label>
                                     <Input
                                         id="maxScore"
@@ -516,7 +515,7 @@ export default function GradeDetailPage() {
                                         htmlFor="scale"
                                         className="text-sm font-medium text-gray-700"
                                     >
-                                        Scale
+                                        Số chữ số sau dấu phẩy
                                     </Label>
                                     <Input
                                         id="scale"
@@ -539,7 +538,7 @@ export default function GradeDetailPage() {
                                         htmlFor="visibility"
                                         className="text-sm font-medium text-gray-700"
                                     >
-                                        Visibility
+                                        Chế độ hiển thị
                                     </Label>
                                     <Listbox
                                         value={editedGradeInfo.visibility}
@@ -630,13 +629,10 @@ export default function GradeDetailPage() {
                                 <div className="flex items-end">
                                     <div className="w-full">
                                         <Label className="text-sm font-medium text-gray-700">
-                                            Created
+                                            Ngày tạo
                                         </Label>
                                         <div className="mt-1 text-sm text-gray-500 bg-gray-50 border rounded-lg px-3 py-2">
-                                            {format(
-                                                new Date(gradeDetail.createdAt),
-                                                'MMM d, yyyy'
-                                            )}
+                                            {formatDate(gradeDetail.createdAt, 'dd/MM/yyyy')}
                                         </div>
                                     </div>
                                 </div>
@@ -647,7 +643,7 @@ export default function GradeDetailPage() {
                             {gradeDetail.description && (
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-700 mb-2">
-                                        Description
+                                        Mô tả
                                     </h3>
                                     <p className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
                                         {gradeDetail.description}
@@ -660,8 +656,8 @@ export default function GradeDetailPage() {
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-700 mb-2">
                                         {gradeDetail.project
-                                            ? 'Linked Project'
-                                            : 'Linked Work Item'}
+                                            ? 'Dự án liên kết'
+                                            : 'Công việc liên kết'}
                                     </h3>
                                     <div
                                         onClick={() => {
@@ -696,7 +692,7 @@ export default function GradeDetailPage() {
                                                     <div className="mt-2 space-y-1">
                                                         <p className="text-sm text-indigo-700 group-hover:text-indigo-600">
                                                             <span className="font-medium">
-                                                                Key:
+                                                                Mã:
                                                             </span>{' '}
                                                             {
                                                                 gradeDetail
@@ -705,7 +701,7 @@ export default function GradeDetailPage() {
                                                         </p>
                                                         <p className="text-sm text-indigo-700 group-hover:text-indigo-600">
                                                             <span className="font-medium">
-                                                                Type:
+                                                                Loại:
                                                             </span>{' '}
                                                             {
                                                                 gradeDetail
@@ -715,21 +711,9 @@ export default function GradeDetailPage() {
                                                         </p>
                                                         <p className="text-sm text-indigo-700 group-hover:text-indigo-600">
                                                             <span className="font-medium">
-                                                                Duration:
+                                                                Thời gian:
                                                             </span>{' '}
-                                                            {format(
-                                                                new Date(
-                                                                    gradeDetail.project.startDate
-                                                                ),
-                                                                'MMM d, yyyy'
-                                                            )}{' '}
-                                                            -{' '}
-                                                            {format(
-                                                                new Date(
-                                                                    gradeDetail.project.endDate
-                                                                ),
-                                                                'MMM d, yyyy'
-                                                            )}
+                                                            {formatDate(gradeDetail.project.startDate, 'dd/MM/yyyy')} - {formatDate(gradeDetail.project.endDate, 'dd/MM/yyyy')}
                                                         </p>
                                                         {gradeDetail.project
                                                             .description && (
@@ -764,7 +748,7 @@ export default function GradeDetailPage() {
                                     <div className="flex items-center gap-2 mb-1">
                                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                         <span className="text-sm font-medium text-blue-900">
-                                            Max Score
+                                            Điểm tối đa
                                         </span>
                                     </div>
                                     <p className="text-2xl font-bold text-blue-900">
@@ -776,7 +760,7 @@ export default function GradeDetailPage() {
                                     <div className="flex items-center gap-2 mb-1">
                                         <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                                         <span className="text-sm font-medium text-purple-900">
-                                            Scale
+                                            Số chữ số sau dấu phẩy
                                         </span>
                                     </div>
                                     <p className="text-2xl font-bold text-purple-900">
@@ -794,7 +778,7 @@ export default function GradeDetailPage() {
                                             gradeDetail.visibility
                                         )}
                                         <span className="text-sm font-medium">
-                                            Visibility
+                                            Chế độ hiển thị
                                         </span>
                                     </div>
                                     <p className="text-2xl font-bold">
@@ -806,14 +790,11 @@ export default function GradeDetailPage() {
                                     <div className="flex items-center gap-2 mb-1">
                                         <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                                         <span className="text-sm font-medium text-gray-700">
-                                            Created
+                                            Ngày tạo
                                         </span>
                                     </div>
                                     <p className="text-lg font-semibold text-gray-900">
-                                        {format(
-                                            new Date(gradeDetail.createdAt),
-                                            'MMM d, yyyy'
-                                        )}
+                                        {formatDate(gradeDetail.createdAt, 'dd/MM/yyyy')}
                                     </p>
                                 </div>
                             </div>
@@ -825,16 +806,16 @@ export default function GradeDetailPage() {
             <Card className="p-6">
                 <div className="space-y-4">
                     <h2 className="text-lg font-semibold text-gray-900">
-                        Student Grades
+                        Điểm sinh viên
                     </h2>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Student ID</TableHead>
-                                <TableHead>Name</TableHead>
+                                <TableHead>Mã sinh viên</TableHead>
+                                <TableHead>Tên sinh viên</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead className="text-right">
-                                    Grade
+                                    Điểm
                                 </TableHead>
                                 <TableHead className="w-24"></TableHead>
                             </TableRow>
@@ -956,10 +937,10 @@ export default function GradeDetailPage() {
                 isOpen={showDeleteModal}
                 onClose={() => setShowDeleteModal(false)}
                 onConfirm={handleDeleteGrade}
-                title="Delete Grade"
-                description="Are you sure you want to delete this grade? This action cannot be undone and will remove all student grades associated with it."
-                confirmText="Delete"
-                cancelText="Cancel"
+                title="Xóa điểm"
+                description="Bạn có chắc chắn muốn xóa điểm này? Thao tác này không thể được hoàn tác và sẽ xóa tất cả điểm của sinh viên liên quan."
+                confirmText="Xóa"
+                cancelText="Hủy"
             />
         </div>
     );

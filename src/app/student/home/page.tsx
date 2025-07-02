@@ -11,7 +11,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Select from 'react-select';
 import { ClassCard } from '@/components/class-card';
@@ -101,11 +100,11 @@ export default function StudentHomePage() {
                 // Fetch classes for the selected semester
                 await fetchClasses(targetSemester?.id, keywordParam);
             } catch (error: any) {
-                console.error('Error fetching initial data:', error);
+                console.log("🚀 ~ fetchInitialData ~ error:", error)
                 if (Array.isArray(error?.message)) {
                     toast.error(error.message[0]);
                 } else {
-                    toast.error(error?.message ?? 'Failed to load data');
+                    toast.error(error?.message ?? 'Đã xảy ra lỗi khi tải dữ liệu');
                 }
             } finally {
                 setLoading(false);
@@ -157,11 +156,11 @@ export default function StudentHomePage() {
             );
             setClasses(response.data);
         } catch (error: any) {
-            console.error('Error fetching classes:', error);
+            console.log("🚀 ~ fetchClasses ~ error:", error)
             if (Array.isArray(error?.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error?.message ?? 'Failed to load classes');
+                toast.error(error?.message ?? 'Đã xảy ra lỗi khi tải danh sách lớp học');
             }
         }
     };
@@ -184,10 +183,9 @@ export default function StudentHomePage() {
         }
     };
 
-    // Handle keyword search button click
-    const handleKeywordSearch = () => {
-        setSearchKeyword(keyword);
-    };
+    // const handleKeywordSearch = () => {
+    //     setSearchKeyword(keyword);
+    // };
 
     // Handle keyword input change (immediate UI update, debounced search)
     const handleKeywordChange = (value: string) => {
@@ -219,7 +217,7 @@ export default function StudentHomePage() {
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
                     <p className="mt-4 text-gray-600">
-                        Loading your classes...
+                        Đang tải danh sách lớp học của bạn...
                     </p>
                 </div>
             </div>
@@ -238,16 +236,16 @@ export default function StudentHomePage() {
                         </h1>
                         <p className="text-gray-600 mt-2">
                             {selectedSemester
-                                ? `Showing classes for ${
+                                ? `Hiển thị lớp học của kỳ ${
                                       selectedSemester.name
                                   }${
                                       searchKeyword
-                                          ? ` matching "${searchKeyword}"`
+                                          ? ` khớp với "${searchKeyword}"`
                                           : ''
                                   }`
-                                : `Showing all classes${
+                                : `Hiển thị tất cả lớp học${
                                       searchKeyword
-                                          ? ` matching "${searchKeyword}"`
+                                          ? ` khớp với "${searchKeyword}"`
                                           : ''
                                   }`}
                         </p>
@@ -263,12 +261,11 @@ export default function StudentHomePage() {
                             <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
                             <div>
                                 <h3 className="font-medium text-amber-900">
-                                    No Active Semester
+                                    Không có kỳ học đang diễn ra
                                 </h3>
                                 <p className="text-sm text-amber-700 mt-1">
-                                    There is currently no active semester.
-                                    Please contact your administrator for more
-                                    information.
+                                    Hiện tại không có kỳ học đang diễn ra.
+                                    Vui lòng liên hệ quản trị viên của bạn để biết thêm thông tin.
                                 </p>
                             </div>
                         </div>
@@ -281,10 +278,10 @@ export default function StudentHomePage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Filter className="h-5 w-5" />
-                        Filters
+                        Bộ lọc
                     </CardTitle>
                     <CardDescription>
-                        Filter classes by semester and search by keyword
+                        Lọc lớp học theo kỳ học và tìm kiếm theo từ khóa
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -292,7 +289,7 @@ export default function StudentHomePage() {
                         {/* Semester Filter */}
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">
-                                Semester
+                                Kỳ học
                             </label>
                             <Select
                                 value={
@@ -303,14 +300,14 @@ export default function StudentHomePage() {
                                           }
                                         : {
                                               value: 'all',
-                                              label: 'All Semesters',
+                                              label: 'Tất cả kỳ học',
                                           }
                                 }
                                 onChange={(option) =>
                                     handleSemesterChange(option?.value || 'all')
                                 }
                                 options={[
-                                    { value: 'all', label: 'All Semesters' },
+                                    { value: 'all', label: 'Tất cả kỳ học' },
                                     ...semesters.map((semester) => ({
                                         value: semester.id.toString(),
                                         label: semester.name,
@@ -328,7 +325,7 @@ export default function StudentHomePage() {
                                         {option.label}
                                         {option.isActive && (
                                             <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                Active
+                                                Đang diễn ra
                                             </span>
                                         )}
                                     </span>
@@ -350,14 +347,14 @@ export default function StudentHomePage() {
                                         }`,
                                 }}
                                 isSearchable={false}
-                                placeholder="Select semester"
+                                placeholder="Chọn kỳ học"
                             />
                         </div>
 
                         {/* Keyword Search */}
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">
-                                Search Classes
+                                Tìm kiếm lớp học
                             </label>
                             <div className="flex gap-2">
                                 <div className="relative flex-1">
@@ -368,44 +365,25 @@ export default function StudentHomePage() {
                                             handleKeywordChange(e.target.value)
                                         }
                                         onKeyPress={handleKeywordKeyPress}
-                                        placeholder="Search by class name or ID..."
+                                        placeholder="Tìm kiếm theo tên lớp hoặc ID..."
                                         className="pl-10"
                                     />
                                 </div>
-                                <Button
+                                {/* <Button
                                     onClick={handleKeywordSearch}
                                     variant="outline"
                                     size="default"
                                 >
-                                    Search
-                                </Button>
+                                    Tìm kiếm
+                                </Button> */}
                             </div>
-                            {keyword !== searchKeyword && keyword.trim() && (
+                            {/* {keyword !== searchKeyword && keyword.trim() && (
                                 <p className="text-xs text-gray-500">
                                     Press Enter or click Search to apply filter
                                 </p>
-                            )}
+                            )} */}
                         </div>
 
-                        {/* Actions */}
-                        {/* <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">
-                                Actions
-                            </label>
-                            <Button
-                                onClick={handleRefresh}
-                                disabled={refreshing}
-                                variant="outline"
-                                className="w-full flex items-center gap-2 transition-all duration-200"
-                            >
-                                <RefreshCw
-                                    className={`h-4 w-4 transition-transform duration-500 ${
-                                        refreshing ? 'animate-spin' : ''
-                                    }`}
-                                />
-                                {refreshing ? 'Refreshing...' : 'Refresh'}
-                            </Button>
-                        </div> */}
                     </div>
                 </CardContent>
             </Card>
@@ -413,21 +391,21 @@ export default function StudentHomePage() {
             {/* Classes Grid */}
             {classes.length === 0 ? (
                 <Card>
-                    <CardContent className="text-center py-12">
+                    <CardContent className="text-center py-12 pt-7">
                         <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-xl font-medium text-gray-900 mb-2">
                             {searchKeyword
-                                ? `No classes found matching "${searchKeyword}"`
+                                ? `Không tìm thấy lớp học khớp với từ khóa "${searchKeyword}"`
                                 : selectedSemester
-                                ? 'No classes in this semester'
-                                : 'No classes found'}
+                                ? 'Không có lớp học trong kỳ học này'
+                                : 'Không tìm thấy lớp học'}
                         </h3>
                         <p className="text-gray-500 mb-6">
                             {searchKeyword
-                                ? 'Try adjusting your search terms or filters.'
+                                ? 'Vui lòng điều chỉnh từ khóa tìm kiếm.'
                                 : selectedSemester
-                                ? `You are not attending any classes for ${selectedSemester.name}.`
-                                : 'You are not attending any classes yet.'}
+                                ? `Bạn không tham gia lớp học nào trong kỳ học ${selectedSemester.name}.`
+                                : 'Bạn chưa tham gia lớp học nào.'}
                         </p>
                     </CardContent>
                 </Card>
@@ -449,7 +427,7 @@ export default function StudentHomePage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Enrolled Classes
+                                Lớp học đã tham gia
                             </CardTitle>
                             <BookOpen className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
@@ -459,10 +437,10 @@ export default function StudentHomePage() {
                             </div>
                             <p className="text-xs text-muted-foreground">
                                 {selectedSemester
-                                    ? `In ${selectedSemester.name}`
-                                    : 'Across all semesters'}
+                                    ? `Trong kỳ học ${selectedSemester.name}`
+                                    : 'Trong tất cả kỳ học'}
                                 {searchKeyword &&
-                                    ` matching "${searchKeyword}"`}
+                                    ` khớp với từ khóa "${searchKeyword}"`}
                             </p>
                         </CardContent>
                     </Card>
@@ -470,16 +448,16 @@ export default function StudentHomePage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Active Semester
+                                Kỳ học đang diễn ra
                             </CardTitle>
                             <GraduationCap className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {activeSemester?.name || 'None'}
+                                {activeSemester?.name || 'Không có'}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                Current active semester
+                                Kỳ học đang diễn ra
                             </p>
                         </CardContent>
                     </Card>
@@ -487,7 +465,7 @@ export default function StudentHomePage() {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Available Semesters
+                                Số kỳ học
                             </CardTitle>
                             <Filter className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
@@ -496,7 +474,7 @@ export default function StudentHomePage() {
                                 {semesters.length}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                Total semesters in organization
+                                Tổng số kỳ học trong tổ chức
                             </p>
                         </CardContent>
                     </Card>

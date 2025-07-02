@@ -70,37 +70,16 @@ export default function StudentProjectsPage() {
         );
     };
 
-    const getStatusBadge = (status: 'OPEN' | 'CLOSED' | 'SCHEDULED') => {
-        switch (status) {
-            case 'OPEN':
-                return (
-                    <Badge className="bg-green-100 text-green-800">Open</Badge>
-                );
-            case 'CLOSED':
-                return (
-                    <Badge className="bg-red-100 text-red-800">Closed</Badge>
-                );
-            case 'SCHEDULED':
-                return (
-                    <Badge className="bg-yellow-100 text-yellow-800">
-                        Scheduled
-                    </Badge>
-                );
-            default:
-                return <Badge variant="secondary">{status}</Badge>;
-        }
-    };
-
     const getJoinStatusBadge = (isJoined: boolean) => {
         return isJoined ? (
             <Badge className="bg-blue-100 text-blue-800">
                 <CheckCircle className="h-3 w-3 mr-1" />
-                Joined
+                Đã tham gia
             </Badge>
         ) : (
             <Badge variant="outline" className="text-gray-600">
                 <XCircle className="h-3 w-3 mr-1" />
-                Not Joined
+                Chưa tham gia
             </Badge>
         );
     };
@@ -108,11 +87,11 @@ export default function StudentProjectsPage() {
     const getParticipationBadge = (mode: 'mandatory' | 'optional') => {
         return mode === 'mandatory' ? (
             <Badge className="text-xs font-semibold bg-red-500 text-white border-red-600 shadow-sm">
-                MANDATORY
+                Bắt buộc
             </Badge>
         ) : (
             <Badge className="text-xs font-semibold bg-blue-500 text-white border-blue-600 shadow-sm">
-                OPTIONAL
+                Tùy chọn
             </Badge>
         );
     };
@@ -148,10 +127,10 @@ export default function StudentProjectsPage() {
             {/* Header */}
             <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Projects
+                    Dự án
                 </h1>
                 <p className="text-gray-600">
-                    View and manage your project assignments
+                    Xem và quản lý các dự án trong lớp học của bạn
                 </p>
             </div>
 
@@ -196,12 +175,11 @@ export default function StudentProjectsPage() {
                                             </div>
                                             <p className="text-gray-600 mt-1">
                                                 {project.description ||
-                                                    'No description provided'}
+                                                    'Không có mô tả'}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        {getStatusBadge(project.status)}
                                         {getJoinStatusBadge(project.isJoined)}
                                     </div>
                                 </div>
@@ -213,7 +191,7 @@ export default function StudentProjectsPage() {
                                         <Calendar className="h-4 w-4 text-gray-500" />
                                         <div>
                                             <div className="text-sm font-medium">
-                                                Start Date
+                                                Ngày bắt đầu
                                             </div>
                                             <div className="text-sm text-gray-600">
                                                 {formatDate(
@@ -229,7 +207,7 @@ export default function StudentProjectsPage() {
                                         <Clock className="h-4 w-4 text-gray-500" />
                                         <div>
                                             <div className="text-sm font-medium">
-                                                End Date
+                                                Ngày kết thúc
                                             </div>
                                             <div
                                                 className={`text-sm ${
@@ -246,15 +224,12 @@ export default function StudentProjectsPage() {
                                                 )}
                                                 {isOverdue && (
                                                     <span className="ml-1 font-medium">
-                                                        (
-                                                        {Math.abs(daysUntilEnd)}{' '}
-                                                        days overdue)
+                                                        (Đã quá hạn {Math.abs(daysUntilEnd)} ngày)
                                                     </span>
                                                 )}
                                                 {isDueSoon && !isOverdue && (
                                                     <span className="ml-1 font-medium">
-                                                        ({daysUntilEnd} days
-                                                        left)
+                                                        (Còn {daysUntilEnd} ngày)
                                                     </span>
                                                 )}
                                             </div>
@@ -266,7 +241,7 @@ export default function StudentProjectsPage() {
                                         <UserPlus className="h-4 w-4 text-gray-500" />
                                         <div>
                                             <div className="text-sm font-medium">
-                                                Join Deadline
+                                                Hạn tham gia
                                             </div>
                                             <div className="text-sm text-gray-600">
                                                 {project.joinProjectDeadline
@@ -274,7 +249,7 @@ export default function StudentProjectsPage() {
                                                           project.joinProjectDeadline,
                                                           'dd/MM/yyyy HH:mm'
                                                       )
-                                                    : 'No deadline'}
+                                                    : 'Không có hạn'}
                                             </div>
                                         </div>
                                     </div>
@@ -284,11 +259,11 @@ export default function StudentProjectsPage() {
                                         <Users className="h-4 w-4 text-gray-500" />
                                         <div>
                                             <div className="text-sm font-medium">
-                                                Students
+                                                Số sinh viên
                                             </div>
                                             <div className="text-sm text-gray-600">
                                                 {project.numberOfStudents}{' '}
-                                                joined
+                                                đã tham gia
                                             </div>
                                         </div>
                                     </div>
@@ -304,17 +279,17 @@ export default function StudentProjectsPage() {
                                         {project.groupNumber && (
                                             <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                                                 <div className="text-sm font-medium text-blue-900">
-                                                    Your Group: Group{' '}
+                                                    Nhóm của bạn: Nhóm{' '}
                                                     {project.groupNumber}
                                                 </div>
                                             </div>
                                         )}
 
                                         {/* Form Group Deadline */}
-                                        {project.formGroupDeadline && (
+                                        {project.formGroupDeadline && project.type === 'TEAM' && (
                                             <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                                                 <div className="text-sm font-medium text-yellow-900 mb-1">
-                                                    Group Formation Deadline
+                                                    Hạn lập nhóm
                                                 </div>
                                                 <div className="text-sm text-yellow-700">
                                                     {formatDate(
@@ -324,22 +299,6 @@ export default function StudentProjectsPage() {
                                                 </div>
                                             </div>
                                         )}
-
-                                        {/* Join Project Deadline */}
-                                        {project.joinProjectDeadline &&
-                                            !project.isJoined && (
-                                                <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
-                                                    <div className="text-sm font-medium text-orange-900 mb-1">
-                                                        Join Project Deadline
-                                                    </div>
-                                                    <div className="text-sm text-orange-700">
-                                                        {formatDate(
-                                                            project.joinProjectDeadline,
-                                                            'dd/MM/yyyy HH:mm'
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            )}
                                     </div>
                                 )}
 
@@ -352,7 +311,7 @@ export default function StudentProjectsPage() {
                                         >
                                             <Button variant="outline" size="sm">
                                                 <Eye className="h-4 w-4 mr-2" />
-                                                View Details
+                                                Xem chi tiết
                                             </Button>
                                         </Link>
 
@@ -367,8 +326,7 @@ export default function StudentProjectsPage() {
                                                         size="sm"
                                                     >
                                                         <BarChart3 className="h-4 w-4 mr-2" />
-                                                        Manage Group and
-                                                        Progress
+                                                        Quản lý nhóm và tiến độ
                                                     </Button>
                                                 </Link>
                                             )}
@@ -397,13 +355,13 @@ export default function StudentProjectsPage() {
                                                                 `/student/classes/${classId}/projects/${project.id}/details/`
                                                             );
                                                             toast.success(
-                                                                'You have joined the project.'
+                                                                'Bạn đã tham gia dự án.'
                                                             );
                                                         }
                                                     }}
                                                 >
                                                     <UserPlus className="h-4 w-4 mr-2" />
-                                                    Join Project
+                                                    Tham gia dự án
                                                 </Button>
                                             )}
                                     </div>
@@ -425,11 +383,10 @@ export default function StudentProjectsPage() {
                 <div className="text-center py-12">
                     <FolderOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        No projects yet
+                        Không có dự án nào
                     </h3>
                     <p className="text-gray-600">
-                        Projects will appear here when they are assigned by your
-                        instructor.
+                        Dự án sẽ hiển thị ở đây khi được giao bởi giáo viên của lớp học.
                     </p>
                 </div>
             )}

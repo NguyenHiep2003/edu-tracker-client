@@ -7,10 +7,10 @@ export default function GroupsLoading() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Project Groups
+                        Danh sách nhóm dự án
                     </h1>
                     <p className="text-gray-600">
-                        Manage project groups and members
+                        Quản lý nhóm tham gia dự án này
                     </p>
                 </div>
                 <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
