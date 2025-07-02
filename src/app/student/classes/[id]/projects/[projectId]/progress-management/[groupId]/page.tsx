@@ -1502,7 +1502,7 @@ export default function ProgressManagement() {
                                             <DropdownMenuTrigger asChild>
                                                 <Button
                                                     variant="ghost"
-                                                    size="s"
+                                                    size="sm"
                                                     onClick={(e) =>
                                                         e.stopPropagation()
                                                     }
