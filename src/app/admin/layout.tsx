@@ -3,7 +3,7 @@ import Image from 'next/image';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useAuthProtection, UserRole } from '@/hooks/use-auth-protection';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 import {
     LayoutDashboard,
     Users,
@@ -41,8 +41,6 @@ const AuthContext = createContext<AuthContextType>({
     userInfo: null,
     loading: true,
 });
-
-export const useAuth = () => useContext(AuthContext);
 
 interface SidebarItem {
     name: string;

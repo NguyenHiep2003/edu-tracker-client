@@ -2,7 +2,7 @@
 
 import type React from 'react';
 import { useAuthProtection, UserRole } from '@/hooks/use-auth-protection';
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { usePathname, useParams } from 'next/navigation';
 import { OrganizationProvider } from '@/context/organization-context';
 import { ProfileProvider } from '@/context/profile-context';
@@ -21,7 +21,6 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
 });
 
-export const useAuth = () => useContext(AuthContext);
 
 function StudentLayoutContent({ children }: { children: React.ReactNode }) {
     const { loading, userInfo } = useAuthProtection({
