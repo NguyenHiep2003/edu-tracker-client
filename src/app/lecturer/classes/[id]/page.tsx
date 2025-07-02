@@ -676,7 +676,7 @@ export default function ClassInfoPage() {
                                             <p className="text-sm text-gray-500">
                                                 {lecturer.email}
                                             </p>
-                                            <div className="flex gap-2 mt-1">
+                                            {/* <div className="flex gap-2 mt-1">
                                                 {lecturer.roles.map((role) => (
                                                     <span
                                                         key={role}
@@ -685,7 +685,7 @@ export default function ClassInfoPage() {
                                                         {role}
                                                     </span>
                                                 ))}
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                     <div className="flex gap-2">

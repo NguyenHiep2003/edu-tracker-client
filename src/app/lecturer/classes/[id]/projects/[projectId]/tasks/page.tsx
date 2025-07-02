@@ -125,9 +125,7 @@ export default function TasksPage() {
         ) {
             const defaultGradeTitle = `Điểm ${newTask.summary}`;
             // Only update if it's still the default or empty
-            if (
-                !newTask.gradeComponent.title
-            ) {
+            if (!newTask.gradeComponent.title) {
                 setNewTask((prev) => ({
                     ...prev,
                     gradeComponent: {
@@ -175,9 +173,7 @@ export default function TasksPage() {
                     </Badge>
                 );
             case 'FAIL':
-                return (
-                    <Badge className="bg-red-100 text-red-800">Lỗi</Badge>
-                );
+                return <Badge className="bg-red-100 text-red-800">Lỗi</Badge>;
             default:
                 return <Badge variant="outline">Không xác định</Badge>;
         }
@@ -215,27 +211,31 @@ export default function TasksPage() {
 
             if (
                 !newTask.gradeComponent.maxScore ||
-                newTask.gradeComponent.maxScore <= 0 || newTask.gradeComponent.maxScore > 10000
+                newTask.gradeComponent.maxScore <= 0 ||
+                newTask.gradeComponent.maxScore > 10000
             ) {
-                newErrors.gradeMaxScore = 'Điểm tối đa phải lớn hơn 0 và nhỏ hơn 10000';
+                newErrors.gradeMaxScore =
+                    'Điểm tối đa phải lớn hơn 0 và nhỏ hơn 10000';
             }
             if (
                 !newTask.gradeComponent.scale ||
-                newTask.gradeComponent.scale <= 0 || newTask.gradeComponent.scale > 4
+                newTask.gradeComponent.scale <= 0 ||
+                newTask.gradeComponent.scale > 4
             ) {
-                newErrors.gradeScale = 'Số chữ số sau dấu phẩy phải lớn hơn 0 và nhỏ hơn 4';
+                newErrors.gradeScale =
+                    'Số chữ số sau dấu phẩy phải lớn hơn 0 và nhỏ hơn 4';
             }
         }
 
         // Validate start date if provided
-       
 
         // Validate end date if provided
         if (newTask.endDate) {
             const endDate = new Date(newTask.endDate);
             const now = new Date();
             if (endDate <= now) {
-                newErrors.endDate = 'Ngày kết thúc phải không được trước ngày hiện tại';
+                newErrors.endDate =
+                    'Ngày kết thúc phải không được trước ngày hiện tại';
             }
 
             // Validate end date is after start date
@@ -344,7 +344,9 @@ export default function TasksPage() {
         return (
             <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                <span className="ml-2 text-gray-600">Đang tải công việc...</span>
+                <span className="ml-2 text-gray-600">
+                    Đang tải công việc...
+                </span>
             </div>
         );
     }
@@ -354,7 +356,9 @@ export default function TasksPage() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Công việc</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">
+                        Công việc
+                    </h1>
                     <p className="text-gray-600">
                         Quản lý công việc và giao việc cho các nhóm
                     </p>
@@ -550,8 +554,8 @@ export default function TasksPage() {
                                                             htmlFor="startDate"
                                                             className="text-gray-900"
                                                         >
-                                                            Ngày bắt đầu
-                                                            (Tùy chọn)
+                                                            Ngày bắt đầu (Tùy
+                                                            chọn)
                                                         </Label>
                                                         <TooltipProvider>
                                                             <Tooltip>
@@ -579,15 +583,20 @@ export default function TasksPage() {
                                                                         </svg>
                                                                     </button>
                                                                 </TooltipTrigger>
-                                                                <TooltipContent>
+                                                                <TooltipContent className="whitespace-normal max-w-xs">
                                                                     <p>
-                                                                        Sinh viên
-                                                                        sẽ
+                                                                        Sinh
+                                                                        viên sẽ
                                                                         nhận
-                                                                        công việc
-                                                                        sau
-                                                                        thời gian
-                                                                        này hoặc ngay lập tức nếu bỏ trống
+                                                                        được
+                                                                        công
+                                                                        việc sau
+                                                                        thời
+                                                                        gian này
+                                                                        hoặc
+                                                                        ngay lập
+                                                                        tức nếu
+                                                                        bỏ trống
                                                                     </p>
                                                                 </TooltipContent>
                                                             </Tooltip>
@@ -747,7 +756,8 @@ export default function TasksPage() {
                                                                     Chọn tập tin
                                                                 </div>
                                                                 <span className="text-gray-500">
-                                                                    hoặc kéo và thả
+                                                                    hoặc kéo và
+                                                                    thả
                                                                 </span>
                                                             </div>
                                                         </label>
@@ -880,9 +890,9 @@ export default function TasksPage() {
                                                         </span>
                                                     </label>
                                                     <p className="text-sm text-gray-600 mt-1">
-                                                        Tạo đầu điểm
-                                                        để đánh giá quá trình làm
-                                                        của sinh viên
+                                                        Tạo đầu điểm để đánh giá
+                                                        quá trình học của sinh
+                                                        viên
                                                     </p>
                                                 </div>
 
@@ -893,7 +903,8 @@ export default function TasksPage() {
                                                                 htmlFor="gradeTitle"
                                                                 className="text-gray-900 font-medium"
                                                             >
-                                                                Tiêu đề đầu điểm *
+                                                                Tiêu đề đầu điểm
+                                                                *
                                                             </Label>
                                                             <Input
                                                                 id="gradeTitle"
@@ -1004,7 +1015,8 @@ export default function TasksPage() {
                                                                 htmlFor="gradeScale"
                                                                 className="text-gray-900 font-medium"
                                                             >
-                                                                Số chữ số sau dấu phẩy *
+                                                                Số chữ số sau
+                                                                dấu phẩy *
                                                             </Label>
                                                             <Input
                                                                 id="gradeScale"
@@ -1128,7 +1140,7 @@ export default function TasksPage() {
                                     </div>
                                     <p className="text-gray-600">
                                         {task.lecturer_item_description ||
-                                            'No description provided'}
+                                            'Không có mô tả'}
                                     </p>
                                 </div>
                             </div>
@@ -1197,7 +1209,7 @@ export default function TasksPage() {
                                     {getJobStatusIcon(task.job_status)}
                                     <div>
                                         <div className="text-sm font-medium">
-                                            Trạng thái xuất bản
+                                            Ngày xuất bản
                                         </div>
                                         <div className="text-sm text-gray-600">
                                             {formatDate(

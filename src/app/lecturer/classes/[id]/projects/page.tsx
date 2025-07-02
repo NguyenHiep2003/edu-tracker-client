@@ -299,7 +299,7 @@ export default function ProjectsPage() {
                                                             project.type
                                                         )}
                                                         <span className="text-sm font-medium text-gray-700">
-                                                            {project.type}
+                                                            {project.type === 'TEAM' ? 'Dự án nhóm' : 'Dự án cá nhân'}
                                                         </span>
                                                     </div>
 
@@ -308,7 +308,7 @@ export default function ProjectsPage() {
                                                             project.participationMode
                                                         )}`}
                                                     >
-                                                        {project.participationMode.toUpperCase()}
+                                                        {project.participationMode === 'mandatory' ? 'Bắt buộc' : 'Tùy chọn'}
                                                     </span>
                                                 </div>
 

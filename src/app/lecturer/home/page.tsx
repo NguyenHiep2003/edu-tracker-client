@@ -310,16 +310,16 @@ export default function LecturerHomePage() {
                         </h1>
                         <p className="text-gray-600 mt-2">
                             {selectedSemester
-                                ? `Showing classes for ${
+                                ? `Hiển thị lớp học trong kỳ học ${
                                       selectedSemester.name
                                   }${
                                       searchKeyword
-                                          ? ` matching "${searchKeyword}"`
+                                          ? ` phù hợp với từ khóa "${searchKeyword}"`
                                           : ''
                                   }`
-                                : `Showing all classes${
+                                : `Hiển thị tất cả lớp học${
                                       searchKeyword
-                                          ? ` matching "${searchKeyword}"`
+                                          ? ` phù hợp với từ khóa "${searchKeyword}"`
                                           : ''
                                   }`}
                         </p>

@@ -95,8 +95,8 @@ export default function LandingPage() {
                             Tất cả những gì tổ chức của bạn cần
                         </h2>
                         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                            Từ quản lý tổ chức, quản lý lớp học, quản lý dự án đến theo
-                            dõi tiến trình học tập của sinh viên.
+                            Từ quản lý tổ chức, quản lý lớp học, quản lý dự án
+                            đến theo dõi tiến trình học tập của sinh viên.
                         </p>
                     </div>
 
@@ -106,8 +106,8 @@ export default function LandingPage() {
                                 <Shield className="h-12 w-12 text-blue-600 mb-4" />
                                 <CardTitle>Quản lý tổ chức</CardTitle>
                                 <CardDescription>
-                                    Quản lý tài nguyên, người dùng, và cài đặt của
-                                    tổ chức với các công cụ quản lý mạnh mẽ.
+                                    Quản lý tài nguyên, người dùng, và cài đặt
+                                    của tổ chức với các công cụ quản lý mạnh mẽ.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -117,7 +117,8 @@ export default function LandingPage() {
                                 <BookOpen className="h-12 w-12 text-green-600 mb-4" />
                                 <CardTitle>Quản lý lớp học và dự án</CardTitle>
                                 <CardDescription>
-                                    Giảng viên có thể tạo lớp học và dự án. Theo dõi quá trình học tập của sinh viên.
+                                    Giảng viên có thể tạo lớp học và dự án. Theo
+                                    dõi quá trình học tập của sinh viên.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -127,9 +128,9 @@ export default function LandingPage() {
                                 <BarChart3 className="h-12 w-12 text-purple-600 mb-4" />
                                 <CardTitle>Theo dõi tiến độ học tập</CardTitle>
                                 <CardDescription>
-                                    Sinh viên có thể tham gia lớp học, hoàn thành
-                                    dự án, và theo dõi tiến độ học tập của mình
-                                    trong thời gian thực.
+                                    Sinh viên có thể tham gia lớp học, hoàn
+                                    thành dự án, và theo dõi tiến độ học tập của
+                                    mình trong thời gian thực.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -139,7 +140,9 @@ export default function LandingPage() {
                                 <Users className="h-12 w-12 text-orange-600 mb-4" />
                                 <CardTitle>Hỗ trợ nhiều vai trò</CardTitle>
                                 <CardDescription>
-                                    Hỗ trợ cho các vai trò khác nhau: Quản trị viên, giảng viên, và sinh viên với trải nghiệm được tùy chỉnh.
+                                    Hỗ trợ cho các vai trò khác nhau: Quản trị
+                                    viên, giảng viên, và sinh viên với trải
+                                    nghiệm được tùy chỉnh.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -147,9 +150,13 @@ export default function LandingPage() {
                         <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
                             <CardHeader>
                                 <Zap className="h-12 w-12 text-yellow-600 mb-4" />
-                                <CardTitle>Hỗ trợ hợp tác thời gian thực</CardTitle>
+                                <CardTitle>
+                                    Hỗ trợ hợp tác thời gian thực
+                                </CardTitle>
                                 <CardDescription>
-                                    Hỗ trợ hợp tác thời gian thực giữa giảng viên và sinh viên với cập nhật và thông báo thời gian thực.
+                                    Hỗ trợ hợp tác thời gian thực giữa giảng
+                                    viên và sinh viên với cập nhật và thông báo
+                                    thời gian thực.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -159,8 +166,8 @@ export default function LandingPage() {
                                 <Globe className="h-12 w-12 text-indigo-600 mb-4" />
                                 <CardTitle>Hỗ trợ nhiều tổ chức</CardTitle>
                                 <CardDescription>
-                                    Hỗ trợ nhiều tổ chức trên một nền tảng với cách
-                                    xử lý dữ liệu được cách ly và bảo mật.
+                                    Hỗ trợ nhiều tổ chức trên một nền tảng với
+                                    cách xử lý dữ liệu được cách ly và bảo mật.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -227,11 +234,12 @@ export default function LandingPage() {
             <section className="py-20 bg-blue-600">
                 <div className="container mx-auto px-4 text-center">
                     <h2 className="text-4xl font-bold text-white mb-4">
-                        Sẵn sàng chuyển đổi trải nghiệm học tập của tổ chức của bạn?
+                        Sẵn sàng chuyển đổi trải nghiệm học tập của tổ chức của
+                        bạn?
                     </h2>
                     <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                        Tham gia nền tảng của chúng tôi
-                        để nâng cao trải nghiệm học tập.
+                        Tham gia nền tảng của chúng tôi để nâng cao trải nghiệm
+                        học tập.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button
@@ -240,9 +248,7 @@ export default function LandingPage() {
                             className="text-lg px-8 py-4"
                             asChild
                         >
-                            <Link href="/register">
-                                Đăng ký tổ chức
-                            </Link>
+                            <Link href="/register">Đăng ký tổ chức</Link>
                         </Button>
                         {/* <Button
                             size="lg"
@@ -253,6 +259,25 @@ export default function LandingPage() {
                             <Link href="/login">Sign In</Link>
                         </Button> */}
                     </div>
+                </div>
+            </section>
+
+            {/* Contact Section */}
+            <section className="py-16 bg-white border-t border-gray-200">
+                <div className="container mx-auto px-4 text-center">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                        Liên hệ
+                    </h2>
+                    <p className="text-lg text-gray-600 mb-4">
+                        Nếu bạn có bất kỳ câu hỏi hoặc cần hỗ trợ, vui lòng liên
+                        hệ với chúng tôi qua email:
+                    </p>
+                    <a
+                        href="mailto:bluemoon20231@gmail.com"
+                        className="text-blue-600 text-xl font-semibold underline hover:text-blue-800"
+                    >
+                        bluemoon20231@gmail.com
+                    </a>
                 </div>
             </section>
 
@@ -273,7 +298,7 @@ export default function LandingPage() {
                                 </span>
                             </div>
                             <p className="text-gray-400">
-                                    Nâng cao trải nghiệm học tập của tổ chức của bạn
+                                Nâng cao trải nghiệm học tập của tổ chức của bạn
                             </p>
                         </div>
                         <div>

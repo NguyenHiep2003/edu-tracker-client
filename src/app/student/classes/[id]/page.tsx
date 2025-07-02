@@ -156,7 +156,7 @@ export default function StudentClassInfoPage() {
                         Description
                     </div>
                     <p className="text-lg text-gray-700 leading-relaxed">
-                        {classData.description || 'No description provided'}
+                        {classData.description || 'Không có mô tả'}
                     </p>
                 </div>
             </div>

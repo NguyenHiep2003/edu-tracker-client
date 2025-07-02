@@ -54,7 +54,7 @@ export default function ImportTemplateModal({
             const data = await getTemplate(debouncedKeyword);
             setTemplates(data);
         } catch (error) {
-            console.log("🚀 ~ fetchTemplates ~ error:", error)
+            console.log('🚀 ~ fetchTemplates ~ error:', error);
             toast.error('Lỗi khi tải dữ liệu template');
         } finally {
             setLoading(false);
@@ -94,14 +94,15 @@ export default function ImportTemplateModal({
     return (
         <>
             <Dialog open={isOpen} onOpenChange={onClose}>
-                <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+                <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col bg-white">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <FileText className="h-6 w-6 text-blue-600" />
                             Nhập dự án từ template
                         </DialogTitle>
                         <DialogDescription>
-                            Chọn một template để tạo mới một dự án trong lớp của bạn.
+                            Chọn một template để tạo mới một dự án trong lớp của
+                            bạn.
                         </DialogDescription>
                     </DialogHeader>
 

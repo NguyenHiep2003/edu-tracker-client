@@ -125,7 +125,7 @@ export default function TemplatePreviewModal({
             const data = await previewTemplate(templateId, startDateTime);
             setPreviewData(data);
         } catch (error) {
-            console.log("🚀 ~ fetchPreviewData ~ error:", error)
+            console.log('🚀 ~ fetchPreviewData ~ error:', error);
             toast.error('Lỗi khi tải dữ liệu template');
         } finally {
             setLoading(false);
@@ -368,13 +368,12 @@ export default function TemplatePreviewModal({
                                                                     .type
                                                             )}
                                                             <span className="text-gray-900">
-                                                                {
-                                                                    previewData
-                                                                        .projectConfigPreview
-                                                                        .type === 'TEAM'
-                                                                        ? 'Nhóm'
-                                                                        : 'Cá nhân'
-                                                                }
+                                                                {previewData
+                                                                    .projectConfigPreview
+                                                                    .type ===
+                                                                'TEAM'
+                                                                    ? 'Nhóm'
+                                                                    : 'Cá nhân'}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -390,20 +389,100 @@ export default function TemplatePreviewModal({
                                                                         .participationMode
                                                                 )}
                                                             >
-                                                                {previewData.projectConfigPreview.participationMode === 'mandatory'
+                                                                {previewData
+                                                                    .projectConfigPreview
+                                                                    .participationMode ===
+                                                                'mandatory'
                                                                     ? 'Bắt buộc'
                                                                     : 'Tùy chọn'}
                                                             </Badge>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                
 
-                                                {/* Deadlines with offsets */}
+                                                        {/* Hạn đăng ký tham gia dự án */}
+                                                        {previewData
+                                                            .projectConfigPreview
+                                                            .participationMode ===
+                                                            'optional' && (
+                                                            <div className="flex-1 p-3 bg-gray-50 rounded-md">
+                                                                <Label className="text-sm font-medium text-gray-700">
+                                                                    Hạn đăng ký
+                                                                    tham gia dự
+                                                                    án
+                                                                </Label>
+                                                                <div className="space-y-1">
+                                                                    {previewData
+                                                                        .projectConfigPreview
+                                                                        .joinProjectDeadline ? (
+                                                                        <p className="text-gray-900">
+                                                                            {formatDate(
+                                                                                previewData
+                                                                                    .projectConfigPreview
+                                                                                    .joinProjectDeadline,
+                                                                                'dd/MM/yyyy HH:mm'
+                                                                            )}
+                                                                        </p>
+                                                                    ) : (
+                                                                        <p className="text-gray-900">
+                                                                            Không
+                                                                            có
+                                                                            hạn
+                                                                        </p>
+                                                                    )}
+                                                                    {previewData
+                                                                        .projectConfigPreview
+                                                                        .joinProjectDeadlineOffset !==
+                                                                        null && (
+                                                                        <p className="text-xs text-gray-500">
+                                                                            {formatTimeOffset(
+                                                                                previewData
+                                                                                    .projectConfigPreview
+                                                                                    .joinProjectDeadlineOffset
+                                                                            )}{' '}
+                                                                            sau
+                                                                            khi
+                                                                            dự
+                                                                            án
+                                                                            bắt
+                                                                            đầu
+                                                                        </p>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    
+
+                                                {/* Cấu hình nhóm */}
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {previewData
-                                                        .projectConfigPreview
-                                                        .type === 'TEAM' && (
-                                                        <div>
+                                                    <div className="space-y-2">
+                                                        <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                            <Users className="h-5 w-5" />
+                                                            Cấu hình nhóm
+                                                        </h3>
+                                                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                                                            <span className="text-sm text-gray-700">
+                                                                Cho phép sinh
+                                                                viên lập nhóm
+                                                            </span>
+                                                            <span
+                                                                className={`px-2 py-1 text-xs font-medium rounded-md ${
+                                                                    previewData
+                                                                        .projectConfigPreview
+                                                                        .allowStudentFormTeam
+                                                                        ? 'bg-green-100 text-green-800'
+                                                                        : 'bg-red-100 text-red-800'
+                                                                }`}
+                                                            >
+                                                                {previewData
+                                                                    .projectConfigPreview
+                                                                    .allowStudentFormTeam
+                                                                    ? 'Cho phép'
+                                                                    : 'Không cho phép'}
+                                                            </span>
+                                                        </div>
+                                                        <div className="p-3 bg-gray-50 rounded-md">
                                                             <Label className="text-sm font-medium text-gray-700">
                                                                 Hạn lập nhóm
                                                             </Label>
@@ -420,7 +499,9 @@ export default function TemplatePreviewModal({
                                                                         )
                                                                     ) : (
                                                                         <>
-                                                                            Không có hạn
+                                                                            Không
+                                                                            có
+                                                                            hạn
                                                                         </>
                                                                     )}
                                                                 </p>
@@ -434,55 +515,47 @@ export default function TemplatePreviewModal({
                                                                                 .projectConfigPreview
                                                                                 .formGroupDeadlineOffset
                                                                         )}{' '}
-                                                                        sau khi dự án bắt đầu
+                                                                        sau khi
+                                                                        dự án
+                                                                        bắt đầu
                                                                     </p>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                    )}
+                                                    </div>
 
-                                                    {previewData
-                                                        .projectConfigPreview
-                                                        .participationMode ===
-                                                        'optional' && (
-                                                        <div>
-                                                            <Label className="text-sm font-medium text-gray-700">
-                                                                Hạn đăng ký tham gia dự án
-                                                            </Label>
-                                                            <div className="space-y-1">
+                                                    {/* Cấu hình chủ đề */}
+                                                    <div className="space-y-2">
+                                                        <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                                            <Users className="h-5 w-5" />
+                                                            Cấu hình chủ đề
+                                                        </h3>
+                                                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                                                            <span className="text-sm text-gray-700">
+                                                                Cho phép sinh
+                                                                viên yêu cầu tạo
+                                                                chủ đề mới
+                                                            </span>
+                                                            <span
+                                                                className={`px-2 py-1 text-xs font-medium rounded-md ${
+                                                                    previewData
+                                                                        .projectConfigPreview
+                                                                        .allowStudentCreateTopic
+                                                                        ? 'bg-green-100 text-green-800'
+                                                                        : 'bg-red-100 text-red-800'
+                                                                }`}
+                                                            >
                                                                 {previewData
                                                                     .projectConfigPreview
-                                                                    .joinProjectDeadline ? (
-                                                                    <p className="text-gray-900">
-                                                                        {formatDate(
-                                                                            previewData
-                                                                                .projectConfigPreview
-                                                                                .joinProjectDeadline,
-                                                                            'dd/MM/yyyy HH:mm'
-                                                                        )}
-                                                                    </p>
-                                                                ) : (
-                                                                    <p className="text-gray-900">
-                                                                        Không có hạn
-                                                                    </p>
-                                                                )}
-                                                                {previewData
-                                                                    .projectConfigPreview
-                                                                    .joinProjectDeadlineOffset !==
-                                                                    null && (
-                                                                    <p className="text-xs text-gray-500">
-                                                                        {formatTimeOffset(
-                                                                            previewData
-                                                                                .projectConfigPreview
-                                                                                .joinProjectDeadlineOffset
-                                                                        )}{' '}
-                                                                        sau khi dự án bắt đầu
-                                                                    </p>
-                                                                )}
-                                                            </div>
+                                                                    .allowStudentCreateTopic
+                                                                    ? 'Cho phép'
+                                                                    : 'Không cho phép'}
+                                                            </span>
                                                         </div>
-                                                    )}
+                                                    </div>
                                                 </div>
+
+                                                {/* Deadlines for optional participation */}
 
                                                 {previewData
                                                     .projectConfigPreview
@@ -501,68 +574,21 @@ export default function TemplatePreviewModal({
                                                     </div>
                                                 )}
 
-                                                {/* Student Permissions */}
-                                                <div>
-                                                    <Label className="text-sm font-medium text-gray-700 mb-2">
-                                                        Quyền hạn sinh viên
-                                                    </Label>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                                                            <span className="text-sm text-gray-700">
-                                                                Cho phép sinh viên lập nhóm
-                                                            </span>
-                                                            <span
-                                                                className={`px-2 py-1 text-xs font-medium rounded-md ${
-                                                                    previewData
-                                                                        .projectConfigPreview
-                                                                        .allowStudentFormTeam
-                                                                        ? 'bg-green-100 text-green-800'
-                                                                        : 'bg-red-100 text-red-800'
-                                                                }`}
-                                                            >
-                                                                {previewData
-                                                                    .projectConfigPreview
-                                                                    .allowStudentFormTeam
-                                                                    ? 'Có'
-                                                                    : 'Không'}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                                                            <span className="text-sm text-gray-700">
-                                                                Cho phép sinh viên yêu cầu tạo chủ đề mới
-                                                            </span>
-                                                            <span
-                                                                className={`px-2 py-1 text-xs font-medium rounded-md ${
-                                                                    previewData
-                                                                        .projectConfigPreview
-                                                                        .allowStudentCreateTopic
-                                                                        ? 'bg-green-100 text-green-800'
-                                                                        : 'bg-red-100 text-red-800'
-                                                                }`}
-                                                            >
-                                                                {previewData
-                                                                    .projectConfigPreview
-                                                                    .allowStudentCreateTopic
-                                                                    ? 'Có'
-                                                                    : 'Không'}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                                 {previewData
                                                     .projectConfigPreview
                                                     .grade && (
                                                     <Card className="bg-blue-50 border-blue-200">
                                                         <CardHeader>
                                                             <CardTitle className="text-blue-900">
-                                                                Cấu hình đầu điểm
+                                                                Cấu hình đầu
+                                                                điểm
                                                             </CardTitle>
                                                         </CardHeader>
                                                         <CardContent className="space-y-2">
                                                             <div>
                                                                 <Label className="text-sm font-medium text-blue-700">
-                                                                    Tiêu đề đầu điểm
+                                                                    Tiêu đề đầu
+                                                                    điểm
                                                                 </Label>
                                                                 <p className="text-blue-900">
                                                                     {
@@ -594,7 +620,8 @@ export default function TemplatePreviewModal({
                                                             <div className="grid grid-cols-2 gap-4">
                                                                 <div>
                                                                     <Label className="text-sm font-medium text-blue-700">
-                                                                        Điểm tối đa
+                                                                        Điểm tối
+                                                                        đa
                                                                     </Label>
                                                                     <p className="text-blue-900">
                                                                         {
@@ -607,7 +634,9 @@ export default function TemplatePreviewModal({
                                                                 </div>
                                                                 <div>
                                                                     <Label className="text-sm font-medium text-blue-700">
-                                                                        Số chữ số sau dấu phẩy
+                                                                        Số chữ
+                                                                        số sau
+                                                                        dấu phẩy
                                                                     </Label>
                                                                     <p className="text-blue-900">
                                                                         {
@@ -647,7 +676,8 @@ export default function TemplatePreviewModal({
                                                 {previewData.topicsPreview
                                                     .length === 0 ? (
                                                     <p className="text-gray-500 text-center py-8">
-                                                        Không có chủ đề trong template này
+                                                        Không có chủ đề trong
+                                                        template này
                                                     </p>
                                                 ) : (
                                                     <div className="space-y-3">
@@ -679,8 +709,10 @@ export default function TemplatePreviewModal({
                                                                                     {
                                                                                         topic.numOfAttachments
                                                                                     }{' '}
-                                                                                    tập tin đính kèm
-                                                                                    
+                                                                                    tập
+                                                                                    tin
+                                                                                    đính
+                                                                                    kèm
                                                                                 </span>
                                                                             </div>
                                                                         </div>
@@ -702,7 +734,8 @@ export default function TemplatePreviewModal({
                                             <CardHeader>
                                                 <CardTitle className="flex items-center gap-2">
                                                     <Clock className="h-5 w-5 text-orange-600" />
-                                                    Công việc giao cho sinh viên (
+                                                    Công việc giao cho sinh viên
+                                                    (
                                                     {
                                                         previewData
                                                             .lecturerItemsPreview
@@ -716,7 +749,8 @@ export default function TemplatePreviewModal({
                                                     .lecturerItemsPreview
                                                     .length === 0 ? (
                                                     <p className="text-gray-500 text-center py-8">
-                                                        Không có công việc trong template này
+                                                        Không có công việc trong
+                                                        template này
                                                     </p>
                                                 ) : (
                                                     <div className="space-y-4">
@@ -766,7 +800,9 @@ export default function TemplatePreviewModal({
                                                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        Ngày bắt đầu
+                                                                                        Ngày
+                                                                                        bắt
+                                                                                        đầu
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatDate(
@@ -777,7 +813,9 @@ export default function TemplatePreviewModal({
                                                                                 </div>
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        Ngày kết thúc
+                                                                                        Ngày
+                                                                                        kết
+                                                                                        thúc
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatDate(
@@ -788,18 +826,30 @@ export default function TemplatePreviewModal({
                                                                                 </div>
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        Công việc xuất bản sau
+                                                                                        Công
+                                                                                        việc
+                                                                                        xuất
+                                                                                        bản
+                                                                                        sau
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatTimeOffset(
                                                                                             item.taskTimeOffset
                                                                                         )}{' '}
-                                                                                        từ khi dự án bắt đầu
+                                                                                        từ
+                                                                                        khi
+                                                                                        dự
+                                                                                        án
+                                                                                        bắt
+                                                                                        đầu
                                                                                     </p>
                                                                                 </div>
                                                                                 <div>
                                                                                     <Label className="text-xs font-medium text-gray-700">
-                                                                                        Thời gian thực hiện
+                                                                                        Thời
+                                                                                        gian
+                                                                                        thực
+                                                                                        hiện
                                                                                     </Label>
                                                                                     <p className="text-gray-900">
                                                                                         {formatDuration(
@@ -835,7 +885,9 @@ export default function TemplatePreviewModal({
                                                                                             </div>
                                                                                             <div className="text-right">
                                                                                                 <p className="text-green-900 font-medium">
-                                                                                                    Điểm tối đa:{' '}
+                                                                                                    Điểm
+                                                                                                    tối
+                                                                                                    đa:{' '}
                                                                                                     {
                                                                                                         item
                                                                                                             .grade
@@ -843,7 +895,12 @@ export default function TemplatePreviewModal({
                                                                                                     }
                                                                                                 </p>
                                                                                                 <p className="text-green-700 text-xs">
-                                                                                                    Số chữ số sau dấu phẩy:{' '}
+                                                                                                    Số
+                                                                                                    chữ
+                                                                                                    số
+                                                                                                    sau
+                                                                                                    dấu
+                                                                                                    phẩy:{' '}
                                                                                                     {
                                                                                                         item
                                                                                                             .grade
@@ -862,8 +919,10 @@ export default function TemplatePreviewModal({
                                                                                     {
                                                                                         item.numOfAttachments
                                                                                     }{' '}
-                                                                                    tập tin đính kèm
-                                                                                    
+                                                                                    tập
+                                                                                    tin
+                                                                                    đính
+                                                                                    kèm
                                                                                 </span>
                                                                             </div>
                                                                         </div>

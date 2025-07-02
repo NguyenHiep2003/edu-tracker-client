@@ -96,9 +96,7 @@ export default function TaskDetailsPage() {
             setDetails(data);
         } catch (err: any) {
             setError('Lỗi khi tải các bài nộp.');
-            toast.error(
-                err.message || 'Đã xảy ra lỗi khi tải các bài nộp.'
-            );
+            toast.error(err.message || 'Đã xảy ra lỗi khi tải các bài nộp.');
         } finally {
             setLoading(false);
         }
@@ -119,7 +117,7 @@ export default function TaskDetailsPage() {
             setStudents(response.data);
             setIsGradeModalOpen(true);
         } catch (error) {
-            console.log("🚀 ~ handleGradeClick ~ error:", error)
+            console.log('🚀 ~ handleGradeClick ~ error:', error);
             toast.error('Đã xảy ra lỗi khi tải điểm sinh viên.');
         }
     };
@@ -139,9 +137,7 @@ export default function TaskDetailsPage() {
         return (
             <div className="text-center py-12 text-red-600">
                 <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">
-                    Đã xảy ra lỗi
-                </h3>
+                <h3 className="text-lg font-medium mb-2">Đã xảy ra lỗi</h3>
                 <p>{error}</p>
                 <Button onClick={() => router.back()} className="mt-4">
                     Quay lại
@@ -196,7 +192,7 @@ export default function TaskDetailsPage() {
                             Mô tả
                         </p>
                         <p className="text-sm text-gray-600">
-                            {details.description || 'No description provided.'}
+                            {details.description || 'Không có mô tả'}
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -255,7 +251,8 @@ export default function TaskDetailsPage() {
                             <div className="flex items-center gap-2 mb-3">
                                 <Paperclip className="h-4 w-4 text-gray-500" />
                                 <p className="text-sm font-medium text-gray-800">
-                                    Tập tin đính kèm ({details.attachments.length})
+                                    Tập tin đính kèm (
+                                    {details.attachments.length})
                                 </p>
                             </div>
                             <div className="space-y-2">
@@ -291,7 +288,7 @@ export default function TaskDetailsPage() {
                                             className="flex items-center gap-1"
                                         >
                                             <Eye className="h-3 w-3" />
-                                                Xem
+                                            Xem
                                         </Button>
                                     </div>
                                 ))}
