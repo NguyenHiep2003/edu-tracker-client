@@ -65,6 +65,12 @@ interface StudentClassroom {
     studentToGrades: StudentToGrade[];
 }
 
+interface AggregationMetadata {
+    id: number;
+    title: string;
+    weight: number;
+}
+
 interface GradeDetail {
     id: number;
     createdAt: string;
@@ -78,6 +84,7 @@ interface GradeDetail {
     classroom: {
         classroomToStudents: StudentClassroom[];
     };
+    aggregationMetadata?: AggregationMetadata[];
     scale: number;
     project?: {
         id: number;
@@ -139,7 +146,7 @@ export default function GradeDetailPage() {
                     visibility: response.data.visibility,
                 });
             } catch (error) {
-                console.log("🚀 ~ fetchGradeDetail ~ error:", error)
+                console.log('🚀 ~ fetchGradeDetail ~ error:', error);
             } finally {
                 setLoading(false);
             }
@@ -301,7 +308,9 @@ export default function GradeDetailPage() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message ?? 'Đã xảy ra lỗi khi cập nhật thông tin điểm');
+                toast.error(
+                    error.message ?? 'Đã xảy ra lỗi khi cập nhật thông tin điểm'
+                );
             }
         }
     };
@@ -358,7 +367,8 @@ export default function GradeDetailPage() {
                         Không tìm thấy điểm
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
-                        Điểm bạn đang tìm không tồn tại hoặc bạn không có quyền xem nó.
+                        Điểm bạn đang tìm không tồn tại hoặc bạn không có quyền
+                        xem nó.
                     </p>
                 </div>
             </div>
@@ -634,7 +644,10 @@ export default function GradeDetailPage() {
                                             Ngày tạo
                                         </Label>
                                         <div className="mt-1 text-sm text-gray-500 bg-gray-50 border rounded-lg px-3 py-2">
-                                            {formatDate(gradeDetail.createdAt, 'dd/MM/yyyy')}
+                                            {formatDate(
+                                                gradeDetail.createdAt,
+                                                'dd/MM/yyyy'
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -652,6 +665,44 @@ export default function GradeDetailPage() {
                                     </p>
                                 </div>
                             )}
+
+                            {gradeDetail.type === GradeType.AGGREGATION &&
+                                gradeDetail.aggregationMetadata && (
+                                    <div className="space-y-2">
+                                        <h3 className="text-sm font-medium text-gray-700 mb-2">
+                                            Thành phần điểm cấu thành
+                                        </h3>
+                                        <ul className="bg-indigo-50 border border-indigo-200 rounded-lg p-3 space-y-2">
+                                            {gradeDetail.aggregationMetadata.map(
+                                                (meta, idx) => (
+                                                    <li
+                                                        key={meta.id || idx}
+                                                        className="flex items-center cursor-pointer hover:bg-indigo-100 rounded px-2 py-1 transition"
+                                                        onClick={() =>
+                                                            router.push(
+                                                                `/lecturer/classes/${params.id}/grading/${meta.id}`
+                                                            )
+                                                        }
+                                                    >
+                                                        <span className="font-medium text-indigo-900">
+                                                            {meta.title}
+                                                            {meta.weight !==
+                                                                undefined && (
+                                                                <span className="ml-2 text-xs text-indigo-700 font-normal">
+                                                                    (Trọng số:{' '}
+                                                                    {
+                                                                        meta.weight
+                                                                    }
+                                                                    )
+                                                                </span>
+                                                            )}
+                                                        </span>
+                                                    </li>
+                                                )
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
 
                             {(gradeDetail.project ||
                                 gradeDetail.lecturerWorkItem) && (
@@ -715,7 +766,19 @@ export default function GradeDetailPage() {
                                                             <span className="font-medium">
                                                                 Thời gian:
                                                             </span>{' '}
-                                                            {formatDate(gradeDetail.project.startDate, 'dd/MM/yyyy')} - {formatDate(gradeDetail.project.endDate, 'dd/MM/yyyy')}
+                                                            {formatDate(
+                                                                gradeDetail
+                                                                    .project
+                                                                    .startDate,
+                                                                'dd/MM/yyyy'
+                                                            )}{' '}
+                                                            -{' '}
+                                                            {formatDate(
+                                                                gradeDetail
+                                                                    .project
+                                                                    .endDate,
+                                                                'dd/MM/yyyy'
+                                                            )}
                                                         </p>
                                                         {gradeDetail.project
                                                             .description && (
@@ -784,7 +847,9 @@ export default function GradeDetailPage() {
                                         </span>
                                     </div>
                                     <p className="text-2xl font-bold">
-                                        {mapGradeVisibility(gradeDetail.visibility)}
+                                        {mapGradeVisibility(
+                                            gradeDetail.visibility
+                                        )}
                                     </p>
                                 </div>
 
@@ -796,7 +861,10 @@ export default function GradeDetailPage() {
                                         </span>
                                     </div>
                                     <p className="text-lg font-semibold text-gray-900">
-                                        {formatDate(gradeDetail.createdAt, 'dd/MM/yyyy')}
+                                        {formatDate(
+                                            gradeDetail.createdAt,
+                                            'dd/MM/yyyy'
+                                        )}
                                     </p>
                                 </div>
                             </div>

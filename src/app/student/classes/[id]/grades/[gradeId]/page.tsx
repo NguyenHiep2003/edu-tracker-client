@@ -47,6 +47,12 @@ interface StudentClassroom {
     studentToGrades: StudentToGrade[];
 }
 
+interface AggregationMetadata {
+    id: number;
+    title: string;
+    weight: number;
+}
+
 interface GradeDetail {
     id: number;
     createdAt: string;
@@ -60,6 +66,7 @@ interface GradeDetail {
     classroom: {
         classroomToStudents: StudentClassroom[];
     };
+    aggregationMetadata?: AggregationMetadata[];
     scale: number;
     project?: {
         id: number;
@@ -188,8 +195,8 @@ export default function GradeDetailPage() {
                         Điểm đánh giá không tồn tại
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
-                        Điểm đánh giá không tồn tại hoặc bạn không có quyền
-                        xem nó.
+                        Điểm đánh giá không tồn tại hoặc bạn không có quyền xem
+                        nó.
                     </p>
                 </div>
             </div>
@@ -228,6 +235,41 @@ export default function GradeDetailPage() {
                                 </p>
                             </div>
                         )}
+
+                        {gradeDetail.type === GradeType.AGGREGATION &&
+                            gradeDetail.aggregationMetadata && (
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                                        Thành phần điểm cấu thành
+                                    </h3>
+                                    <ul className="bg-indigo-50 border border-indigo-200 rounded-lg p-3 space-y-2">
+                                        {gradeDetail.aggregationMetadata.map(
+                                            (meta, idx) => (
+                                                <li
+                                                    key={meta.id || idx}
+                                                    className="flex items-center cursor-pointer hover:bg-indigo-100 rounded px-2 py-1 transition"
+                                                    onClick={() =>
+                                                        router.push(
+                                                            `/student/classes/${params.id}/grades/${meta.id}`
+                                                        )
+                                                    }
+                                                >
+                                                    <span className="font-medium text-indigo-900">
+                                                        {meta.title}
+                                                        {meta.weight !==
+                                                            undefined && (
+                                                            <span className="ml-2 text-xs text-indigo-700 font-normal">
+                                                                (Trọng số:{' '}
+                                                                {meta.weight})
+                                                            </span>
+                                                        )}
+                                                    </span>
+                                                </li>
+                                            )
+                                        )}
+                                    </ul>
+                                </div>
+                            )}
 
                         {(gradeDetail.project ||
                             gradeDetail.lecturerWorkItem) && (
@@ -277,22 +319,24 @@ export default function GradeDetailPage() {
                                                         <span className="font-medium">
                                                             Loại:
                                                         </span>{' '}
-                                                        {
-                                                            gradeDetail.project
-                                                                .type === 'TEAM' ? 'Dự án nhóm' : 'Dự án cá nhân'
-                                                        }
+                                                        {gradeDetail.project
+                                                            .type === 'TEAM'
+                                                            ? 'Dự án nhóm'
+                                                            : 'Dự án cá nhân'}
                                                     </p>
                                                     <p className="text-sm text-indigo-700 group-hover:text-indigo-600">
                                                         <span className="font-medium">
                                                             Thời gian:
                                                         </span>{' '}
                                                         {formatDate(
-                                                            gradeDetail.project.startDate,
+                                                            gradeDetail.project
+                                                                .startDate,
                                                             'dd/MM/yyyy HH:mm'
                                                         )}{' '}
                                                         -{' '}
                                                         {formatDate(
-                                                            gradeDetail.project.endDate,
+                                                            gradeDetail.project
+                                                                .endDate,
                                                             'dd/MM/yyyy HH:mm'
                                                         )}
                                                     </p>
@@ -373,7 +417,10 @@ export default function GradeDetailPage() {
                                     </span>
                                 </div>
                                 <p className="text-lg font-semibold text-gray-900">
-                                    {formatDate(gradeDetail.createdAt, 'dd/MM/yyyy')}
+                                    {formatDate(
+                                        gradeDetail.createdAt,
+                                        'dd/MM/yyyy'
+                                    )}
                                 </p>
                             </div>
                         </div>

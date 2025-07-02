@@ -406,8 +406,8 @@ export default function ClassInfoPage() {
                 isOpen={showErrorModal}
                 onClose={handleCloseErrorModal}
                 error={importError}
-                title="Student Import Errors"
-                description="The following errors occurred while importing students:"
+                title="Lỗi thêm sinh viên từ file"
+                description="Các lỗi sau đã xảy ra khi nhập sinh viên:"
             />
 
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
