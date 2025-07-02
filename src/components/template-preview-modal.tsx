@@ -222,13 +222,13 @@ export default function TemplatePreviewModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-6xl h-[90vh] flex flex-col">
+            <DialogContent className="max-w-6xl h-[90vh] flex flex-col bg-white">
                 <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
+                    <DialogTitle className="flex items-center gap-2 text-gray-900">
                         <Eye className="h-5 w-5 text-blue-600" />
                         Bản xem trước của template dự án: {templateTitle}
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="text-gray-900">
                         Xem trước cấu hình và nội dung của template
                     </DialogDescription>
                 </DialogHeader>
@@ -399,60 +399,51 @@ export default function TemplatePreviewModal({
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
 
-                                                        {/* Hạn đăng ký tham gia dự án */}
-                                                        {previewData
-                                                            .projectConfigPreview
-                                                            .participationMode ===
-                                                            'optional' && (
-                                                            <div className="flex-1 p-3 bg-gray-50 rounded-md">
-                                                                <Label className="text-sm font-medium text-gray-700">
-                                                                    Hạn đăng ký
-                                                                    tham gia dự
-                                                                    án
-                                                                </Label>
-                                                                <div className="space-y-1">
-                                                                    {previewData
-                                                                        .projectConfigPreview
-                                                                        .joinProjectDeadline ? (
-                                                                        <p className="text-gray-900">
-                                                                            {formatDate(
-                                                                                previewData
-                                                                                    .projectConfigPreview
-                                                                                    .joinProjectDeadline,
-                                                                                'dd/MM/yyyy HH:mm'
-                                                                            )}
-                                                                        </p>
-                                                                    ) : (
-                                                                        <p className="text-gray-900">
-                                                                            Không
-                                                                            có
-                                                                            hạn
-                                                                        </p>
+                                                {/* Hạn đăng ký tham gia dự án */}
+                                                {previewData
+                                                    .projectConfigPreview
+                                                    .participationMode ===
+                                                    'optional' && (
+                                                    <div className="flex-1 p-3 bg-gray-50 rounded-md">
+                                                        <Label className="text-sm font-medium text-gray-700">
+                                                            Hạn đăng ký tham gia
+                                                            dự án
+                                                        </Label>
+                                                        <div className="space-y-1">
+                                                            {previewData
+                                                                .projectConfigPreview
+                                                                .joinProjectDeadline ? (
+                                                                <p className="text-gray-900">
+                                                                    {formatDate(
+                                                                        previewData
+                                                                            .projectConfigPreview
+                                                                            .joinProjectDeadline,
+                                                                        'dd/MM/yyyy HH:mm'
                                                                     )}
-                                                                    {previewData
-                                                                        .projectConfigPreview
-                                                                        .joinProjectDeadlineOffset !==
-                                                                        null && (
-                                                                        <p className="text-xs text-gray-500">
-                                                                            {formatTimeOffset(
-                                                                                previewData
-                                                                                    .projectConfigPreview
-                                                                                    .joinProjectDeadlineOffset
-                                                                            )}{' '}
-                                                                            sau
-                                                                            khi
-                                                                            dự
-                                                                            án
-                                                                            bắt
-                                                                            đầu
-                                                                        </p>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    
+                                                                </p>
+                                                            ) : (
+                                                                <p className="text-gray-900">
+                                                                    Không có hạn
+                                                                </p>
+                                                            )}
+                                                            {previewData
+                                                                .projectConfigPreview
+                                                                .joinProjectDeadlineOffset !==
+                                                                null && (
+                                                                <p className="text-xs text-gray-500">
+                                                                    {formatTimeOffset(
+                                                                        previewData
+                                                                            .projectConfigPreview
+                                                                            .joinProjectDeadlineOffset
+                                                                    )}{' '}
+                                                                    sau khi dự
+                                                                    án bắt đầu
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
 
                                                 {/* Cấu hình nhóm */}
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

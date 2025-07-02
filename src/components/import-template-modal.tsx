@@ -96,11 +96,11 @@ export default function ImportTemplateModal({
             <Dialog open={isOpen} onOpenChange={onClose}>
                 <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col bg-white">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">
+                        <DialogTitle className="flex items-center gap-2 text-gray-900">
                             <FileText className="h-6 w-6 text-blue-600" />
                             Nhập dự án từ template
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-gray-900">
                             Chọn một template để tạo mới một dự án trong lớp của
                             bạn.
                         </DialogDescription>
