@@ -375,7 +375,7 @@ export default function GroupStatisticsPage() {
             <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                     <Users className="h-5 w-5" />
-                    Phân bổ công việc (chỉ bao gồm các công việc đã hoàn thành và không chia ra các công việc con)
+                    Phân bổ công việc (chỉ bao gồm các công việc đã hoàn thành và không bị chia nhỏ)
                 </h2>
 
                 <div className="space-y-8">

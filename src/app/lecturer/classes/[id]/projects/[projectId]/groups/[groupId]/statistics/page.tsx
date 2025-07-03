@@ -134,7 +134,7 @@ export default function GroupStatisticsPage() {
                         .then((res) => setDevWeeklyData(res.data)),
                 ]);
             } catch (error) {
-                console.log("🚀 ~ fetchData ~ error:", error)
+                console.log('🚀 ~ fetchData ~ error:', error);
             } finally {
                 setLoading(false);
             }
@@ -151,7 +151,7 @@ export default function GroupStatisticsPage() {
             setStudents(response.data);
             setIsGradeModalOpen(true);
         } catch (error) {
-            console.log("🚀 ~ handleGradeClick ~ error:", error)
+            console.log('🚀 ~ handleGradeClick ~ error:', error);
         }
     };
 
@@ -417,7 +417,8 @@ export default function GroupStatisticsPage() {
                 <Card className="p-6">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                         <Users className="h-5 w-5" />
-                        Phân bổ công việc giữa các thành viên
+                        Phân bổ công việc (chỉ bao gồm các công việc đã hoàn
+                        thành và không bị chia nhỏ)
                     </h2>
 
                     <div className="space-y-8">
@@ -570,7 +571,7 @@ export default function GroupStatisticsPage() {
                                                         <div className="ml-4">
                                                             <div className="text-sm font-medium text-gray-900">
                                                                 {member.student_name ||
-                                                                    member.student_email || 
+                                                                    member.student_email ||
                                                                     'Không có tên'}
                                                             </div>
                                                             <div className="text-sm text-gray-500">
@@ -589,7 +590,10 @@ export default function GroupStatisticsPage() {
                                                                 : 'bg-gray-100 text-gray-800'
                                                         }`}
                                                     >
-                                                        {member.group_role === 'LEADER' ? 'Trưởng nhóm' : 'Thành viên'}
+                                                        {member.group_role ===
+                                                        'LEADER'
+                                                            ? 'Trưởng nhóm'
+                                                            : 'Thành viên'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -646,7 +650,8 @@ export default function GroupStatisticsPage() {
                                                             <TooltipContent>
                                                                 <p>
                                                                     Xem tất cả
-                                                                    công việc đã làm
+                                                                    công việc đã
+                                                                    làm
                                                                 </p>
                                                             </TooltipContent>
                                                         </Tooltip>
@@ -812,7 +817,8 @@ export default function GroupStatisticsPage() {
                     {/* Code Changes Chart */}
                     <div>
                         <h3 className="text-lg font-medium mb-4">
-                            Thay đổi mã nguồn của mỗi thành viên (dòng code thêm + dòng code xóa)
+                            Thay đổi mã nguồn của mỗi thành viên (dòng code thêm
+                            + dòng code xóa)
                         </h3>
                         <div className="h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">

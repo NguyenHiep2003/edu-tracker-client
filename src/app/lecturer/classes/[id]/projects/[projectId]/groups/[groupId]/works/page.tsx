@@ -51,6 +51,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { getTypeIcon } from '@/helper/get-type-icon';
 import { useParams } from 'next/navigation';
 import { formatDate } from '@/helper/date-formatter';
+import { mapSprintStatus } from '@/helper/map-sprint-status';
 
 const getStatusIcon = (status: WorkItemStatus) => {
     switch (status) {
@@ -752,7 +753,7 @@ export default function WorkItemsListPage() {
                                                         `Sprint ${sprint.number}`}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
-                                                    Trạng thái: {sprint.status}
+                                                    Trạng thái: {mapSprintStatus(sprint.status)}
                                                 </div>
                                             </div>
                                         </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Bell, User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import {User, LogOut, Settings, ChevronDown } from 'lucide-react';
 // import { Button } from '@/components/ui/button';
 import { getProfile } from '@/services/api/user';
 import type { IUser } from '@/services/api/user/interface';
@@ -94,7 +94,7 @@ export function LecturerHeader({
                     {/* Right side - Notifications and Profile */}
                     <div className="flex items-center space-x-3">
                         {/* Notifications */}
-                        <div className="relative">
+                        {/* <div className="relative">
                             <button
                                 onClick={() =>
                                     setShowNotifications(!showNotifications)
@@ -103,7 +103,7 @@ export function LecturerHeader({
                             >
                                 <Bell className="h-5 w-5 text-gray-600" />
                                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
-                            </button>
+                            </button> */}
 
                             {/* {showNotifications && (
                                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
@@ -149,7 +149,7 @@ export function LecturerHeader({
                                     </div>
                                 </div>
                             )} */}
-                        </div>
+                        {/* </div> */}
 
                         {/* Profile Menu */}
                         <div className="relative">
