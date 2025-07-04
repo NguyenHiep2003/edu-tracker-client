@@ -93,6 +93,7 @@ export default function TasksPage() {
     const [isDeleteWarningOpen, setIsDeleteWarningOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
     const [isDeletingTask, setIsDeletingTask] = useState(false);
+    const [useDefaultGradeTitle, setUseDefaultGradeTitle] = useState(true);
     const [newTask, setNewTask] = useState({
         assignType: AssignType.ALL,
         type: WorkItemType.TASK,
@@ -125,7 +126,7 @@ export default function TasksPage() {
         ) {
             const defaultGradeTitle = `Điểm ${newTask.summary}`;
             // Only update if it's still the default or empty
-            if (!newTask.gradeComponent.title) {
+            if (useDefaultGradeTitle) {
                 setNewTask((prev) => ({
                     ...prev,
                     gradeComponent: {
@@ -135,7 +136,7 @@ export default function TasksPage() {
                 }));
             }
         }
-    }, [newTask.summary, newTask.createGradeComponent]);
+    }, [newTask.summary, newTask.createGradeComponent, useDefaultGradeTitle]);
 
     const fetchTasks = async () => {
         try {
@@ -914,12 +915,14 @@ export default function TasksPage() {
                                                                         ?.title ||
                                                                     ''
                                                                 }
-                                                                onChange={(e) =>
+                                                                onChange={(e) => {
                                                                     handleGradeComponentChange(
                                                                         'title',
                                                                         e.target
                                                                             .value
                                                                     )
+                                                                    setUseDefaultGradeTitle(false);
+                                                                }
                                                                 }
                                                                 placeholder="Nhập tiêu đề đầu điểm"
                                                                 className={`text-gray-900 placeholder-gray-500 ${
