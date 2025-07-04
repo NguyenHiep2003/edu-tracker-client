@@ -253,7 +253,7 @@ export function GroupSubmissionProgressModal({
                 <Avatar
                     name={assignee?.studentClassroom?.student?.name}
                 ></Avatar>
-                <div>
+                {assignee?.studentClassroom?.student ? <div>
                     <p className="text-sm font-medium text-gray-900">
                         {assignee.studentClassroom.student.name}
                     </p>
@@ -263,7 +263,11 @@ export function GroupSubmissionProgressModal({
                     <p className="text-xs text-gray-500">
                         ID: {assignee.studentClassroom.student.externalId}
                     </p>
-                </div>
+                </div> : <div>
+                    <p className="text-sm font-medium text-gray-900">
+                        Không được giao
+                    </p>
+                </div>}
             </div>
         );
     };
