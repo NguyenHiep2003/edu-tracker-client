@@ -156,7 +156,11 @@ export function CreateGradeModal({
                     toast.success('Điểm đã được tạo thành công');
                     onClose();
                 } catch (error: any) {
-                    if (error?.message && Array.isArray(error.message) && typeof error.message[0] !== 'string') {
+                    if (
+                        error?.message &&
+                        Array.isArray(error.message) &&
+                        typeof error.message[0] !== 'string'
+                    ) {
                         setImportError(error);
                         setShowErrorModal(true);
                     } else if (
@@ -176,22 +180,19 @@ export function CreateGradeModal({
                     return;
                 }
             } else {
-                await instance.post(
-                    `/v1/classroom/${classId}/grade`,
-                    {
-                        title: formData.title,
-                        description: formData.description,
-                        maxScore: formData.maxScore,
-                        scale: formData.scale,
-                        visibility: formData.visibility,
-                        // isFinal: formData.isFinal,
-                        childGrades:
-                            formData.type === GradeType.AGGREGATION
-                                ? formData.childGrades
-                                : [],
-                        type: formData.type,
-                    }
-                );
+                await instance.post(`/v1/classroom/${classId}/grade`, {
+                    title: formData.title,
+                    description: formData.description,
+                    maxScore: formData.maxScore,
+                    scale: formData.scale,
+                    visibility: formData.visibility,
+                    // isFinal: formData.isFinal,
+                    childGrades:
+                        formData.type === GradeType.AGGREGATION
+                            ? formData.childGrades
+                            : [],
+                    type: formData.type,
+                });
                 toast.success('Điểm đã được tạo thành công');
                 onClose();
             }
@@ -243,8 +244,8 @@ export function CreateGradeModal({
                     />
 
                     {/* Modal */}
-                    <div className="relative z-50 w-full max-w-lg mx-4">
-                        <div className="relative transform rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl sm:p-6">
+                    <div className="relative z-50 w-full max-w-lg mx-4 max-h-[90vh] h-full">
+                        <div className="relative transform rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl sm:p-6 max-h-[90vh] h-full flex flex-col">
                             {/* Close button */}
                             <div className="absolute right-0 top-0 pr-4 pt-4">
                                 <button
@@ -257,11 +258,13 @@ export function CreateGradeModal({
                                 </button>
                             </div>
 
-                            {/* Content */}
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-semibold leading-6 text-gray-900">
-                                    Tạo điểm thành phần
-                                </h3>
+                            {/* Header */}
+                            <h3 className="text-lg font-semibold leading-6 text-gray-900 mb-4">
+                                Tạo điểm thành phần
+                            </h3>
+
+                            {/* Scrollable Content */}
+                            <div className="flex-1 min-h-0 overflow-y-auto">
                                 <div className="space-y-4">
                                     <div>
                                         <Label
@@ -469,7 +472,7 @@ export function CreateGradeModal({
                                             </div>
                                         </Listbox>
                                     </div>
-                                   
+
                                     <div>
                                         <Label
                                             htmlFor="type"
@@ -668,7 +671,8 @@ export function CreateGradeModal({
                                                             {isSelected && (
                                                                 <div className="flex items-center gap-2">
                                                                     <span className="text-xs text-gray-600 min-w-[70px]">
-                                                                        Trọng số:
+                                                                        Trọng
+                                                                        số:
                                                                     </span>
                                                                     <div className="flex items-center border rounded">
                                                                         <button
@@ -825,22 +829,29 @@ export function CreateGradeModal({
                                                         <ul className="mt-1 list-disc list-inside space-y-1">
                                                             <li>
                                                                 Tập tin Excel
-                                                                (.xlsx hoặc .xls)
+                                                                (.xlsx hoặc
+                                                                .xls)
                                                             </li>
                                                             <li>
-                                                                Phải có một sheet tên
+                                                                Phải có một
+                                                                sheet tên
                                                                 &quot;grades&quot;
                                                             </li>
                                                             <li>
-                                                                Các cột bắt buộc:
-                                                                <ul className="ml-4 list-disc">
+                                                                Các cột bắt
+                                                                buộc:
+                                                                <ul className="ml-6 list-none list-inside space-y-1">
                                                                     <li>
                                                                         EMAIL:
-                                                                        email của sinh viên
+                                                                        email
+                                                                        của sinh
+                                                                        viên
                                                                     </li>
                                                                     <li>
                                                                         GRADE:
-                                                                        điểm của sinh viên
+                                                                        điểm của
+                                                                        sinh
+                                                                        viên
                                                                     </li>
                                                                 </ul>
                                                             </li>
@@ -888,22 +899,24 @@ export function CreateGradeModal({
                                                                 }
                                                             </p>
                                                             <p className="text-xs text-gray-500">
-                                                                Click để thay đổi
-                                                                tập tin
+                                                                Click để thay
+                                                                đổi tập tin
                                                             </p>
                                                         </div>
                                                     ) : (
                                                         <div>
                                                             <p className="text-gray-600 mb-1">
-                                                                Kéo và thả tập tin vào đây,
+                                                                Kéo và thả tập
+                                                                tin vào đây,
                                                                 hoặc{' '}
                                                                 <span className="text-blue-600 hover:text-blue-700 font-medium">
                                                                     tìm kiếm
                                                                 </span>
                                                             </p>
                                                             <p className="text-sm text-gray-500">
-                                                                Chỉ tập tin Excel
-                                                                (.xlsx, .xls)
+                                                                Chỉ tập tin
+                                                                Excel (.xlsx,
+                                                                .xls)
                                                             </p>
                                                         </div>
                                                     )}
