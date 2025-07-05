@@ -87,7 +87,7 @@ export function AddStudentModal({
     // Handle Student selection
     const handleSelectStudent = (student: StudentSuggestion) => {
         setSelectedStudent(student);
-        setSearchTerm(student.name);
+        setSearchTerm(student.name ?? student.email);
         setSuggestions([]);
     };
 

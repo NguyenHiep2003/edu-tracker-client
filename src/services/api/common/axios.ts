@@ -70,9 +70,9 @@ instance.interceptors.response.use(
                 isRefreshing = false;
                 // Handle refresh token errors by clearing stored tokens and redirecting to the login page.
                 console.error('Token refresh failed:', refreshError);
-                // localStorage.removeItem('accessToken');
+                localStorage.removeItem('accessToken');
                 localStorage.removeItem('roles');
-                // window.location.href = '/login';
+                window.location.href = '/login';
 
                 return;
             }
