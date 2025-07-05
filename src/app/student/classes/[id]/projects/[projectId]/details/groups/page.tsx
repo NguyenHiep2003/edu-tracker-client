@@ -97,7 +97,7 @@ export default function StudentProjectGroupsPage() {
         setIsJoiningGroup(true);
         try {
             await joinGroup(Number(projectId), Number(selectedGroup?.id));
-            toast.success('Đã tham gia nhóm thành công!');
+            toast.success('Đã gửi yêu cầu tham gia nhóm thành công!');
             setShowJoinGroupModal(false);
             setSelectedGroup(null);
             refetchProject();
@@ -105,7 +105,7 @@ export default function StudentProjectGroupsPage() {
             if (Array.isArray(error.message)) {
                 toast.error(error.message[0]);
             } else {
-                toast.error(error.message || 'Đã xảy ra lỗi khi tham gia nhóm');
+                toast.error(error.message || 'Đã xảy ra lỗi khi gửi yêu cầu tham gia nhóm');
             }
         } finally {
             setIsJoiningGroup(false);
