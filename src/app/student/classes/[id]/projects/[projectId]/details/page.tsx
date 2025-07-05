@@ -305,7 +305,7 @@ export default function StudentProjectOverviewPage() {
                                 </Badge>
                             </div>}
 
-                            {projectData.allowStudentCreateTopic && <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <span className="text-base font-medium text-gray-700">
                                     Cho phép sinh viên tạo chủ đề
                                 </span>
@@ -314,7 +314,7 @@ export default function StudentProjectOverviewPage() {
                                         ? 'Có'
                                         : 'Không'}
                                 </Badge>
-                            </div>}
+                            </div>
 
                             {projectData.isJoined && (
                                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
