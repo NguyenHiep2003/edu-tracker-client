@@ -661,7 +661,7 @@ export function CreateGradeModal({
                                                                 />
                                                                 <Label
                                                                     htmlFor={`grade-${grade.id}`}
-                                                                    className="text-sm text-gray-900 min-w-[160px]"
+                                                                    className="text-sm text-gray-900 min-w-[160px] max-w-[200px]"
                                                                 >
                                                                     {
                                                                         grade.title
